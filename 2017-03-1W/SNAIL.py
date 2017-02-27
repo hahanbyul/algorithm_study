@@ -10,15 +10,19 @@ class SNAIL:
         self.m = m
         self.n = n
         self.rain_prob = rain_prob
+        
+        self.cache = [[-1 for _ in range(n)] for _ in range(m)]
     
     def start(self):
         return self.climb(self.m, 0) / 2**self.m
         
     def climb(self, days, climbed):
+        if self.cache[m - days][climbed] != -1: return self.cache[m - days][climbed]
         if days == 0:
             return 1 if climbed >= self.n else 0
         
-        return self.climb(days - 1, climbed + 2) + self.climb(days - 1, climbed + 1)
+        ret = self.climb(days - 1, climbed + 2) + self.climb(days - 1, climbed + 1)
+        return ret
 
     def climb_in_rainy_season(self, days, climbed):
         if days == 0:
@@ -27,7 +31,8 @@ class SNAIL:
         return (1 - self.rain_prob)*self.climb(days - 1, climbed + 2) + self.rain_prob*self.climb(days - 1, climbed + 1)
         
 def main():
-    snail = SNAIL(m=10, n=2)
+    snail = SNAIL(m=10, n=2, rain_prob=0.75)
+    print(snail.cache)
     prob = snail.start()
     print(prob)
     
