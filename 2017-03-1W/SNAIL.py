@@ -6,9 +6,10 @@ Created on Mon Feb 27 15:52:23 2017
 @author: hanbyulkim
 """
 class SNAIL:
-    def __init__(self, m, n):
+    def __init__(self, m, n, rain_prob):
         self.m = m
         self.n = n
+        self.rain_prob = rain_prob
     
     def start(self):
         return self.climb(self.m, 0) / 2**self.m
@@ -19,6 +20,12 @@ class SNAIL:
         
         return self.climb(days - 1, climbed + 2) + self.climb(days - 1, climbed + 1)
 
+    def climb_in_rainy_season(self, days, climbed):
+        if days == 0:
+            return 1 if climbed >= self.n else 0
+        
+        return (1 - self.rain_prob)*self.climb(days - 1, climbed + 2) + self.rain_prob*self.climb(days - 1, climbed + 1)
+        
 def main():
     snail = SNAIL(m=10, n=2)
     prob = snail.start()
