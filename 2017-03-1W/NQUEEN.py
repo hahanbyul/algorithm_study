@@ -20,14 +20,16 @@ class NQueen:
         for i in range(self.N):
             if i in picked_cols: continue
             
-            if check_diag(picked_cols, current_row, i)
+            if check_diag(picked_cols, current_row, i):
                 picked_cols.append(i)
                 ret = find(picked_cols)
                 picked_cols.pop()
             else:
                 ret = False
             return ret
-            
+
+    def check_diag(self, picked_cols, row, col):
+        return True
         
 def main():
     NQueen(2)
