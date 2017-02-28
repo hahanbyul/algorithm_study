@@ -44,12 +44,11 @@ class NQUEEN:
 
     def draw_answers(self):
         for i, answer in enumerate(self.answers):
-            print("#", i+1)
+            print("\n#", i+1)
             print("\n".join(answer))
-            print()
         
 def main():
-    NQueen(2)
+    return 0
     
 if __name__ == '__main__':
     main()
