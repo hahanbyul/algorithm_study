@@ -10,9 +10,10 @@ class NQUEEN:
     def __init__(self, N):
         self.answers = []
         self.N = N
+        self.find([])
         
     def find(self, picked_cols):
-        print(self.to_board(picked_cols))
+        #print(self.to_board(picked_cols))
 
         if len(picked_cols) == self.N:
             self.answers.append(self.to_board([col for col in picked_cols]))
@@ -20,10 +21,10 @@ class NQUEEN:
         
         current_row = len(picked_cols)
         for i in range(self.N):
-            print("i:", i)
+            #print("i:", i)
 
             if i in picked_cols or self.is_diag(picked_cols, i): 
-                print('continue')
+                #print('continue')
                 continue
             
             picked_cols.append(i)
@@ -40,6 +41,8 @@ class NQUEEN:
 
     def to_board(self, picked_cols):
         return ["."*col + "Q" + "."*(self.N-1-col) for col in picked_cols]
+
+# TODO: draw_answers
         
 def main():
     NQueen(2)

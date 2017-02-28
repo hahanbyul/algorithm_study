@@ -15,13 +15,16 @@ def test_is_diag():
 
 def test_no_answer():
     nqueen = NQUEEN(2)
-    nqueen.find([])
     assert nqueen.answers == []
     nqueen2 = NQUEEN(3)
-    nqueen2.find([])
     assert nqueen.answers == []
 
 def test_answer():
     nqueen = NQUEEN(4)
-    nqueen.find([])
     assert nqueen.answers == [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]]
+
+def test_answer2():
+    nqueen = NQUEEN(6)
+    print(nqueen.answers)
+    assert True
+    
