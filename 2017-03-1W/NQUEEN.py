@@ -16,6 +16,19 @@ class NQueen:
             answers.append([col for col in picked_cols])
             return True
         
+        current_row = len(picked_cols)
+        for i in range(self.N):
+            if i in picked_cols: continue
+            
+            if check_diag(picked_cols, current_row, i)
+                picked_cols.append(i)
+                ret = find(picked_cols)
+                picked_cols.pop()
+            else:
+                ret = False
+            return ret
+            
+        
 def main():
     NQueen(2)
     
