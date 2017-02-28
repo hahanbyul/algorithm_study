@@ -25,6 +25,6 @@ def test_answer():
 
 def test_answer2():
     nqueen = NQUEEN(6)
-    print(nqueen.answers)
+    nqueen.draw_answers()
     assert True
     

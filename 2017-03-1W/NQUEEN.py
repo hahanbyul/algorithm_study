@@ -42,7 +42,11 @@ class NQUEEN:
     def to_board(self, picked_cols):
         return ["."*col + "Q" + "."*(self.N-1-col) for col in picked_cols]
 
-# TODO: draw_answers
+    def draw_answers(self):
+        for i, answer in enumerate(self.answers):
+            print("#", i+1)
+            print("\n".join(answer))
+            print()
         
 def main():
     NQueen(2)
