@@ -12,21 +12,23 @@ class NQUEEN:
         self.N = N
         
     def find(self, picked_cols):
+        print(self.to_board(picked_cols))
+
         if len(picked_cols) == self.N:
-            answers.append([col for col in picked_cols])
-            return True
+            self.answers.append(self.to_board([col for col in picked_cols]))
+            return
         
         current_row = len(picked_cols)
         for i in range(self.N):
-            if i in picked_cols: continue
+            print("i:", i)
+
+            if i in picked_cols or self.is_diag(picked_cols, i): 
+                print('continue')
+                continue
             
-            if is_diag(picked_cols, i):
-                picked_cols.append(i)
-                ret = find(picked_cols)
-                picked_cols.pop()
-            else:
-                ret = False
-            return ret
+            picked_cols.append(i)
+            self.find(picked_cols)
+            picked_cols.pop()
 
     def is_diag(self, picked_cols, test_col):
         test_row = len(picked_cols)
