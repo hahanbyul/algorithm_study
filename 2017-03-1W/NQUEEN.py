@@ -6,7 +6,7 @@ Created on Tue Feb 28 14:19:39 2017
 @author: hanbyulkim
 """
 
-class NQueen:
+class NQUEEN:
     def __init__(self, N):
         self.answers = []
         self.N = N
@@ -30,6 +30,9 @@ class NQueen:
 
     def check_diag(self, picked_cols, row, col):
         return True
+
+    def to_board(self, picked_cols):
+        return ["."*col + "Q" + "."*(self.N-1-col) for col in picked_cols]
         
 def main():
     NQueen(2)
