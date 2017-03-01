@@ -11,3 +11,9 @@ import pytest
 def test_example(n, m, prob):
     snail = SNAIL(m=m, n=n, rain_prob=0.75)
     assert abs(snail.start() - prob) <= 0.1 ** 7
+
+def test_cached():
+    snail = SNAIL(m=50, n=25, rain_prob=0.75)
+    prob = snail.start()
+    print(snail.cache_event)
+    assert True

@@ -15,6 +15,7 @@ class SNAIL:
         self.rain_prob = rain_prob
         
         self.cache = [[-1 for _ in range(m+1)] for _ in range(m)]
+        self.cache_event = 0
     
     def start(self):
         #return self.climb(self.m, 0) / 2**self.m
@@ -38,6 +39,7 @@ class SNAIL:
 
         cached = self.cache[days-1][climbed-self.m] 
         if cached != -1:
+            self.cache_event += 1
             return cached
 
         prob_sunny = 1.0 - self.rain_prob
@@ -47,10 +49,11 @@ class SNAIL:
         return ret
         
 def main():
-    snail = SNAIL(m=10, n=2, rain_prob=0.75)
-    print(snail.cache)
-    prob = snail.start()
-    print(prob)
+    n = int(rl())
+    for _ in range(n):
+        (n, m) = rl().split()
+        snail = SNAIL(m=int(m), n=int(n), rain_prob=0.75)
+        print(snail.start())
     
 if __name__ == '__main__':
     main()
