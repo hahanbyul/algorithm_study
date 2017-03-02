@@ -16,6 +16,7 @@ class TriPath:
         self.board = board
     
     def path(self, y, x):
+        # self.isMaxPath = True
         return 0
         
     def path_num(self, y, x):
@@ -39,12 +40,13 @@ def parse_board(n):
     return board
 
 def main():
-    #C = int(rl())
-    C = 1
+    C = int(rl())
 
     for _ in range(C):
         n = int(rl())
-        print(parse_board(n))
+        board = parse_board(n)
+        print(board)
+        TriPath(n, board)
     return 0
 
 if __name__ == '__main__':
