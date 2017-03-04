@@ -12,16 +12,22 @@ class TriPath:
     def __init__(self, N, board):
         self.N = N
         self.cache = [[-1 for _ in range(N)] for _ in range(N)]
-        self.isMaxPath = False
         self.board = board
     
     def path(self, y, x):
-        # self.isMaxPath = True
-        return 0
+        if self.cache[y][x] != -1:
+            return self.cache[y][x]
+
+        cur_value = self.board[y][x]
+        if y == self.N-1:
+            return cur_value
+
+        ret = cur_value + max(self.path(y+1, x), self.path(y+1, x+1))
+        self.cache[y][x] = ret
+        return ret
         
     def path_num(self, y, x):
-        if not self.isMaxPath: 
-            self.path(0, 0)
+        self.path(0, 0)
             
         if y == self.N - 1: 
             return 1
