@@ -20,6 +20,7 @@ class TriPath:
 
         cur_value = self.board[y][x]
         if y == self.N-1:
+            self.cache[y][x] = cur_value
             return cur_value
 
         ret = cur_value + max(self.path(y+1, x), self.path(y+1, x+1))

@@ -22,6 +22,11 @@ def test_cache():
     tripath = TriPath(4, board2)
     tripath.path(0,0)
     assert tripath.cache[0][0] == 24
-    print(tripath.cache)
+    #print(tripath.cache)
 
+def test_tripathcnt():
+    tripath = TriPath(4, board2)
+    assert tripath.path_num(0,0) == 3
 
+    tripath2 = TriPath(4, board1)
+    assert tripath2.path_num(0,0) == 8
