@@ -52,8 +52,9 @@ def main():
     for _ in range(C):
         n = int(rl())
         board = parse_board(n)
-        print(board)
-        TriPath(n, board)
+        tripath = TriPath(n, board)
+        print(tripath.path_num(0,0))
+
     return 0
 
 if __name__ == '__main__':
