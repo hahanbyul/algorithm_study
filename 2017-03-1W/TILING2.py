@@ -20,7 +20,7 @@ class Tiling:
         if n <= 1: return 1
         if n == 2: return 2
         
-        ret = self.compute(n - 3) + 2*self.compute(n - 2)
+        ret = self.compute(n - 3) + 2*self.compute(n - 2) # 여기서 mod 해야 함
         self.cache[n-1] = ret
         return ret
 

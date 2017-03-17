@@ -14,7 +14,7 @@ class SNAIL:
         self.n = n
         self.rain_prob = rain_prob
         
-        self.cache = [[-1 for _ in range(m+1)] for _ in range(m)]
+        self.cache = [[-1 for _ in range(m+1)] for _ in range(m)] # cache를 dict로 바꿔보자
         self.cache_event = 0
     
     def start(self):

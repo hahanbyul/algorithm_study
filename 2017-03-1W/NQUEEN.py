@@ -31,7 +31,7 @@ class NQUEEN:
             self.find(picked_cols)
             picked_cols.pop()
 
-    def is_diag(self, picked_cols, test_col):
+    def is_diag(self, picked_cols, test_col): # 이미 검사한 거는 false로 체크하기
         test_row = len(picked_cols)
 
         for row, col in enumerate(picked_cols):
@@ -48,6 +48,8 @@ class NQUEEN:
             print("\n".join(answer))
         
 def main():
+    nq = NQUEEN(7)
+    nq.draw_answers()
     return 0
     
 if __name__ == '__main__':
