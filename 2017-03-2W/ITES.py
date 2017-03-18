@@ -9,16 +9,15 @@ class ITES:
             self.A.append(A_i % 10000 + 1)
             i = i + 1
 
-    def find_seq(self, K):
-        return find_seq(self.A, K)
-
-    def find_seq(self, seq, K):
+    def find_seq(self, K, seq=None):
+        seq = seq or self.A
         answers = set()
         partial_seq = list()
         partial_sum = 0
 
         while seq:
-            while partial_sum < K:
+            print("!seq: ", seq)
+            while partial_sum < K and seq:
                 partial_sum += seq[0]
                 partial_seq.append(seq.pop(0))
                 print("sum: ", partial_sum)

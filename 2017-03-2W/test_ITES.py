@@ -6,5 +6,10 @@ def test_init():
 
 def test_find():
     ites = ITES(5)
-    assert ites.find_seq([1,4,2,1,4,3,1,6], 7) == {(1,4,2) , (4,2,1) , (2,1,4), (4,3), (1,6)}
+    assert ites.find_seq(7, [1,4,2,1,4,3,1,6]) == {(1,4,2) , (4,2,1) , (2,1,4), (4,3), (1,6)}
+
+def test_A_find():
+    K, N = (8791, 20)
+    ites = ITES(N)
+    assert len(ites.find_seq(K)) == 1
 
