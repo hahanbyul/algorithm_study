@@ -4,11 +4,9 @@ def test_init():
     ites = ITES(5)
     assert [x for x in ites.generator()] == [1983, 8791, 4770, 7665, 3188]
 
-"""
 def test_find():
     ites = ITES(5)
-    assert ites.find_seq(7, [1,4,2,1,4,3,1,6]) == {(1,4,2) , (4,2,1) , (2,1,4), (4,3), (1,6)}
-"""
+    assert ites.find_seq(7, iter([1,4,2,1,4,3,1,6])) == {(1,4,2) , (4,2,1) , (2,1,4), (4,3), (1,6)}
 
 def test_A_find():
     K, N = (8791, 20)
