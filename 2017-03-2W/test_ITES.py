@@ -13,3 +13,12 @@ def test_A_find():
     ites = ITES(N)
     assert len(ites.find_seq(K)) == 1
 
+    K, N = (5265, 5000)
+    ites = ITES(N)
+    assert len(ites.find_seq(K)) == 4
+
+"""
+    K, N = (3578452, 5000000)
+    ites = ITES(N)
+    assert len(ites.find_seq(K)) == 1049
+"""

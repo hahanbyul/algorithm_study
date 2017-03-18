@@ -16,21 +16,21 @@ class ITES:
         partial_sum = 0
 
         while seq:
-            print("!seq: ", seq)
+            #print("!seq: ", seq)
             while partial_sum < K and seq:
                 partial_sum += seq[0]
                 partial_seq.append(seq.pop(0))
-                print("sum: ", partial_sum)
-                print("seq: ", partial_seq)
+                #print("sum: ", partial_sum)
+                #print("seq: ", partial_seq)
 
             while partial_sum > K:
                 partial_sum -= partial_seq.pop(0)
-                print("sum: ", partial_sum)
-                print("seq: ", partial_seq)
+                #print("sum: ", partial_sum)
+                #print("seq: ", partial_seq)
 
             if partial_sum == K:
                 answers.add(tuple(partial_seq))
-                print("answers: ", answers)
+                #print("answers: ", answers)
 
                 partial_sum -= partial_seq[0]
                 partial_seq.pop(0)
