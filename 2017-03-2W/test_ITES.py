@@ -6,6 +6,5 @@ def test_init():
 
 def test_find():
     ites = ITES(5)
-    ites.find_seq([1,4,2,1,4,3,1,6], 7) 
-    assert True
+    assert ites.find_seq([1,4,2,1,4,3,1,6], 7) == {(1,4,2) , (4,2,1) , (2,1,4), (4,3), (1,6)}
 
