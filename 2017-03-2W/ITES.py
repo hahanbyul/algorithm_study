@@ -22,7 +22,8 @@ class ITES:
         try:
             while True:
                 while partial_sum < K:
-                    x = seq.__next__()
+                    #x = seq.__next__()
+                    x = next(seq)
                     partial_sum += x
                     partial_seq.append(x)
                     #print("sum: ", partial_sum)
@@ -39,3 +40,19 @@ class ITES:
 
         except StopIteration:
             return answers
+
+def main():
+    C = int(input())
+    for _ in range(C):
+        #K, N = tuple([int(i) for i in input().split()])
+        K, N = tuple([int(i) for i in raw_input().split()])
+        ites = ITES(N)
+        print(len(ites.find_seq(K)))
+    """
+    K, N = (3578452, 5000000)
+    ites = ITES(N)
+    print(len(ites.find_seq(K)))
+    """
+
+if __name__ == '__main__':
+    main()
