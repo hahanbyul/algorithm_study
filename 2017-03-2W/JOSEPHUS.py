@@ -11,13 +11,13 @@ class Josephus:
         count = self.N-1
 
         while count > 0:
-            print("survivors: ", self.survivors)
+            #print("survivors: ", self.survivors)
             index = (index + self.K % count) % count - 1
             if index == -1:
                 index = index + count
-            print("i: ", index)
+            #print("i: ", index)
             ret.append(self.survivors.pop(index))
-            print("ret: ", ret)
+            #print("ret: ", ret)
             count = count - 1
 
         return ret
@@ -51,6 +51,11 @@ class Josephus:
     #def find_next(K):
 
 def main():
-    josephus = Josephus()
+    testcases = int(input())
+    for i in range(testcases):
+        (n,k) = tuple([ int(i) for i in input().split()])
+        jo = Josephus(n, k)
+        print(" ".join([str(i) for i in jo.get_survivors()]))
+
 if __name__ == '__main__':
     main()
