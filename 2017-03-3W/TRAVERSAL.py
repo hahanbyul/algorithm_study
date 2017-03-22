@@ -14,6 +14,10 @@ class Traversal:
         tree = add_child(midorder)
         print(postorder(tree, []))
 
+    def get_postorder(self):
+        tree = add_child(midorder)
+        return postorder(tree, [])
+
     def postorder(self, root, seq):
         if root == None:
             return
