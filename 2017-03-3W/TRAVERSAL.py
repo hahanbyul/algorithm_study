@@ -1,36 +1,43 @@
 class Node:
     def __init__(self, num):
         self.num   = num
-        self.left  = null
-        self.right = null
+        self.left  = None
+        self.right = None
 
 class Traversal:
     def __init__(self, preorder, midorder):
         self.preorder = preorder
         self.midorder = midorder
+        self.cur_index = 0
 
-    def postorder(self):
-        root = Node(self.preorder[0])
-        left_subset, right_subset = split_midorder(midorder, root)
-        self.cur_index = 1
+    def print_postorder(self):
+        tree = add_child(midorder)
+        print(postorder(tree, []))
 
-        root.left  = add_child(left_subset)
-        root.right = add_child(right_subset)
+    def postorder(self, root, seq):
+        if root == None:
+            return
+
+        self.postorder(root.left, seq)
+        self.postorder(root.right, seq)
+        if root.num != None:
+            seq.append(root.num)
+        return seq
 
     def add_child(self, subset):
         if not subset: 
-            return null
+            return None
 
         cur_num = self.preorder[self.cur_index]
         if not cur_num in subset:
-            return null
+            return None
 
         parent = Node(cur_num)
         self.cur_index += 1
 
-        left_subset, right_subset = split_midorder(subset, parent)
-        parent.left  = add_child(left_subset)
-        parent.right = add_child(right_subset)
+        left_subset, right_subset = self.split_midorder(subset, cur_num)
+        parent.left  = self.add_child(left_subset)
+        parent.right = self.add_child(right_subset)
 
         return parent
 
