@@ -57,8 +57,8 @@ class Fortress:
         return root
 
 class Node:
-    def __init__(self, string):
-        self.wall = Wall(string) if not isinstance(string, Wall) else string
+    def __init__(self, wall):
+        self.wall = wall
         self.inside_walls = list()
         self.height = 1
 
@@ -68,19 +68,20 @@ class Node:
         else:
             return "%s - %s" % (self.wall, self.inside_walls)
 
-    def add_child(self, string):
-        wall = Wall(string)
+    def add_child(self, wall):
         if not self.inside_walls:
-            self.inside_walls.append(Node(string))
-            return 1
+            self.inside_walls.append(Node(wall))
+            self.height = 2
+            return
 
         for child in self.inside_walls:
             if wall in child.wall:
-                self.height = 1 + child.add_child(string)
-                return self.height
+                child.add_child(wall)
+                self.height = child.height + 1
+                return
         
-        self.inside_walls.append(Node(string))
-        return 1
+        self.inside_walls.append(Node(wall))
+        return
 
 def main():
     C = int(input())
