@@ -20,3 +20,6 @@ def test_wall_operators():
 
 def test_sort():
     assert sorted([w2, w3, w1, w4]) == [w1, w2, w3, w4]
+
+def test_tree():
+    assert tree == '(21, 15, 20) - [(15, 15, 10) - [(13, 12, 5) - [(12, 12, 3)], (19, 19, 2)], (32, 10, 7) - [(32, 9, 4)], (30, 24, 5)]'
