@@ -56,6 +56,11 @@ class Fortress:
             root.add_child(this_wall)
         return root
 
+    def get_max_walls(self):
+        root = self.make_tree()
+        heights = [node.height for node in root.inside_walls]
+        return sum(sorted(heights)[-2:])
+
 class Node:
     def __init__(self, wall):
         self.wall = wall
