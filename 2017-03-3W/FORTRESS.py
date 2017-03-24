@@ -16,7 +16,10 @@ class Wall:
         return self.r < other_wall.r 
 
     def __eq__(self, other_wall):
-        return self.x == other_wall.x and self.y == other_wall.y and self.r == other_wall.r
+        if isinstance(other_wall, Wall):
+            return self.x == other_wall.x and self.y == other_wall.y and self.r == other_wall.r
+        elif isinstance(other_wall, tuple):
+            return (self.x, self.y, self.r) == other_wall
 
     def __contains__(self, circle):
         return circle.is_inside(self)
@@ -34,16 +37,30 @@ class Wall:
             return False
 
 class Fortress:
-    def __init__(self, N):
+    def read_string(self, string):
+        self.walls = list()
+        for line in string.split(sep="\n"):
+            self.walls.append(Wall(line))
+        self.walls.sort(reverse=True)
+
+    def read_lines(self, N):
         self.walls = list()
         for _ in range(N):
             self.walls.append(Wall(input()))
         self.walls.sort(reverse=True)
 
+    def make_tree(self):
+        root = Node(self.walls[0])
+        for i in range(1, len(self.walls)):
+            this_wall = self.walls[i]
+            root.add_child(this_wall)
+        return root
+
 class Node:
-    def __init__(self, string):
-        self.wall = Wall(string)
+    def __init__(self, wall):
+        self.wall = wall
         self.inside_walls = list()
+        self.height = 1
 
     def __repr__(self):
         if not self.inside_walls:
@@ -51,18 +68,20 @@ class Node:
         else:
             return "%s - %s" % (self.wall, self.inside_walls)
 
-    def add_child(self, string):
-        wall = Wall(string)
+    def add_child(self, wall):
         if not self.inside_walls:
-            self.inside_walls.append(Node(string))
-            return 1
+            self.inside_walls.append(Node(wall))
+            self.height = 2
+            return
 
         for child in self.inside_walls:
             if wall in child.wall:
-                return 1 + child.add_child(string)
+                child.add_child(wall)
+                self.height = child.height + 1
+                return
         
-        self.inside_walls.append(Node(string))
-        return 1
+        self.inside_walls.append(Node(wall))
+        return
 
 def main():
     C = int(input())
