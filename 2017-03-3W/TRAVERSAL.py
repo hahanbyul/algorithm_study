@@ -5,18 +5,18 @@ class Node:
         self.right = None
 
 class Traversal:
-    def __init__(self, preorder, midorder):
+    def __init__(self, preorder, inorder):
         self.preorder = preorder
-        self.midorder = midorder
+        self.inorder = inorder
         self.cur_index = 0
 
     def print_postorder(self):
-        tree = add_child(midorder)
-        print(postorder(tree, []))
+        node = self.add_child(self.inorder)
+        print(" ".join([str(i) for i in self.postorder(node, [])]))
 
     def get_postorder(self):
-        tree = add_child(midorder)
-        return postorder(tree, [])
+        node = self.add_child(self.inorder)
+        return self.postorder(node, [])
 
     def postorder(self, root, seq):
         if root == None:
@@ -45,6 +45,21 @@ class Traversal:
 
         return parent
 
-    def split_midorder(self, midorder, root):
-        root_index = midorder.index(root)
-        return midorder[:root_index], midorder[root_index+1:]
+    def split_midorder(self, inorder, root):
+        root_index = inorder.index(root)
+        return inorder[:root_index], inorder[root_index+1:]
+
+def str2list(string):
+    return [int(num) for num in string.split()]
+
+def main():
+    C = int(input())
+    for _ in range(C):
+        N = int(input())
+        preorder = str2list(input())
+        inorder  = str2list(input())
+        tr = Traversal(preorder, inorder)
+        tr.print_postorder()
+
+if __name__ == '__main__':
+    main()
