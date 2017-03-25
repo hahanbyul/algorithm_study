@@ -25,16 +25,11 @@ class Wall:
         return circle.is_inside(self)
 
     def is_inside(self, another):
-        if self.r > another.r:
-            raise ValueError('The circle should be smaller!')
-
-        is_x_inside = another.x - another.r < self.x < another.x + another.r 
-        is_y_inside = another.y - another.r < self.y < another.y + another.r 
-
-        if is_x_inside and is_y_inside:
-            return True
-        else:
+        if self.r >= another.r:
             return False
+            #raise ValueError('The circle should be smaller!')
+
+        return (self.x - another.x)**2 + (self.y - another.y)**2 < (another.r - self.r)**2
 
 class Fortress:
     def read_string(self, string):
@@ -92,7 +87,9 @@ def main():
     C = int(input())
     for _ in range(C):
         N = int(input())
-        fortress = Fortress(N)
+        fortress = Fortress()
+        fortress.read_lines(N)
+        print(fortress.get_max_walls())
 
 if __name__ == '__main__':
     main()

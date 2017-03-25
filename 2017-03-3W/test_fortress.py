@@ -1,16 +1,21 @@
 from FORTRESS import Fortress
 from FORTRESS import Wall
 
+w0 = Wall("100 100 20")
 w1 = Wall("21 15 20")
 w2 = Wall("15 15 10")
 w3 = Wall("30 24 5")
 w4 = Wall("32 10 7")
+w5 = Wall("0 0 100")
+w6 = Wall("98 98 1")
 
 def test_is_inside():
-    #assert w1.is_inside(w2) # should raise exception!
+    assert not w1.is_inside(w2) # should raise exception!
+    assert not w0.is_inside(w1)
     assert w2.is_inside(w1)
     assert not w3.is_inside(w2)
     assert not w3.is_inside(w4)
+    assert not w6.is_inside(w5)
 
 def test_wall_operators():
     assert w2 in w1                 # contains
