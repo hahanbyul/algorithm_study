@@ -16,3 +16,11 @@ def test_get_num_with_0_last_digit():
 def test_sum_digits():
     assert s.sum_digits(132) == 6
     assert s.sum_digits(9900) == 18
+
+def test_compute_self_num():
+    for i in range(90, 100):
+    #for i in [1, 10, 100, 1000]:
+    #for i in [12, 120, 1200]:
+    #for i in range(1, 10):
+        s.compute_self_number(i)
+    assert False
