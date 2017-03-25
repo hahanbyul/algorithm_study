@@ -2,13 +2,27 @@ import itertools
 
 class Self_number:
     def __init__(self):
-        is_self_number = [True  for i in range(10001)]
-        is_visited     = [False for i in range(10001)]
+        self.is_self_num    = dict()
+        self.is_visited = dict()
+
+    def is_self_number(self, num):
+        if num <= 0 or not isinstance(num, int):
+            return 
+
+        self.compute_self_number(num)
+        return self.is_self_num.get(num, True)
 
     def compute_self_number(self, num):
+        #print()
         # cache is_visited
+        if self.is_visited.get(num, False):
+            #print("[visited!]")
+            return
+
         same = self.get_same_last_digit(num)
         zero = self.get_0_last_digit(num)
+
+        self.update_cache(self.is_visited, same, True)
 
         s_next = self.sum_digits(num)
         if num % 10 + s_next < 10:
@@ -16,10 +30,15 @@ class Self_number:
         else:
             ret = self.get_next_not_self_nums(same, s_next) + self.get_next_not_self_nums(zero, s_next)
 
-        print()
-        print(same, zero)
-        print(ret)
+        self.update_cache(self.is_self_num, ret, False)
+
+        #print(same, zero)
+        #print(ret)
         return ret
+
+    def update_cache(self, cache, num_list, val):
+        for i in num_list:
+            cache[i] = val
 
     def get_next_not_self_nums(self, num_list, sum_of_digits):
         return [num + sum_of_digits for num in num_list]
@@ -68,3 +87,13 @@ class Self_number:
             picked.append(self.arr[i])
             self.dfs(i+1, picked, num_to_pick-1)
             picked.pop()
+
+def main():
+    s = Self_number()
+    for i in range(1, 10000 + 1):
+        if s.is_self_number(i):
+            print(i)
+    #print(s.is_self_num)
+
+if __name__ == '__main__':
+    main()
