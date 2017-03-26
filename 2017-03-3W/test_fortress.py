@@ -32,6 +32,10 @@ f2 = Fortress()
 f2.read_string('5 5 15\n5 5 10\n5 5 5')
 tree2 = f2.make_tree()
 
+f3 = Fortress()
+f3.read_string('0 0 200\n0 0 100\n10 10 2\n10 10 1\n20 20 1\n20 20 2')
+tree3 = f3.make_tree()
+
 def test_fortress_init():
     assert str(f.walls) == '[(21, 15, 20), (15, 15, 10), (32, 10, 7), (13, 12, 5), (30, 24, 5), (32, 9, 4), (12, 12, 3), (19, 19, 2)]'
 
@@ -46,6 +50,41 @@ def test_fortress():
     assert [node.wall   for node in tree2.inside_walls] == [(5, 5, 10)]
     assert [node.height for node in tree2.inside_walls] == [2]
 
+def test_max_height():
+    assert tree.max_height() == 3
+    assert tree.inside_walls[0].max_height() == 2
+
+    assert tree2.max_height() == 2
+    assert tree2.inside_walls[0].max_height() == 1
+
+    assert tree3.max_height() == 3
+    assert tree3.inside_walls[0].max_height() == 2
+
+def test_max_leaf_to_leaf():
+    assert tree.max_leaf_to_leaf() == 5
+    assert tree.inside_walls[0].max_leaf_to_leaf() == 3
+    assert tree.inside_walls[1].max_leaf_to_leaf() == 1
+    assert tree.inside_walls[2].max_leaf_to_leaf() == 0
+
+    assert tree2.max_leaf_to_leaf() == 2
+
+    assert tree3.max_leaf_to_leaf() == 3
+    assert tree3.inside_walls[0].max_leaf_to_leaf() == 4
+
+def test_iterate():
+    res = f.iterate(tree, [])
+    print(res)
+    assert len(res) == len(f.walls)
+
+    res = f2.iterate(tree2, [])
+    print(res)
+    assert len(res) == len(f2.walls)
+
+    res = f3.iterate(tree3, [])
+    print(res)
+    assert len(res) == len(f3.walls)
+
 def test_max_walls():
     assert f.get_max_walls() == 5
     assert f2.get_max_walls() == 2
+    assert f3.get_max_walls() == 4

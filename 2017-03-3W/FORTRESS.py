@@ -53,8 +53,16 @@ class Fortress:
 
     def get_max_walls(self):
         root = self.make_tree()
-        heights = [node.height for node in root.inside_walls]
-        return sum(sorted(heights)[-2:])
+        paths = self.iterate(root, [])
+        return max(paths)
+
+    def iterate(self, node, picked):
+        picked.append(node.max_leaf_to_leaf())
+
+        for wall in node.inside_walls:
+            self.iterate(wall, picked)
+
+        return picked
 
 class Node:
     def __init__(self, wall):
@@ -82,6 +90,20 @@ class Node:
         
         self.inside_walls.append(Node(wall))
         return
+
+    def max_height(self):
+        if len(self.inside_walls) == 0:
+            return 0
+
+        ret = 0
+        for node in self.inside_walls:
+            ret = max(ret, 1 + node.max_height())
+
+        return ret
+
+    def max_leaf_to_leaf(self):
+        max_heights = [wall.max_height() + 1 for wall in self.inside_walls]
+        return sum(sorted(max_heights)[-2:])
 
 def main():
     C = int(input())
