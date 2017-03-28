@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -661,56 +664,60 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        try {
+			int C = Integer.parseInt(br.readLine());
+			for (int i = 0; i < C; i++) {
+				Main main_obj = new Main();
+				Main.RedBlackBST<Integer, Integer> st_of_p = main_obj.new RedBlackBST<Integer, Integer>();
+				Main.RedBlackBST<Integer, Integer> st_of_q = main_obj.new RedBlackBST<Integer, Integer>();
 
-        int C = Integer.parseInt(sc.nextLine());
-        for (int i = 0; i < C; i++) {
-        	Main main_obj = new Main();
-			Main.RedBlackBST<Integer, Integer> st_of_p = main_obj.new RedBlackBST<Integer, Integer>();
-			Main.RedBlackBST<Integer, Integer> st_of_q = main_obj.new RedBlackBST<Integer, Integer>();
+				int N = Integer.parseInt(br.readLine());
+				int partial_sum = 0;
 
-			int N = Integer.parseInt(sc.nextLine());
-            int partial_sum = 0;
+				for (int j = 0; j < N; j++) {
+					String[] p_and_q = br.readLine().split(" ");
 
-			for (int j = 0; j < N; j++) {
-				String[] p_and_q = sc.nextLine().split(" ");
+					int p = Integer.parseInt(p_and_q[0]);
+					int q = Integer.parseInt(p_and_q[1]);
 
-				int p = Integer.parseInt(p_and_q[0]);
-				int q = Integer.parseInt(p_and_q[1]);
+					st_of_p.put(p, j);
+					st_of_q.put(q, j);
+					
+					Map<Integer, Integer> map_of_p = get_less_keys(st_of_p, p-1);
+					Map<Integer, Integer> map_of_q = get_less_keys(st_of_q, q-1);
+					
+					Set<Integer> set_of_p = new HashSet<Integer>(map_of_p.keySet());
+					Set<Integer> set_of_q = new HashSet<Integer>(map_of_q.keySet());
+					set_of_p.retainAll(set_of_q);
 
-				st_of_p.put(p, j);
-				st_of_q.put(q, j);
-				
-				Map<Integer, Integer> map_of_p = get_less_keys(st_of_p, p-1);
-				Map<Integer, Integer> map_of_q = get_less_keys(st_of_q, q-1);
-				
-				Set<Integer> set_of_p = new HashSet<Integer>(map_of_p.keySet());
-				Set<Integer> set_of_q = new HashSet<Integer>(map_of_q.keySet());
-				set_of_p.retainAll(set_of_q);
+					for (int s : set_of_p) {
+						int p_to_remove = map_of_p.get(s);
+						int q_to_remove = map_of_q.get(s);
 
-				for (int s : set_of_p) {
-					int p_to_remove = map_of_p.get(s);
-					int q_to_remove = map_of_q.get(s);
+						st_of_p.delete(p_to_remove);
+						st_of_q.delete(q_to_remove);
 
-					st_of_p.delete(p_to_remove);
-					st_of_q.delete(q_to_remove);
+						//System.out.printf("removed ID %d: (%d, %d)\n", s, p_to_remove, q_to_remove);
 
-					//System.out.printf("removed ID %d: (%d, %d)\n", s, p_to_remove, q_to_remove);
+					}
+
+					//System.out.printf("# of IDs: %d\n", st_of_p.size());
+					partial_sum += st_of_p.size();
 
 				}
 
-				//System.out.printf("# of IDs: %d\n", st_of_p.size());
-                partial_sum += st_of_p.size();
-
-			}
-
-            System.out.println(partial_sum);
+				System.out.println(partial_sum);
 
 //			for (int s : st_of_p.keys())
 //				System.out.println(s + " " + st_of_p.get(s));
 //
 //			for (int s : st_of_q.keys())
 //				System.out.println(s + " " + st_of_q.get(s));
-        }
+			}
+        } catch(IOException e){
+				  //do something with e... log, perhaps rethrow etc.
+		}
 	}
 }
