@@ -663,6 +663,36 @@ public class Main {
 		return map;
 	}
 
+    public static boolean isDominated(RedBlackBST<Integer, Integer> bst, int p, int q) {
+    	Integer rightAboveKey;
+        try {
+            rightAboveKey = bst.ceiling(p);
+            if (rightAboveKey == null) return false;
+        } catch(NoSuchElementException e) {
+            return false;
+        }
+        return q < bst.get(rightAboveKey);
+    }
+
+    public static void removeDominated(RedBlackBST<Integer, Integer> bst, int p, int q) {
+        int next = p - 1;
+        Integer closestLeftKey;
+        while (true) {
+            try {
+                closestLeftKey = bst.floor(next);
+				if (closestLeftKey == null) break;
+            } catch(NoSuchElementException e) {
+                break;
+            }
+
+            if (bst.get(closestLeftKey) > q) break;
+            else {
+                bst.delete(closestLeftKey);
+                next = closestLeftKey - 1;
+            }
+        }
+    }
+
 	public static void main(String[] args) {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
@@ -670,41 +700,27 @@ public class Main {
 			int C = Integer.parseInt(br.readLine());
 			for (int i = 0; i < C; i++) {
 				Main main_obj = new Main();
-				Main.RedBlackBST<Integer, Integer> st_of_p = main_obj.new RedBlackBST<Integer, Integer>();
-				Main.RedBlackBST<Integer, Integer> st_of_q = main_obj.new RedBlackBST<Integer, Integer>();
+				Main.RedBlackBST<Integer, Integer> bst = main_obj.new RedBlackBST<Integer, Integer>();
 
 				int N = Integer.parseInt(br.readLine());
 				int partial_sum = 0;
 
 				for (int j = 0; j < N; j++) {
-					String[] p_and_q = br.readLine().split(" ");
+					String[] coordinates = br.readLine().split(" ");
 
-					int p = Integer.parseInt(p_and_q[0]);
-					int q = Integer.parseInt(p_and_q[1]);
+					int p = Integer.parseInt(coordinates[0]);
+					int q = Integer.parseInt(coordinates[1]);
 
-					st_of_p.put(p, j);
-					st_of_q.put(q, j);
-					
-					Map<Integer, Integer> map_of_p = get_less_keys(st_of_p, p-1);
-					Map<Integer, Integer> map_of_q = get_less_keys(st_of_q, q-1);
-					
-					Set<Integer> set_of_p = new HashSet<Integer>(map_of_p.keySet());
-					Set<Integer> set_of_q = new HashSet<Integer>(map_of_q.keySet());
-					set_of_p.retainAll(set_of_q);
+                    if (isDominated(bst, p, q)) {
+                        partial_sum += bst.size();
+                        continue;
+                    }
 
-					for (int s : set_of_p) {
-						int p_to_remove = map_of_p.get(s);
-						int q_to_remove = map_of_q.get(s);
-
-						st_of_p.delete(p_to_remove);
-						st_of_q.delete(q_to_remove);
-
-						//System.out.printf("removed ID %d: (%d, %d)\n", s, p_to_remove, q_to_remove);
-
-					}
+                    removeDominated(bst, p, q);
+                    bst.put(p, q);
+                    partial_sum += bst.size();
 
 					//System.out.printf("# of IDs: %d\n", st_of_p.size());
-					partial_sum += st_of_p.size();
 
 				}
 
