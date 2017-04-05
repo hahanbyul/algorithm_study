@@ -3,6 +3,7 @@ class Fence:
         self.N = N
         self.fences = [int(i) for i in string.split()]
         self.cache = dict()
+        self.cache_smaller_array = dict()
 
     def max_rect(self):
         ret = max(self.N, max(self.fences))
@@ -35,6 +36,7 @@ class Fence:
     def find_max_continuous_fences(self, fence, height):
         ret = self.cache.get(height, None)
         if ret != None:
+            #print("cached!!")
             return ret
 
         if fence == None:
@@ -43,7 +45,7 @@ class Fence:
         ret = 0
         num = 0
 
-        for i in range(self.N):
+        for i in range(len(fence)):
             if fence[i] >= height:
                 num += 1
             else:
@@ -55,6 +57,10 @@ class Fence:
         return ret
 
     def make_smaller_fence(self, fence, height):
+        ret = self.cache_smaller_array.get(height, None)
+        if ret != None:
+            return ret
+
         new_fence = list()
         is_continuous = False
 
@@ -66,29 +72,34 @@ class Fence:
                 new_fence.append(0)
                 is_continuous = False
 
+        self.cache_smaller_array[height] = new_fence
         return new_fence
 
     def max_rect_fast(self):
-        return foo(self.fences, 1, max(self.fences))
+        return self.foo(self.fences, 1, max(self.fences))
 
     def foo(self, fence, lo, hi):
+        #print("fence: %s, lo: %d, hi: %d" % (fence, lo, hi))
         lo_fence_num = self.find_max_continuous_fences(fence, lo)
         hi_fence_num = self.find_max_continuous_fences(fence, hi)
+        #print("lo_num: %d, hi_num: %d" % (lo_fence_num, hi_fence_num))
 
         ret = hi * hi_fence_num
         if lo == hi or lo_fence_num == hi_fence_num or (hi-1)*lo_fence_num < ret:
-            print("finished!!")
             return ret
 
-        mid = int(hi / 2)
-        return max(foo(self.make_smaller_fence(fence, lo), mid), foo(self.make_smaller_fence(fence, mid), hi))
+        mid = lo + int((hi - lo)/ 2)
+        if mid <= lo:
+            return max(lo*lo_fence_num, ret)
+
+        return max(self.foo(self.make_smaller_fence(fence, lo), lo, mid), self.foo(self.make_smaller_fence(fence, mid+1), mid+1, hi))
 
 def main():
     C = int(input())                 # num. of cases
     for _ in range(C):
         N = int(input())             # num. of fences
         f = Fence(N, input())        # heights of fences
-        print(f.max_rect())
+        print(f.max_rect_fast())
 
 if __name__ == '__main__':
     main()
