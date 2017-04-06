@@ -1,4 +1,5 @@
 from FENCE import Fence
+import random
 
 f1 = Fence(7, "7 1 5 9 6 7 3")
 f2 = Fence(5, "1 1 1 3 4")
@@ -35,3 +36,9 @@ def test_max_rect_fast():
     assert f4.max_rect_fast() == 16
     assert f5.max_rect_fast() == 8
 
+
+def test_equal():
+    for _ in range(10):
+        fences = [str(random.randint(1, 10)) for _ in range(10)]
+        f6 = Fence(len(fences), " ".join(fences))
+        assert f6.max_rect() == f6.max_rect_fast()

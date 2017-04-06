@@ -20,13 +20,19 @@ class Fence:
             if height == 1:
                 continue
 
-            idx = i + 2
-            while idx <= N-1 and self.fences[idx] >= height:
-                idx += 1
+            right_idx = i + 2
+            while right_idx <= N-1 and self.fences[right_idx] >= height:
+                right_idx += 1
+            
+            left_idx = i - 1
+            while left_idx >= 0 and self.fences[left_idx] >= height:
+                left_idx -= 1
 
-            #print("idx: ", idx)
+            #print("right_idx: ", right_idx)
+            #print("left_idx: ", left_idx)
 
-            area = height * (idx - i)
+            count = (right_idx - i) + (i - 1 - left_idx)
+            area = height * count
             #print("area: ", area)
             if area > ret:
                 ret = area
@@ -102,8 +108,9 @@ def main():
     for _ in range(C):
         N = int(raw_input())             # num. of fences
         f = Fence(N, raw_input())        # heights of fences
-        #print(f.max_rect_fast())
-        print f.max_rect_fast()
+        print(f.max_rect_fast())
+        #print f.max_rect_fast()
+        #print f.max_rect()
 
 if __name__ == '__main__':
     main()
