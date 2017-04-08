@@ -12,8 +12,10 @@ class Check_BST:
         node = Node(string)
         self.node_list.append(node)
 
-        if node.L != 0: self.children.add(node.L)
-        if node.R != 0: self.children.add(node.R)
+        if node.L != 0:
+            self.children.add(node.L)
+        if node.R != 0:
+            self.children.add(node.R)
 
     def find_root(self, N):
         root = set(range(1, N+1)).difference(self.children)
@@ -21,7 +23,7 @@ class Check_BST:
 
     def is_bst(self):
         root_index = self.find_root(self.N)
-        if root_index == None:
+        if root_index is None:
             return False
 
         root = self.node_list[root_index-1]
@@ -29,6 +31,7 @@ class Check_BST:
             return True
         else:
             return False
+
 
 class Node:
     def __init__(self, string):
@@ -47,7 +50,7 @@ class Node:
 
         ret = True
         if self.L != 0:
-            left  = node_list[self.L-1]
+            left = node_list[self.L-1]
             ret = ret and left.K < self.K and left.is_bst(node_list, key_list)
 
         if self.R != 0:
@@ -56,8 +59,8 @@ class Node:
 
         return ret
 
-def main():
 
+def main():
     C = int(input())
     for _ in range(C):
 
