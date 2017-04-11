@@ -28,18 +28,24 @@ def test_find_graph():
     assert d[1].find_graph() == {'a': {'b', 'c'}}
     assert d[2].find_graph() == {'g': {'k'}, 'k': {'l'}, 'o': {'g'}, 'l': {'h'}}
 
-"""
-def test_foo():
+def test_find_answer():
+    d[0].find_answer()
+    '''
     try: 
-        d[0].foo()
+        d[0].find_answer()
     except Exception:
         assert True
-    assert d[1].foo() == ['b', 'c', 'a'].reverse()
-    assert d[2].foo() == ['h', 'l', 'k', 'g', 'o'].reverse()
+    '''
+    assert d[1].find_answer() == ['a', 'b', 'c']
+
+    b = ['h', 'l', 'k', 'g', 'o']
+    b.reverse()
+    assert d[2].find_answer() == b
 
     d[3].vertex = {'a': ['b'], 'b': ['c', 'd'], 'd': 'c'}
-    assert d[3].foo() == ['c', 'd', 'b', 'a'].reverse()
-"""
+    c = ['c', 'd', 'b', 'a']
+    c.reverse()
+    assert d[3].find_answer() == c
 
 def test_get_answer():
     dd = Dictionary()
