@@ -6,7 +6,9 @@ class Dictionary:
     def __init__(self):
         self.words_list = list()
         self.vertex = dict()
+
         self.is_visited = dict()
+        self.char_list = list()
 
     def read_words(self, N):
         for _ in range(N):
@@ -26,8 +28,9 @@ class Dictionary:
         return adjacent
 
     def find_diff_idx(self, this_word, next_word):
+        length = min(len(this_word), len(next_word))
         i = 0
-        while i < len(this_word) and this_word[i] == next_word[i]:
+        while i < length and this_word[i] == next_word[i]:
             i += 1
         return i
 
@@ -36,7 +39,8 @@ class Dictionary:
             next_word = self.words_list[i+1]
 
             diff_idx = self.find_diff_idx(this_word, next_word)
-            if diff_idx == len(this_word):
+            length = min(len(this_word), len(next_word))
+            if diff_idx == length:
                 continue
 
             adjacent = self.get_adjacent(this_word[diff_idx])
@@ -45,15 +49,16 @@ class Dictionary:
         return self.vertex
 
     def find_answer(self):
-        char_list = list()
+        self.is_visited = dict()
+        self.char_list = list()
+
         for key in self.vertex.keys():
-            self.dfs(key, char_list, list())
+            self.dfs(key, self.char_list, list())
             if not self.is_visited.get(key, False):
-                char_list.append(key)
+                self.char_list.append(key)
             self.is_visited[key] = True
             # print(f'is_visited: {self.is_visited}')
             # print(f'char_list: {char_list}')
-        self.char_list = char_list
         self.char_list.reverse()
         return self.char_list
 
@@ -81,7 +86,8 @@ class Dictionary:
     def get_answer(self):
         try:
             self.find_graph()
-            self.find_answer()
+            # self.find_answer()
+            self.topological_sort()
             if sorted(self.char_list) == self.char_list:
                 return string.ascii_lowercase
             else:
@@ -90,6 +96,42 @@ class Dictionary:
         except Exception:
             return "INVALID HYPOTHESIS"
 
+    def transform_graph(self):
+        adj = [[0 for _ in range(26)] for _ in range(26)]
+        for key in self.vertex.keys():
+            here = string.ascii_lowercase.find(key)
+            for val in self.vertex[key]:
+                there = string.ascii_lowercase.find(val)
+                adj[here][there] = 1
+
+        self.adj = adj
+        return adj
+
+    def dfs_book(self, here):
+        self.is_visited[here] = True
+        for there in range(0, 26):
+            if self.adj[here][there] and not self.is_visited.get(there, False):
+                self.dfs_book(there)
+        self.char_list.append(here)
+
+    def topological_sort(self):
+        self.is_visited = dict()
+        self.char_list = list()
+        self.transform_graph()
+
+        for i in range(26):
+            if not self.is_visited[i]:
+                self.dfs_book(i)
+        self.char_list.reverse()
+
+        for i in range(26):
+            for j in range(i+1, 26):
+                if self.adj[self.char_list[j]][self.char_list[i]]:
+                    raise Exception
+
+        self.char_list = [string.ascii_lowercase[i] for i in self.char_list]
+        return self.char_list
+        
 
 def main():
     C = int(input())
