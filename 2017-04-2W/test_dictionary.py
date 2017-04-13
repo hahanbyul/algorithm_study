@@ -9,6 +9,16 @@ d[0].read_words_with_string("ba\naa\nab")
 d[1].read_words_with_string("aa\nba\nbc")
 d[2].read_words_with_string("gg\nkia\nlotte\nlg\nhanhwa")
 
+def test_new_func():
+    d[2].find_graph()
+    print(d[2].compute_num_in())
+    d[2].topo_sort()
+
+def test_is_cycle():
+    D = Dictionary()
+    D.vertex = {'a': ['b', 'c'], 'b': ['d'], 'c': ['a']}
+    D.is_cycle('a', list())
+
 def test_read_input():
     assert d[0].words_list == ["ba", "aa", "ab"]
 
@@ -71,3 +81,6 @@ def test_get_answer():
 def test_transform_graph():
     d[0].transform_graph() == [[0,1],[1,0]]
     d[1].transform_graph() == [[0,1,1],[0,0,0],[0,0,0]]
+
+def test_equal():
+    d[2].find_answer == d[2].topological_sort()
