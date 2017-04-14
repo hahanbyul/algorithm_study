@@ -12,7 +12,7 @@ class Dictionary:
 
     def read_words(self, N):
         for _ in range(N):
-            word = input()
+            word = raw_input()
             self.words_list.append(word)
 
     def read_words_with_string(self, string):
@@ -120,12 +120,12 @@ class Dictionary:
 
 
 def main():
-    C = int(input())
+    C = int(raw_input())
     for _ in range(C):
-        N = int(input())
+        N = int(raw_input())
         d = Dictionary()
         d.read_words(N)
-        print(d.get_answer())
+        print d.get_answer()
 
 
 if __name__ == '__main__':
