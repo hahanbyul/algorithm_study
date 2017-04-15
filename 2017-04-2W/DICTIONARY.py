@@ -12,7 +12,7 @@ class Dictionary:
 
     def read_words(self, N):
         for _ in range(N):
-            word = input()
+            word = raw_input()
             self.words_list.append(word)
 
     def read_words_with_string(self, string):
@@ -48,46 +48,57 @@ class Dictionary:
 
         return self.vertex
 
-    def find_answer(self):
-        self.is_visited = dict()
-        self.char_list = list()
+    def compute_num_in(self):
+        num_in = dict()
+        for key, values in self.vertex.items():
+            if not key in num_in:
+                num_in[key] = 0
 
-        for key in self.vertex.keys():
-            self.dfs(key, self.char_list, list())
-            if not self.is_visited.get(key, False):
-                self.char_list.append(key)
-            self.is_visited[key] = True
-            # print(f'is_visited: {self.is_visited}')
-            # print(f'char_list: {char_list}')
-        self.char_list.reverse()
-        return self.char_list
+            for val in values:
+                if not val in num_in:
+                    num_in[val] = 0
+                num_in[val] += 1
 
-    def dfs(self, char, char_list, cycle_check):
-        # print(f'dfs({char})')
-        if self.is_visited.get(char, False) or char not in self.vertex.keys():
-            # print('return')
-            return
+        return num_in
 
-        cycle_check.append(char)
+    def topo_sort(self):
+        num_in_keys = self.compute_num_in()
 
-        for adj in self.get_adjacent(char):
-            # print(f'adj: {self.get_adjacent(char)}')
-            if adj in cycle_check:
-                raise Exception
+        sorted_list = list()
 
-            self.dfs(adj, char_list, cycle_check)
-            if not self.is_visited.get(adj, False):
-                char_list.append(adj)
-            self.is_visited[adj] = True
+        while len(num_in_keys) > 0:
+            # print(f'num_in_keys: {num_in_keys}')
+            tups = sorted(num_in_keys.items(), key=lambda x: x[1])
 
-            # print(f'is_visited: {self.is_visited}')
-            # print(f'char_list: {char_list}')
+            i = 0
+            while i < len(tups):
+                key = tups[i][0]
+                self.is_cycle(key, list())           # if cycle in graph, raise exception
+
+                sorted_list.append(key)
+                del num_in_keys[key]
+
+                for val in self.vertex.get(key, []):
+                    num_in_keys[val] -= 1
+                i += 1
+
+        self.char_list = sorted_list
+        return sorted_list
+
+    def is_cycle(self, key, visited):
+        # print(f'key: {key}, visited: {visited}')
+        if key in visited:
+            raise Exception
+        visited.append(key)
+
+        for adj in self.vertex.get(key, []):
+            self.is_cycle(adj, visited)
+            visited.pop()
 
     def get_answer(self):
         try:
             self.find_graph()
-            # self.find_answer()
-            self.topological_sort()
+            self.topo_sort()
             if sorted(self.char_list) == self.char_list:
                 return string.ascii_lowercase
             else:
@@ -107,39 +118,14 @@ class Dictionary:
         self.adj = adj
         return adj
 
-    def dfs_book(self, here):
-        self.is_visited[here] = True
-        for there in range(0, 26):
-            if self.adj[here][there] and not self.is_visited.get(there, False):
-                self.dfs_book(there)
-        self.char_list.append(here)
-
-    def topological_sort(self):
-        self.is_visited = dict()
-        self.char_list = list()
-        self.transform_graph()
-
-        for i in range(26):
-            if not self.is_visited[i]:
-                self.dfs_book(i)
-        self.char_list.reverse()
-
-        for i in range(26):
-            for j in range(i+1, 26):
-                if self.adj[self.char_list[j]][self.char_list[i]]:
-                    raise Exception
-
-        self.char_list = [string.ascii_lowercase[i] for i in self.char_list]
-        return self.char_list
-        
 
 def main():
-    C = int(input())
+    C = int(raw_input())
     for _ in range(C):
-        N = int(input())
+        N = int(raw_input())
         d = Dictionary()
         d.read_words(N)
-        print(d.get_answer())
+        print d.get_answer()
 
 
 if __name__ == '__main__':
