@@ -22,3 +22,12 @@ def test_add_edge():
     assert w.outdegree[index('g')] == 1
     assert w.indegree[index('n')] == 1
     assert w.outdegree[index('n')] == 1
+
+def test_euler_circuit():
+    w = Wordchain()
+    w.read_words_with_string(ex1)
+
+    circuit = list()
+    w.get_euler_circuit(index('d'), circuit)
+    circuit.reverse()
+    assert circuit == ["dog", "god", "dragon", "need"]
