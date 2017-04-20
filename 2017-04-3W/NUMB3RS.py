@@ -1,6 +1,7 @@
 # https://algospot.com/judge/problem/read/NUMB3RS
 import math
 
+
 class Numb3rs:
     def __init__(self, N, D, P):
         self.N = N
@@ -15,7 +16,7 @@ class Numb3rs:
     def read_table(self):
         self.trans = list()
         for _ in range(self.N):
-            trans = [float(i) for i in input().split()]
+            trans = [float(i) for i in raw_input().split()]
             self.trans.append(trans)
         self.normalize()
 
@@ -47,8 +48,8 @@ class Numb3rs:
         XY = [0.0 for _ in range(J)]
 
         for j in range(J):
-           for k in range(K):
-               XY[j] += X[k] * Y[k][j]
+            for k in range(K):
+                XY[j] += X[k] * Y[k][j]
 
         return XY
 
@@ -60,8 +61,8 @@ class Numb3rs:
 
         for i in range(I):
             for j in range(J):
-               for k in range(K):
-                   XY[i][j] += X[i][k] * Y[k][j]
+                for k in range(K):
+                    XY[i][j] += X[i][k] * Y[k][j]
 
         return XY
 
@@ -82,15 +83,16 @@ class Numb3rs:
 
 
 def main():
-    C = int(input())
+    C = int(raw_input())
     for _ in range(C):
-        N, D, P = [int(i) for i in input().split()]
+        N, D, P = [int(i) for i in raw_input().split()]
         number = Numb3rs(N, D, P)
         number.read_table()
-        T = input()
-        Q = [int(i) for i in input().split()]
+        T = raw_input()
+        Q = [int(i) for i in raw_input().split()]
         answer = [str(num) for num in number.get_answer(Q)]
-        print(" ".join(answer))
+        print " ".join(answer)
+
 
 if __name__ == '__main__':
     main()
