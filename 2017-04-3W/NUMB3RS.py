@@ -12,7 +12,7 @@ class Numb3rs:
     def read_table(self):
         self.trans = list()
         for _ in range(self.N):
-            trans = [float(i) for i in raw_input().split()]
+            trans = [float(i) for i in input().split()]
             self.trans.append(trans)
         self.trans = np.array(self.trans)
         for i in range(self.N):
@@ -33,10 +33,15 @@ class Numb3rs:
         return answer[Q]
 
 def main():
-    C = int(raw_input())
-    N, D, P = [int(i) for i in raw_input().split()]
-    number = Numb3rs(N, D, P)
-    number.read_table()
-    T = raw_input()
-    Q = [int(i) for i in raw_input().split()]
-    print(number.get_answer(Q))
+    C = int(input())
+    for _ in range(C):
+        N, D, P = [int(i) for i in input().split()]
+        number = Numb3rs(N, D, P)
+        number.read_table()
+        T = input()
+        Q = [int(i) for i in input().split()]
+        answer = [str(num) for num in number.get_answer(Q).tolist()]
+        print(" ".join(answer))
+
+if __name__ == '__main__':
+    main()
