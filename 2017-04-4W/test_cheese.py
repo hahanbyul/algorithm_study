@@ -82,8 +82,9 @@ def test_print_melting_cheese():
 
     cheese_ex.hole_iter('row')
     cheese_ex.hole_iter('col')
-    cheese_ex.color_row_hole(cheese_ex.board)
-    cheese_ex.print_melting_cheese(cheese_ex.color_col_hole(cheese_ex.board))
+    cheese_ex.color_row_hole()
+    #cheese_ex.color_col_hole()
+    cheese_ex.print_melting_cheese()
 
     # cheese_ex.print_melting_cheese(cheese_ex.board)
     # cheese_ex.color_melting_cheese(cheese_ex.is_col_empty, cheese_ex.get_col_edge)

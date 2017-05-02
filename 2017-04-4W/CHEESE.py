@@ -1,6 +1,6 @@
 # http://www.jungol.co.kr/bbs/board.php?bo_table=pbank&wr_id=1113&sca=30
-import pprint as pp
-import colorful
+# import pprint as pp
+# import colorful
 
 
 class Cheese:
@@ -211,12 +211,13 @@ class Cheese:
             if not next_hole.colored:
                 self.color_hole_iter(board, next_hole)
 
+    """
     def print_melting_cheese(self, board=None):
         if board is None:
             board = self.board
 
         print()
-        print("--" * len(board[0]))
+        print('--' * len(board[0]))
         for row in board:
             for e in row:
                 if e == 0:
@@ -228,7 +229,8 @@ class Cheese:
                 elif e == 7:
                     print(colorful.blue('h'), end=' ')
             print()
-        print("--" * len(board[0]))
+        print('--' * len(board[0]))
+    """
 
     def is_opened_hole(self, hole):
         if hole.mode == 'row':
@@ -277,8 +279,10 @@ class Cheese:
                 self.print_melting_cheese()
             count = self.count_melting()
 
-        print(hour)
-        print(count)
+        # print(hour)
+        print hour
+        # print(count)
+        print count
 
     def solve_iter(self):
         self.edge_iter('row')
@@ -323,10 +327,12 @@ class Hole:
         self.adj = list()
         self.colored = False
 
+    '''
     def __repr__(self):
         #return f"({self.left},{self.right})"
         neighbor_list = ",".join([f"({neighbor.left}, {neighbor.right})" for neighbor in self.adj])
         return f"Hole(({self.left},{self.right}), {self.mode}, {self.idx}) - [{neighbor_list}]"
+    '''
 
     def __eq__(self, another):
         return self.left == another.left and self.right == another.right and self.mode == another.mode and self.idx == another.idx
@@ -342,10 +348,10 @@ class Hole:
 
 
 def main():
-    ROW, COL = [int(i) for i in input().split()]
+    ROW, COL = [int(i) for i in raw_input().split()]
     board = list()
     for _ in range(ROW):
-        board.append(input())
+        board.append(raw_input())
     board = "\n".join(board)
     cheese = Cheese(board)
     cheese.solve()
