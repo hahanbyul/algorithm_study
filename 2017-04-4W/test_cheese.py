@@ -15,6 +15,12 @@ board2 = [[0,0,0,0,0,0,0],
           [0,1,1,1,1,1,0],
           [0,1,0,1,0,1,0],
           [0,0,0,0,0,0,0]]
+board3 = [[0,0,0,0,0,0,0],
+          [0,1,1,1,1,1,0],
+          [0,1,0,0,1,1,0],
+          [0,1,1,1,0,1,0],
+          [0,1,0,1,0,1,0],
+          [0,0,0,0,0,0,0]]
 board_ex = "0 0 0 0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 1 1 0 0 0\n0 1 1 1 0 0 0 1 1 0 0 0 \
             \n0 1 1 1 1 1 1 0 0 0 0 0\n0 1 1 1 1 1 0 1 1 0 0 0\n0 1 1 1 1 0 0 1 1 0 0 0\n0 0 1 1 0 0 0 1 1 0 0 0 \
             \n0 0 1 1 1 1 1 1 1 0 0 0\n0 0 1 1 1 1 1 1 1 0 0 0\n0 0 1 1 1 1 1 1 1 0 0 0\n0 0 1 1 1 1 1 1 1 0 0 0\n0 0 0 0 0 0 0 0 0 0 0 0"
@@ -122,7 +128,7 @@ def test_update_row_hole():
     cheese_ex.edge_iter('row')
     cheese_ex.hole_iter('row')
 
-    cheese_ex.update_hole_relation('row')
+    cheese_ex.update_hole_status('row')
     print(f'\nopened: {cheese_ex.opened_holes}')
     print('row_holes: ')
     pp.pprint(cheese_ex.row_hole)
@@ -131,7 +137,7 @@ def test_update_col_hole():
     cheese_ex.edge_iter('col')
     cheese_ex.hole_iter('col')
 
-    cheese_ex.update_hole_relation('col')
+    cheese_ex.update_hole_status('col')
     print(f'\nopened: {cheese_ex.opened_holes}')
     print('col_holes: ')
     pp.pprint(cheese_ex.col_hole)
@@ -152,4 +158,19 @@ def test_solve_iter():
     cheese_ex.solve_iter()
     print(cheese_ex.count_melting())
     cheese_ex.solve_iter()
+    print(cheese_ex.count_melting())
+    print(cheese_ex.is_row_empty)
     cheese_ex.print_melting_cheese()
+
+def test_ex():
+    cheese_ex.solve(True)
+
+def test_solve():
+    board = list()
+    N = int(input())
+    for _ in range(N):
+        row = input()
+        board.append(" ".join([r for r in row]))
+        
+    cheese = Cheese("\n".join(board))
+    cheese.solve(plot=True)

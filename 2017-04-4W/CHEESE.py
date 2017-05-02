@@ -215,8 +215,9 @@ class Cheese:
         if board is None:
             board = self.board
 
+        print()
+        print("--" * len(board[0]))
         for row in board:
-            print()
             for e in row:
                 if e == 0:
                     print(colorful.black(e), end=' ')
@@ -226,6 +227,8 @@ class Cheese:
                     print(colorful.red('c'), end=' ')
                 elif e == 7:
                     print(colorful.blue('h'), end=' ')
+            print()
+        print("--" * len(board[0]))
 
     def is_opened_hole(self, hole):
         if hole.mode == 'row':
@@ -264,16 +267,18 @@ class Cheese:
                     if hole.is_connected(another):
                         hole.add_neighbor(another)
 
-    def solve(self):
+    def solve(self, plot=False):
         hour = 0
-        while all(is_row_empty == True):
+        count = 0
+        while sum(self.is_row_empty) != len(self.is_row_empty):
             self.solve_iter()
             hour += 1
+            if plot:
+                self.print_melting_cheese()
             count = self.count_melting()
 
         print(hour)
         print(count)
-        
 
     def solve_iter(self):
         self.edge_iter('row')
@@ -300,6 +305,9 @@ class Cheese:
                 if e == 6:
                     count += 1
                     self.board[i][j] = 0
+
+            if all(e == 0 for e in row):
+                self.is_row_empty[i] = True
 
         return count
 
@@ -334,9 +342,13 @@ class Hole:
 
 
 def main():
-    C = int(raw_input())
-    for _ in range(C):
-        pass
+    ROW, COL = [int(i) for i in input().split()]
+    board = list()
+    for _ in range(ROW):
+        board.append(input())
+    board = "\n".join(board)
+    cheese = Cheese(board)
+    cheese.solve()
 
-if __name__ == '__main__'
+if __name__ == '__main__':
     main()
