@@ -27,12 +27,12 @@ class Sortgame:
 
         while len(self.q) != 0:
             here = self.q.pop(0)
-                print('here: %s' % here)
-                #pp.pprint(self.q)
-                if here == sorted(here):
-                    print("found: %s" % self.discovered[' '.join(here)])
-                        break
-                for there in self.generator(here):
-                    if not self.discovered.get(' '.join(there), False):
-                        self.q.append(there)
-                        self.discovered[' '.join(there)] = self.discovered[' '.join(here)] + 1
+            print('here: %s' % here)
+            #pp.pprint(self.q)
+            if here == sorted(here):
+                print("found: %s" % self.discovered[' '.join(here)])
+                    break
+            for there in self.generator(here):
+                if not self.discovered.get(' '.join(there), False):
+                    self.q.append(there)
+                    self.discovered[' '.join(there)] = self.discovered[' '.join(here)] + 1
