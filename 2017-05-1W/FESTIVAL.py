@@ -54,8 +54,8 @@ def main():
         N, L = [int(i) for i in input().split()]
         price = [int(i) for i in input().split()]
         
-        f = Festival()
-        print(f.solve(price, N))
+        f = Festival(price, L, N)
+        print(f.solve())
 
 
 if __name__ == '__main__':
