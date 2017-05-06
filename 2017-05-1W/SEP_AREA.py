@@ -1,5 +1,6 @@
 # https://www.acmicpc.net/problem/2583
-import pprint as pp
+import sys
+sys.setrecursionlimit(10000)
 
 
 class Separated_area:
@@ -46,17 +47,17 @@ class Separated_area:
                 cnt += 1
                 areas.append(self.dfs(i,j))
 
-        print(cnt)
-        print(" ".join([str(i) for i in sorted(areas)]))
+        print cnt
+        print " ".join([str(i) for i in sorted(areas)])
 
 
 def main():
     problem = Separated_area()
-    prob = input()
+    prob = raw_input()
     problem.read_problem(prob)
 
     for _ in range(problem.K):
-        rect = input()
+        rect = raw_input()
         problem.read_rect(rect) 
 
     # pp.pprint(problem.board)
