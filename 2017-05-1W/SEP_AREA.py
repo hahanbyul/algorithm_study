@@ -1,5 +1,4 @@
 # https://www.acmicpc.net/problem/2583
-import pprint as pp
 
 
 class Separated_area:
@@ -28,7 +27,6 @@ class Separated_area:
 
         while len(stack) > 0:
             x, y = stack.pop()
-            # print 'dfs: (%d, %d)' % (x, y)
             ret += 1
             for dx, dy in zip(self.dx, self.dy): 
                 x_next = x + dx
@@ -49,20 +47,19 @@ class Separated_area:
                     continue
                 areas.append(self.dfs_stack(i,j))
 
-        print len(areas)
-        print " ".join([str(i) for i in sorted(areas)])
+        print(len(areas))
+        print(" ".join([str(i) for i in sorted(areas)]))
 
 
 def main():
     problem = Separated_area()
-    prob = raw_input()
+    prob = input()
     problem.read_problem(prob)
 
     for _ in range(problem.K):
-        rect = raw_input()
+        rect = input()
         problem.read_rect(rect) 
 
-    # pp.pprint(problem.board)
     problem.solve()
 
 if __name__ == '__main__':
