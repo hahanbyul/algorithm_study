@@ -1,14 +1,16 @@
+# https://www.acmicpc.net/problem/2309
+
 class SevenDwarves:
     def __init__(self):
         pass
 
     def find_seven_dwarves(self, all_heights):
-        print(self.dfs([], 0, sorted(all_heights), 7, 100, 0))
+        dwarves_heights = self.dfs([], 0, sorted(all_heights), 7, 100, 0)
+        for h in dwarves_heights:
+            print(h)
 
     def dfs(self, picked, summed, cand, num_to_select, sum_to_select, i_begin):
         if len(picked) == num_to_select:
-            print(picked)
-            print(summed)
             if summed == sum_to_select:
                 return picked
 
