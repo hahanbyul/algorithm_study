@@ -11,11 +11,11 @@ class MinimumBudget:
         self.budget = [[-1 for _ in range(n)] for _ in range(n)]
 
     def read_budget(self, input_str):
-        begin_city, end_city, budget = [int(x) for x in input_str.split()]
-        self.budget[(begin_city, end_city)] = budget
+        here, there, budget = [int(x) for x in input_str.split()]
+        self.budget[here-1][there-1] = budget
 
     def solve(self, here, there):
-        pass 
+        return self.dijkstra(self.budget, here-1, there-1)
 
     def dijkstra(self, graph, start, goal):
         frontier = [ (0, start) ]
@@ -23,18 +23,14 @@ class MinimumBudget:
 
         while len(frontier) > 0:
             budget, current = heapq.heappop(frontier)
-            print(f'current: {string.ascii_uppercase[current]}')
-            print(f'budget: {budget}')
-            print(f'frontier: {frontier}')
             if current == goal:
                 return budget
 
             for i, edge in enumerate(graph[current]):
                 next_budget = budget + edge
-                if edge and next_budget < discovered.get(i, math.inf):
+                if edge >= 0 and next_budget < discovered.get(i, math.inf):
                     heapq.heappush(frontier, (next_budget, i))
                     discovered[i] = next_budget
-
 
 
 def main():
@@ -46,7 +42,7 @@ def main():
         mb.read_budget(input())
 
     here, there = [int(x) for x in input().split()]
-    mb.solve(here, there)
+    print(mb.solve(here, there))
 
 
 if __name__ == '__main__':
