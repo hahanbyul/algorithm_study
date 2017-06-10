@@ -1,4 +1,5 @@
 # https://www.acmicpc.net/problem/1916
+import math
 import string
 import heapq
 
@@ -6,7 +7,8 @@ class MinimumBudget:
     def __init__(self, n, m):
         self.city_num = n
         self.bus_num  = m
-        self.budget = dict()
+
+        self.budget = [[-1 for _ in range(n)] for _ in range(n)]
 
     def read_budget(self, input_str):
         begin_city, end_city, budget = [int(x) for x in input_str.split()]
@@ -15,18 +17,23 @@ class MinimumBudget:
     def solve(self, here, there):
         pass 
 
-    def bfs(self, graph, start):
-        frontier = [ start ]
-        visited  = {}
+    def dijkstra(self, graph, start, goal):
+        frontier = [ (0, start) ]
+        discovered = {}
 
         while len(frontier) > 0:
-            current = frontier.pop(0)
+            budget, current = heapq.heappop(frontier)
             print(f'current: {string.ascii_uppercase[current]}')
+            print(f'budget: {budget}')
+            print(f'frontier: {frontier}')
+            if current == goal:
+                return budget
 
             for i, edge in enumerate(graph[current]):
-                if edge and not visited.get(i, False):
-                    frontier.append(i)
-                    visited[i] = True
+                next_budget = budget + edge
+                if edge and next_budget < discovered.get(i, math.inf):
+                    heapq.heappush(frontier, (next_budget, i))
+                    discovered[i] = next_budget
 
 
 
