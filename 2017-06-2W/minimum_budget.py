@@ -12,7 +12,9 @@ class MinimumBudget:
 
     def read_budget(self, input_str):
         here, there, budget = [int(x) for x in input_str.split()]
-        self.budget[here-1][there-1] = budget
+        current_budget = self.budget[here-1][there-1]
+        if current_budget == -1 or current_budget > budget:
+            self.budget[here-1][there-1] = budget
 
     def solve(self, here, there):
         return self.dijkstra(self.budget, here-1, there-1)
