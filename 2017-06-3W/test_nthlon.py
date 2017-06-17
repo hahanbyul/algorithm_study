@@ -42,10 +42,12 @@ def test_get_answer():
    print()
    nthlon.diff_minus = [1,6,1]
    nthlon.cost_minus = [134,31,10]
+   nthlon.make_minus_graph()
    nthlon.get_answer(2)
    print()
    nthlon.diff_minus = [1,1,1,1]
    nthlon.cost_minus = [1,3,5,7]
+   nthlon.make_minus_graph()
    answer = nthlon.get_answer(4)
    print(answer)
 

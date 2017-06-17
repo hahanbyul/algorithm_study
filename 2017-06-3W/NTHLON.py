@@ -8,17 +8,22 @@ input = sys.stdin.readline
 class Nthlon:
     def __init__(self):
         self.diff_plus_graph = None
+        self.cache = {}
 
     def make_graph(self):
+        self.make_plus_graph()
+        self.make_minus_graph()
+
+    def make_plus_graph(self):
        self.diff_plus_graph = [self.diff_plus for _ in range(len(self.diff_plus))]
        self.cost_plus_graph = [self.cost_plus for _ in range(len(self.cost_plus))]
 
+    def make_minus_graph(self):
        self.diff_minus_graph = [self.diff_minus for _ in range(len(self.diff_minus))]
        self.cost_minus_graph = [self.cost_minus for _ in range(len(self.cost_minus))]
  
     def lin_comb(self, max_limit):
-        if self.diff_plus_graph is None:
-            self.make_graph()
+        self.make_graph()
 
         frontier = [ (cost, i, diff) for i, (diff, cost) in enumerate(zip(self.diff_plus, self.cost_plus)) ]
         heapq.heapify(frontier)
@@ -48,6 +53,8 @@ class Nthlon:
 
     def get_answer(self, goal_diff):
         # TODO: 처음부터 시작하지 말고 이전에 하던 데부터...
+        # if self.cache.get(goal_diff, False):
+            #return self.cache[goal_diff]
 
         frontier = [ (cost, i, diff) for i, (diff, cost) in enumerate(zip(self.diff_minus, self.cost_minus)) ]
         if len(frontier) == 0:
