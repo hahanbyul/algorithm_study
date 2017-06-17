@@ -1,4 +1,5 @@
 from NTHLON import Nthlon
+import random
 
 def test_lin_comb():
    nthlon = Nthlon()
@@ -42,14 +43,28 @@ def test_get_answer():
    print()
    nthlon.diff_minus = [1,6,1]
    nthlon.cost_minus = [134,31,10]
-   nthlon.make_minus_graph()
    nthlon.get_answer(2)
    print()
    nthlon.diff_minus = [1,1,1,1]
    nthlon.cost_minus = [1,3,5,7]
-   nthlon.make_minus_graph()
    answer = nthlon.get_answer(4)
    print(answer)
 
+def test_random_input():
+   nthlon = Nthlon()
+   M = random.randint(1, 500)
+   A = [random.randint(1, 200) for _ in range(M)]
+   B = [random.randint(1, 200) for _ in range(M)]
+   nthlon.diff(A, B)
+   print()
+   nthlon.print_var()
+   print(nthlon.solve())
 
+def test_all_same_input():
+   nthlon = Nthlon()
+   M = random.randint(1, 500)
+   A = [random.randint(1, 200) for _ in range(M)]
+   nthlon.diff(A, A)
+   nthlon.print_var()
+   print(nthlon.solve())
 
