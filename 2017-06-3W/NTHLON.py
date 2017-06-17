@@ -7,35 +7,48 @@ input = sys.stdin.readline
 
 class Nthlon:
     def __init__(self):
+        self.diff_plus, self.diff_minus, self.diff_zero = [ [] for _ in range(3) ]
+        self.cost_plus, self.cost_minus, self.cost_zero = [ [] for _ in range(3) ]
+        
         self.diff_plus_graph = None
         self.cache = {}
+
+    def read_record(self):
+        A_time, B_time = (int(t) for t in input().split())
+        diff = A_time - B_time
+        if diff > 0:
+            self.diff_plus.append(diff)
+            self.cost_plus.append(A_time)
+        elif diff == 0:
+            self.diff_zero.append(0)
+            self.cost_zero.append(A_time)
+        elif diff < 0:
+            self.diff_minus.append(-diff)
+            self.cost_minus.append(A_time)
 
     def make_graph(self):
         self.make_plus_graph()
         self.make_minus_graph()
 
     def make_plus_graph(self):
-       self.diff_plus_graph = [self.diff_plus for _ in range(len(self.diff_plus))]
-       self.cost_plus_graph = [self.cost_plus for _ in range(len(self.cost_plus))]
+        self.diff_plus_graph = [self.diff_plus for _ in range(len(self.diff_plus))]
+        self.cost_plus_graph = [self.cost_plus for _ in range(len(self.cost_plus))]
 
     def make_minus_graph(self):
-       self.diff_minus_graph = [self.diff_minus for _ in range(len(self.diff_minus))]
-       self.cost_minus_graph = [self.cost_minus for _ in range(len(self.cost_minus))]
- 
-    def lin_comb(self, max_limit):
+        self.diff_minus_graph = [self.diff_minus for _ in range(len(self.diff_minus))]
+        self.cost_minus_graph = [self.cost_minus for _ in range(len(self.cost_minus))]
+
+    def solve(self):
         self.make_graph()
 
         frontier = [ (cost, i, diff) for i, (diff, cost) in enumerate(zip(self.diff_plus, self.cost_plus)) ]
         heapq.heapify(frontier)
         discovered = {}
-        print(f'frontier: {frontier}')
+        #print(f'frontier: {frontier}')
 
         while len(frontier) > 0:
             cur_cost, current, cur_diff = heapq.heappop(frontier)
-            print(f'[plus] cost: {cur_cost}, diff: {cur_diff}')
-
-            if cur_cost > max_limit:
-                return 
+            #print(f'[plus] cost: {cur_cost}, diff: {cur_diff}')
 
             another_cost, another_diff = self.get_answer(cur_diff)
             if cur_diff == another_diff:
@@ -62,11 +75,11 @@ class Nthlon:
 
         heapq.heapify(frontier)
         discovered = {}
-        print(f'frontier: {frontier}')
+        #print(f'frontier: {frontier}')
 
         while len(frontier) > 0:
             cur_cost, current, cur_diff = heapq.heappop(frontier)
-            print(f'[minus] cost: {cur_cost}, diff: {cur_diff}')
+            #print(f'[minus] cost: {cur_cost}, diff: {cur_diff}')
 
             if goal_diff <= cur_diff:
                 return (cur_cost, cur_diff)
@@ -89,22 +102,8 @@ def main():
 
         nthlon = Nthlon()
 
-        nthlon.diff_plus, nthlon.diff_minus, nthlon.diff_zero = [ [] for _ in range(3) ]
-        nthlon.cost_plus, nthlon.cost_minus, nthlon.cost_zero = [ [] for _ in range(3) ]
-
         for _ in range(M):
-            A_time, B_time = (int(t) for t in input().split())
-            diff = A_time - B_time
-            if diff > 0:
-                nthlon.diff_plus.append(diff)
-                nthlon.cost_plus.append(A_time)
-            elif diff == 0:
-                nthlon.diff_zero.append(0)
-                nthlon.cost_zero.append(A_time)
-            elif diff < 0:
-                nthlon.diff_minus.append(-diff)
-                nthlon.cost_minus.append(A_time)
-
+            nthlon.read_record()
 
         if len(nthlon.diff_plus) * len(nthlon.diff_minus) == 0:
             print('IMPOSSIBLE')
@@ -114,10 +113,12 @@ def main():
             nthlon.diff_plus, nthlon.diff_minus = nthlon.diff_minus, nthlon.diff_plus
             nthlon.cost_plus, nthlon.cost_minus = nthlon.cost_minus, nthlon.cost_plus
 
-        print(f'[nthlon.diff] plus: {nthlon.diff_plus}, zero: {nthlon.diff_zero}, minus: {nthlon.diff_minus}')
-        print(f'[nthlon.cost] plus: {nthlon.cost_plus}, zero: {nthlon.cost_zero}, minus: {nthlon.cost_minus}')
+        #print(f'[nthlon.diff] plus: {nthlon.diff_plus}, zero: {nthlon.diff_zero}, minus: {nthlon.diff_minus}')
+        #print(f'[nthlon.cost] plus: {nthlon.cost_plus}, zero: {nthlon.cost_zero}, minus: {nthlon.cost_minus}')
 
-        nthlon.make_graph()
+        print()
+        #print(nthlon.solve())
+
 
 if __name__ == '__main__':
     main()

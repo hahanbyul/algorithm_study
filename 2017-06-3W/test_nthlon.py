@@ -10,7 +10,7 @@ def test_lin_comb():
    nthlon.cost_minus = [1,3,5,7]
 
    print()
-   print(f'answer: {nthlon.lin_comb(200)}')
+   print(f'answer: {nthlon.solve()}')
 
    # example 2
    nthlon.diff_minus = [1, 9]
@@ -23,7 +23,7 @@ def test_lin_comb():
    nthlon.cost_plus, nthlon.cost_minus = nthlon.cost_minus, nthlon.cost_plus
 
    print()
-   print(f'answer: {nthlon.lin_comb(200)}')
+   print(f'answer: {nthlon.solve()}')
 
 def test_cache():
    nthlon = Nthlon()
@@ -35,7 +35,7 @@ def test_cache():
    nthlon.cost_plus = [1]
 
    print()
-   print(f'answer: {nthlon.lin_comb(200)}')
+   print(f'answer: {nthlon.solve()}')
 
 def test_get_answer():
    nthlon = Nthlon()
