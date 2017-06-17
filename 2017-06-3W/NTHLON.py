@@ -6,9 +6,19 @@ import math
 input = sys.stdin.readline
 
 class Nthlon:
+    def __init__(self):
+        self.diff_plus_graph = None
+
+    def make_graph(self):
+       self.diff_plus_graph = [self.diff_plus for _ in range(len(self.diff_plus))]
+       self.cost_plus_graph = [self.cost_plus for _ in range(len(self.cost_plus))]
+
+       self.diff_minus_graph = [self.diff_minus for _ in range(len(self.diff_minus))]
+       self.cost_minus_graph = [self.cost_minus for _ in range(len(self.cost_minus))]
+ 
     def lin_comb(self, max_limit):
-        diff_graph = [self.diff_plus for _ in range(len(self.diff_plus))]
-        cost_graph = [self.cost_plus for _ in range(len(self.cost_plus))]
+        if self.diff_plus_graph is None:
+            self.make_graph()
 
         frontier = [ (cost, i, diff) for i, (diff, cost) in enumerate(zip(self.diff_plus, self.cost_plus)) ]
         heapq.heapify(frontier)
@@ -17,12 +27,16 @@ class Nthlon:
 
         while len(frontier) > 0:
             cur_cost, current, cur_diff = heapq.heappop(frontier)
+            print(f'[plus] cost: {cur_cost}, diff: {cur_diff}')
 
             if cur_cost > max_limit:
                 return 
 
-            print(cur_cost)
-            for i, (diff, cost) in enumerate(zip(diff_graph[current], cost_graph[current])):
+            another_cost, another_diff = self.get_answer(cur_diff)
+            if cur_diff == another_diff:
+                return cur_cost + another_cost
+
+            for i, (diff, cost) in enumerate(zip(self.diff_plus_graph[current], self.cost_plus_graph[current])):
                 next_cost = cur_cost + cost
                 next_diff = cur_diff + diff
 
@@ -33,13 +47,11 @@ class Nthlon:
             #print(f'frontier: {frontier}')
 
     def get_answer(self, goal_diff):
-        self.cost_minus = [cost for cost, diff in zip(self.cost_minus, self.diff_minus) if diff <= goal_diff]
-        self.diff_minus = [diff for diff in self.diff_minus if diff <= goal_diff]
-
-        diff_graph = [self.diff_minus for _ in range(len(self.diff_minus))]
-        cost_graph = [self.cost_minus for _ in range(len(self.cost_minus))]
+        # TODO: 처음부터 시작하지 말고 이전에 하던 데부터...
 
         frontier = [ (cost, i, diff) for i, (diff, cost) in enumerate(zip(self.diff_minus, self.cost_minus)) ]
+        if len(frontier) == 0:
+            return math.inf, math.inf
 
         heapq.heapify(frontier)
         discovered = {}
@@ -47,50 +59,58 @@ class Nthlon:
 
         while len(frontier) > 0:
             cur_cost, current, cur_diff = heapq.heappop(frontier)
-            print(cur_cost)
+            print(f'[minus] cost: {cur_cost}, diff: {cur_diff}')
 
             if goal_diff <= cur_diff:
-                return cur_cost
+                return (cur_cost, cur_diff)
 
-            for i, (diff, cost) in enumerate(zip(diff_graph[current], cost_graph[current])):
+            for i, (diff, cost) in enumerate(zip(self.diff_minus_graph[current], self.cost_minus_graph[current])):
                 next_cost = cur_cost + cost
                 next_diff = cur_diff + diff
-
-                print(f'[next] cost: {next_cost}, diff: {next_diff}')
 
                 if next_diff <= goal_diff and next_cost < discovered.get(next_diff, math.inf):
                     heapq.heappush(frontier, (next_cost, i, next_diff))
                     discovered[next_diff] = next_cost
-            print(f'frontier: {frontier}')
+            #print(f'frontier: {frontier}')
+
+        return math.inf, math.inf
 
 def main():
     C = int(input())
     for _ in range(C):
         M = int(input())
 
-        diff_plus, diff_minus, diff_zero = [ [] for _ in range(3) ]
-        cost_plus, cost_minus, cost_zero = [ [] for _ in range(3) ]
+        nthlon = Nthlon()
+
+        nthlon.diff_plus, nthlon.diff_minus, nthlon.diff_zero = [ [] for _ in range(3) ]
+        nthlon.cost_plus, nthlon.cost_minus, nthlon.cost_zero = [ [] for _ in range(3) ]
 
         for _ in range(M):
             A_time, B_time = (int(t) for t in input().split())
             diff = A_time - B_time
             if diff > 0:
-                diff_plus.append(diff)
-                cost_plus.append(A_time)
+                nthlon.diff_plus.append(diff)
+                nthlon.cost_plus.append(A_time)
             elif diff == 0:
-                diff_zero.append(0)
-                cost_zero.append(A_time)
+                nthlon.diff_zero.append(0)
+                nthlon.cost_zero.append(A_time)
             elif diff < 0:
-                diff_minus.append(-diff)
-                cost_minus.append(A_time)
+                nthlon.diff_minus.append(-diff)
+                nthlon.cost_minus.append(A_time)
 
-        print(f'[diff] plus: {diff_plus}, zero: {diff_zero}, minus: {diff_minus}')
-        print(f'[cost] plus: {cost_plus}, zero: {cost_zero}, minus: {cost_minus}')
 
-        if len(diff_plus) * len(diff_minus) == 0:
+        if len(nthlon.diff_plus) * len(nthlon.diff_minus) == 0:
             print('IMPOSSIBLE')
             continue
 
+        if max(nthlon.diff_plus) < max(nthlon.diff_minus):
+            nthlon.diff_plus, nthlon.diff_minus = nthlon.diff_minus, nthlon.diff_plus
+            nthlon.cost_plus, nthlon.cost_minus = nthlon.cost_minus, nthlon.cost_plus
+
+        print(f'[nthlon.diff] plus: {nthlon.diff_plus}, zero: {nthlon.diff_zero}, minus: {nthlon.diff_minus}')
+        print(f'[nthlon.cost] plus: {nthlon.cost_plus}, zero: {nthlon.cost_zero}, minus: {nthlon.cost_minus}')
+
+        nthlon.make_graph()
 
 if __name__ == '__main__':
     main()
