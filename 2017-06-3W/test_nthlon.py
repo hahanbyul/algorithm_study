@@ -60,6 +60,7 @@ def test_random_input():
    nthlon.print_var()
    print(nthlon.solve())
 
+"""
 def test_all_same_input():
    nthlon = Nthlon()
    M = random.randint(1, 500)
@@ -68,3 +69,12 @@ def test_all_same_input():
    nthlon.print_var()
    print(nthlon.solve())
 
+def test_all_input():
+   nthlon = Nthlon()
+   M = random.randint(1, 500)
+   A = [200 for _ in range(M)]
+   B = [1 for _ in range(M)]
+   nthlon.diff(A, B)
+   nthlon.print_var()
+   print(nthlon.solve())
+"""

@@ -92,7 +92,7 @@ class Nthlon:
             cur_cost, current, cur_diff = heapq.heappop(frontier)
             #print(f'[minus] cost: {cur_cost}, diff: {cur_diff}')
 
-            if goal_diff <= cur_diff:
+            if goal_diff == cur_diff:
                 return (cur_cost, cur_diff)
 
             for i, (diff, cost) in enumerate(zip(self.diff_minus, self.cost_minus)):
