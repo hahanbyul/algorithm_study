@@ -13,33 +13,13 @@ class Timetrip:
             self.adj[a] = []
         self.adj[a].append((b, d))
 
-    def interpret(self, upper, opposite=False):
-        if len(upper) > 0:
-            shortest = upper[1]
-        elif len(upper) == 0: # if negative cycle exists
-            dist, via = self.floyd(opposite=opposite)
-            shortest = dist[0][1]
-            if self.has_cycle(via):
-                return 'INFINITY'
-
-        if shortest == float("inf"):
-            return 'UNREACHABLE'
-        
-        if opposite:
-            return -shortest
-        else:
-            return shortest
-
     def solve(self):
-        upper = self.bellmanFord()
-        shortest = self.interpret(upper)
-                
-        lower = self.bellmanFord(opposite=True)
-        longest = self.interpret(lower, opposite=True)
+        shortest = self.bellmanFord()
+        longest = self.bellmanFord(opposite=True)
 
-        if shortest == 'UNREACHABLE' or longest == 'UNREACHABLE':
+        if shortest == float('inf') or longest == float('inf'):
             print('UNREACHABLE')
-            return shortest
+            return 'UNREACHABLE'
 
         print('%s %s' % (str(shortest), str(longest)))
         return (shortest, longest)
@@ -84,7 +64,7 @@ class Timetrip:
         upper = [float("inf") for _ in range(V)]
         upper[src] = 0
 
-        for _ in range(V):
+        for _ in range(V-1):
             updated = False
             for here in range(V):
                 for there, cost in self.adj.get(here, []):
@@ -98,9 +78,20 @@ class Timetrip:
             if not updated:
                 break
 
-        if updated:
-            upper = []
-        return upper
+        for here in range(V):
+            for there, cost in self.adj.get(here, []):
+                if opposite:
+                    cost = -cost
+
+                if upper[there] > upper[here] + cost:
+                    reachable, via = self.floyd(opposite=opposite)
+                    if reachable[0][here] != float('inf') and reachable[here][1] != float('inf'):
+                        return 'INFINITY'
+
+        if opposite:
+            return -upper[1]
+        else:
+            return upper[1]
 
 
 def main():
