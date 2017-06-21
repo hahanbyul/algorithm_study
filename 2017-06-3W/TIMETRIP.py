@@ -1,8 +1,5 @@
 # https://algospot.com/judge/problem/read/TIMETRIP
 
-import math
-import sys
-input = sys.stdin.readline
 import pprint as pp
 
 class Timetrip:
@@ -11,7 +8,7 @@ class Timetrip:
         self.adj = {}
 
     def fill_graph(self, string):
-        a, b, d = [int(i) for i in string.split()]
+        a, b, d = [int(i) for i in string.split(' ')]
         if a not in self.adj.keys():
             self.adj[a] = []
         self.adj[a].append((b, d))
@@ -25,7 +22,7 @@ class Timetrip:
             if self.has_cycle(via):
                 return 'INFINITY'
 
-        if shortest == math.inf:
+        if shortest == float("inf"):
             return 'UNREACHABLE'
         
         if opposite:
@@ -40,7 +37,7 @@ class Timetrip:
         lower = self.bellmanFord(opposite=True)
         longest = self.interpret(lower, opposite=True)
 
-        if shortest == 'UNREACHABLE':
+        if shortest == 'UNREACHABLE' or longest == 'UNREACHABLE':
             print('UNREACHABLE')
             return shortest
 
@@ -49,7 +46,7 @@ class Timetrip:
 
     def floyd(self, opposite=False):
         V = self.G
-        adj = [[math.inf for _ in range(V)] for _ in range(V)]
+        adj = [[float("inf") for _ in range(V)] for _ in range(V)]
 
         for here in self.adj.keys():
             for there, cost in self.adj[here]:
@@ -84,7 +81,7 @@ class Timetrip:
     def bellmanFord(self, src=0, opposite=False):
         V = self.G
 
-        upper = [math.inf for _ in range(V)]
+        upper = [float("inf") for _ in range(V)]
         upper[src] = 0
 
         for _ in range(V):
@@ -109,7 +106,7 @@ class Timetrip:
 def main():
     C = int(input())
     for _ in range(C):
-        G, W = [int(i) for i in input().split()]
+        G, W = [int(i) for i in input().split(' ')]
         tt = Timetrip(G)
         for _ in range(W):
             tt.fill_graph(input())
