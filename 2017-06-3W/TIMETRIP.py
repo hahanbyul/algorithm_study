@@ -16,31 +16,35 @@ class Timetrip:
             self.adj[a] = []
         self.adj[a].append((b, d))
 
-    def solve(self):
-        upper = self.bellmanFord()
-        print(f'upper: {upper}')
+    def interpret(self, upper, opposite=False):
         if len(upper) > 0:
             shortest = upper[1]
         elif len(upper) == 0: # if negative cycle exists
-            dist = self.floyd()
-            print(dist)
+            dist, via = self.floyd(opposite=opposite)
             shortest = dist[0][1]
-            if dist[0][0] < 0 and shortest != math.inf:
-                shortest = 'INFINITY'
+            if self.has_cycle(via):
+                return 'INFINITY'
 
         if shortest == math.inf:
             return 'UNREACHABLE'
+        
+        if opposite:
+            return -shortest
+        else:
+            return shortest
+
+    def solve(self):
+        upper = self.bellmanFord()
+        shortest = self.interpret(upper)
                 
         lower = self.bellmanFord(opposite=True)
-        if len(lower) > 0:
-            longest = -lower[1]
-        elif len(lower) == 0:
-            dist = self.floyd(opposite=True)
-            print(dist)
-            longest = -dist[0][1]
-            if dist[0][0] < 0 and longest != math.inf:
-                longest = 'INFINITY'
+        longest = self.interpret(lower, opposite=True)
 
+        if shortest == 'UNREACHABLE':
+            print('UNREACHABLE')
+            return shortest
+
+        print('%s %s' % (str(shortest), str(longest)))
         return (shortest, longest)
 
     def floyd(self, opposite=False):
@@ -58,16 +62,24 @@ class Timetrip:
         for i in range(V):
             if adj[i][i] > 0:
                 adj[i][i] = 0
-        pp.pprint(adj)
+        # pp.pprint(adj)
+
+        via = [[-1 for _ in range(V)] for _ in range(V)]
 
         for k in range(V):
             for i in range(V):
                 for j in range(V):
-                    print(f'({k},{i},{j})')
+                    # print(f'({k},{i},{j})')
                     if adj[i][j] > adj[i][k] + adj[k][j]:
                         adj[i][j] = adj[i][k] + adj[k][j]
-                        pp.pprint(adj)
-        return adj
+                        via[i][j] = k
+                        # pp.pprint(adj)
+
+        return (adj, via)
+
+    def has_cycle(self, via):
+        mid = via[0][1]
+        return via[0][0] == 0 or via[1][1] == 1 or via[mid][mid] == mid
 
     def bellmanFord(self, src=0, opposite=False):
         V = self.G
