@@ -6,11 +6,8 @@ def test_ex():
     for w in '1 6 9\n1 2 3\n2 8 3\n6 8 5\n6 7 3\n8 7 3\n6 5 5\n4 5 7\n3 4 4\n3 5 2\n2 3 6\n7 5 1'.split('\n'):
         d.fill_graph(w)
 
-    pp.pprint(d.adj)
-    pp.pprint(d.V_cost)
+    print()
     assert d.solve(1, 5) == 17
-    pp.pprint(d.adj)
-    pp.pprint(d.V_cost)
     assert d.solve(6, 3) == 10
 
 

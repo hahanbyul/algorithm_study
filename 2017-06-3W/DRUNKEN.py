@@ -54,8 +54,10 @@ class Drunken:
                         cost[i][j] = max_cost
                         # pp.pprint(adj)
 
-        #pp.pprint(adj)
-        #pp.pprint(cost)
+        """
+        pp.pprint(adj)
+        pp.pprint(cost)
+        """
         return (adj, via, cost)
 
     def solve(self, src, target):
