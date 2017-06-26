@@ -36,8 +36,8 @@ def test_find_end_idx_of_alpha_seq():
 
 def test_solve():
     hn = HiddenNumber(example)
-    hn.solve()
+    assert hn.solve() == 29
 
     hn = HiddenNumber('ab01233323bc323')
-    hn.solve()
+    assert hn.solve() == 323
 

@@ -22,12 +22,12 @@ class HiddenNumber:
 
     def solve(self):
         seq = self.problem
-        print(f'seq: {seq}')
+        # print(f'seq: {seq}')
         begin = 0
         total_sum = 0
 
         while begin < len(seq):
-            print(f'begin: {begin}')
+            # print(f'begin: {begin}')
             if seq[begin].isalpha():
                 end = self.find_end(self.isalpha, seq, begin)
             elif seq[begin].isdigit():
@@ -35,7 +35,7 @@ class HiddenNumber:
 
                 if end - begin <= 6:
                     hidden_num = int(seq[begin:end])
-                    print(hidden_num)
+                    # print(hidden_num)
                     total_sum += hidden_num
 
             begin = end
@@ -43,11 +43,11 @@ class HiddenNumber:
         print(total_sum)
         return total_sum
 
-def main():
-    C = int(input())
-    for _ in range(C):
-        pass
 
+def main():
+    num = int(input())
+    hn = HiddenNumber(input())
+    hn.solve()
 
 if __name__ == '__main__':
     main()
