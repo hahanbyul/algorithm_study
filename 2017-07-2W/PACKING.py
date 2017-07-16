@@ -1,10 +1,10 @@
 # https://algospot.com/judge/problem/read/PACKING
 
 class Packing:
-    def __init__(self, weight):
-        self.weight = weight
-        self.max_need_sum = 0
+    def __init__(self, capacity):
+        self.capacity = capacity
         self.thing_list = []
+        self.cache = {}
 
     def read_line(self, string):
         thing, vol, need = string.split()
@@ -12,34 +12,47 @@ class Packing:
 
     def solve(self):
         self.thing_list.sort(key=lambda tup: tup[1]) # sort by volume
-        self.dfs([], 0, 0, 0)
+        max_need_sum, max_picked = self.solve_memo(self.capacity, 0)
 
-        # print(f'{self.max_need_sum} {len(self.max_picked)}')
-        print('%d %d' % (self.max_need_sum, len(self.max_picked)))
-        for thing in self.max_picked:
-            print(thing[0])
-        return self.max_need_sum, len(self.max_picked)
+        print('%d %d' % (max_need_sum, len(max_picked)))
+        for thing in max_picked:
+            print(thing)
 
-    def dfs(self, picked, begin_idx, vol_sum, need_sum):
-        # print(f'picked: {picked}')
-        # print(f'need_sum: {need_sum}, vol_sum: {vol_sum}')
+        return max_need_sum, len(max_picked)
 
-        if need_sum > self.max_need_sum:
-            self.max_need_sum = need_sum
-            self.max_picked = [thing for thing in picked]
+    def solve_memo(self, capacity, begin_idx):
+        # print(f'cap: {capacity}, idx: {begin_idx}')
+        ret = self.cache.get((capacity, begin_idx), False)
+        if ret is not False:
+            # print('cached!')
+            return ret
 
-        for i in range(begin_idx, len(self.thing_list)):
-            ith_thing = self.thing_list[i]
-            picked.append(ith_thing)
-            next_vol  = vol_sum + ith_thing[1]
-            next_need = need_sum + ith_thing[2]
+        if begin_idx >= len(self.thing_list):
+            return (0, [])
 
-            if next_vol > self.weight:
-                picked.pop()
-                break
+        this = self.thing_list[begin_idx]
+        this_weight = this[1]
+        this_need   = this[2]
 
-            self.dfs(picked, i+1, next_vol, next_need)
-            picked.pop()
+        if capacity < this_weight:
+            return (0, [])
+
+        included_need, included_list = self.solve_memo(capacity - this_weight, begin_idx + 1)
+        included_need += this_need
+        included_list_new = [x for x in included_list]
+        included_list_new.append(this[0])
+
+        excluded_need, excluded_list = self.solve_memo(capacity, begin_idx + 1)
+        excluded_list_new = [x for x in excluded_list]
+
+        if included_need > excluded_need:
+            ret = (included_need, included_list_new)
+        else:
+            ret = (excluded_need, excluded_list_new)
+
+        self.cache[(capacity, begin_idx)] = ret
+
+        return ret
 
 
 def main():

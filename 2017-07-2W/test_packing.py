@@ -33,4 +33,12 @@ def test_ex2_solve():
 
     assert p.solve() == (30, 4)
 
+def test_solve_memo():
+    p = Packing(17)
+    for line in ex1.split('\n'):
+        p.read_line(line)
+    p.thing_list.sort(key=lambda tup: tup[1]) # sort by volume
+    print(p.thing_list)
+    assert p.solve_memo(10, 0)[0] == 24
+    assert p.solve_memo(17, 0)[0] == 30
 
