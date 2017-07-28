@@ -18,6 +18,13 @@ class Boardcover:
     def read_line(self, string):
         self.board.append([1 if char == '#' else 0 for char in string])
 
+    def is_solvable(self, board):
+        return board is not None and len(board) >= 2 and len(board[0]) >= 2 and  self.count_zero(board) % 3 == 0
+
+    @staticmethod
+    def count_zero(board):
+        return sum(sum([[1 if e == 0 else 0 for e in row] for row in board], []))
+
     @staticmethod
     def is_full_row(board, index):
         return all(board[index])
@@ -70,33 +77,38 @@ class Boardcover:
             next_row = board[r+1]
 
             board_ = [[e for e in row] for row in board]
-            if shape == 'L' and next_row[zero_index] == 0 and next_row[zero_index+1] == 0:
-                board_[r][zero_index]     = 2
-                board_[r+1][zero_index+1] = 2
-                board_[r+1][zero_index]   = 2
-                return board_
+            if zero_index+1 < len(row):
+                if shape == 'L' and next_row[zero_index] == 0 and next_row[zero_index+1] == 0:
+                    board_[r][zero_index]     = 2
+                    board_[r+1][zero_index+1] = 2
+                    board_[r+1][zero_index]   = 2
+                    return board_
 
-            if shape == 'L_90' and row[zero_index+1] == 0 and next_row[zero_index] == 0:
-                board_[r][zero_index]   = 2
-                board_[r][zero_index+1] = 2
-                board_[r+1][zero_index] = 2
-                return board_
+                if shape == 'L_90' and row[zero_index+1] == 0 and next_row[zero_index] == 0:
+                    board_[r][zero_index]   = 2
+                    board_[r][zero_index+1] = 2
+                    board_[r+1][zero_index] = 2
+                    return board_
 
-            if shape == 'L_180' and row[zero_index+1] == 0 and next_row[zero_index+1] == 0:
-                board_[r][zero_index]     = 2
-                board_[r][zero_index+1]   = 2
-                board_[r+1][zero_index+1] = 2
-                return board_
+                if shape == 'L_180' and row[zero_index+1] == 0 and next_row[zero_index+1] == 0:
+                    board_[r][zero_index]     = 2
+                    board_[r][zero_index+1]   = 2
+                    board_[r+1][zero_index+1] = 2
+                    return board_
 
-            if shape == 'L_270' and zero_index > 0 and next_row[zero_index-1] == 0 and next_row[zero_index] == 0:
-                board_[r][zero_index]     = 2
-                board_[r+1][zero_index-1] = 2
-                board_[r+1][zero_index]   = 2
-                return board_
+            if zero_index > 0:
+                if shape == 'L_270' and next_row[zero_index-1] == 0 and next_row[zero_index] == 0:
+                    board_[r][zero_index]     = 2
+                    board_[r+1][zero_index-1] = 2
+                    board_[r+1][zero_index]   = 2
+                    return board_
 
             return
 
     def solve(self, board):
+        if not self.is_solvable(board):
+            return 0
+
         print('\n[SOLVE]')
         self.print_board(board)
 
@@ -109,6 +121,9 @@ class Boardcover:
         if board == []:
             return 1
 
+        if not self.is_solvable(board):
+            return 0
+
         # memoization check
 
         # split board
@@ -119,13 +134,11 @@ class Boardcover:
 
         for c in range(1, len(board[0])-1):
             if self.is_full_col(board, c):
+                print('\n[SPLIT]')
                 return self.solve([row[:c] for row in board]) * self.solve([row[c+1:] for row in board])
 
         # return self.fill(board)
-        self.print_board(self.fill_board(board, 'L'))
-        self.print_board(self.fill_board(board, 'L_90'))
-        self.print_board(self.fill_board(board, 'L_180'))
-        self.print_board(self.fill_board(board, 'L_270'))
+        return self.solve(self.fill_board(board, 'L')) + self.solve(self.fill_board(board, 'L_90')) + self.solve(self.fill_board(board, 'L_180')) + self.solve(self.fill_board(board, 'L_270'))
 
     def split_board(self, row_begin, row_end, col_begin, col_end):
         print('%d, %d, %d, %d' % (row_begin, row_end, col_begin, col_end))
@@ -184,3 +197,12 @@ class Boardcover:
 
         print(ret)
         return ret
+
+def main():
+    C = int(input())
+    for _ in range(C):
+        pass
+
+    # is_full check
+if __name__ == '__main__':
+    main()

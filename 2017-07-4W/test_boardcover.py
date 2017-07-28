@@ -42,6 +42,15 @@ def test_solve():
         bc.read_line(line)
 
     print()
+    assert bc.solve(bc.board) == 1
+
+def test_ex0():
+    bc = Boardcover()
+    for line in '##.##..\n#......\n#....##\n#..####'.split('\n'):
+        bc.read_line(line)
+
+    print()
+    assert bc.is_solvable(bc.board)
     bc.solve(bc.board)
 
 def test_ex1():
@@ -50,8 +59,26 @@ def test_ex1():
         bc.read_line(line)
 
     print()
-    bc.solve(bc.board)
+    assert bc.solve(bc.board) == 0
+    assert not bc.is_solvable(bc.board)
 
+def test_ex2():
+    bc = Boardcover()
+    for line in '#.....#\n#.....#\n##..###'.split('\n'):
+        bc.read_line(line)
+
+    print()
+    assert bc.solve(bc.board) == 2
+    assert bc.is_solvable(bc.board)
+
+def test_ex3():
+    bc = Boardcover()
+    for line in '##########\n#........#\n#........#\n#........#\n#........#\n#........#\n#........#\n##########'.split('\n'):
+        bc.read_line(line)
+
+    print()
+    assert bc.solve(bc.board) == 1514
+    
 def test_fill():
     bc = Boardcover()
     for line in '#.....#\n#.....#\n##...##'.split('\n'):
@@ -61,7 +88,22 @@ def test_fill():
     print()
     bc.print_board(board)
 
-    bc.print_board(bc.fill_board(board, 'L'))
+    board_ = bc.fill_board(board, 'L')
+    bc.print_board(board_)
+    assert bc.is_full_col(board_, 0)
+    assert not bc.is_full_col(board_, 1)
+
     bc.print_board(bc.fill_board(board, 'L_90'))
     bc.print_board(bc.fill_board(board, 'L_180'))
     bc.print_board(bc.fill_board(board, 'L_270'))
+
+def test_count_zero():
+    bc = Boardcover()
+    assert bc.count_zero([[1, 0], [0, 0]]) == 3
+
+def test_is_solvable():
+    bc = Boardcover()
+
+    assert not bc.is_solvable([[0, 0]])
+    assert bc.is_solvable([[1, 0], [0, 0]])
+
