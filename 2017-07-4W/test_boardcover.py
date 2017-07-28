@@ -80,6 +80,7 @@ def test_ex3():
 
     print()
     assert bc.solve(bc.board) == 1514
+    bc.print_cache()
     
 def test_fill():
     bc = Boardcover()
@@ -125,3 +126,7 @@ def test_memoization():
     bc.solve(bc.board)
     bc.print_cache()
 
+def test_is_full():
+    bc = Boardcover()
+    assert not bc.is_full([[1, 0], [0, 1]])
+    assert bc.is_full([[1, 1], [1, 1]])
