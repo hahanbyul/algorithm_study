@@ -61,6 +61,7 @@ def test_ex1():
     print()
     assert bc.solve(bc.board) == 0
     assert not bc.is_solvable(bc.board)
+    bc.print_cache()
 
 def test_ex2():
     bc = Boardcover()
@@ -70,6 +71,7 @@ def test_ex2():
     print()
     assert bc.solve(bc.board) == 2
     assert bc.is_solvable(bc.board)
+    bc.print_cache()
 
 def test_ex3():
     bc = Boardcover()
@@ -106,4 +108,20 @@ def test_is_solvable():
 
     assert not bc.is_solvable([[0, 0]])
     assert bc.is_solvable([[1, 0], [0, 0]])
+
+def test_to_string_and_to_board():
+    bc = Boardcover()
+    for line in '#.....#\n#.....#\n##...##'.split('\n'):
+        bc.read_line(line)
+
+    assert bc.to_string(bc.board) == '#.....#\n#.....#\n##...##'
+    assert bc.to_board('#.....#\n#.....#\n##...##') == bc.board
+
+def test_memoization():
+    bc = Boardcover()
+    for line in '#.....#\n#.....#\n##..###'.split('\n'):
+        bc.read_line(line)
+
+    bc.solve(bc.board)
+    bc.print_cache()
 

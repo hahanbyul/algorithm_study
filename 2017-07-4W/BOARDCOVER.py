@@ -4,16 +4,7 @@ import colorful
 class Boardcover:
     def __init__(self):
         self.board = []
-
-    def read_board(self, H, W):
-        self.board = [[1 for _ in range(W)] for _ in range(H)]
-        for h in range(H):
-            line = input()
-            for w, char in enumerate(line):
-                if char == '.':
-                    self.board[h][w] = 0
-
-        print(self.board)
+        self.cache = {}
 
     def read_line(self, string):
         self.board.append([1 if char == '#' else 0 for char in string])
@@ -51,6 +42,18 @@ class Boardcover:
                 else:
                     print(colorful.white('#'), end='')
             print()
+
+    @staticmethod
+    def to_string(board):
+        return '\n'.join([''.join(['#' if e > 0 else '.' for e in row]) for row in board])
+
+    @staticmethod
+    def to_board(string):
+        board = []
+        for row in string.split('\n'):
+            board.append([1 if char == '#' else 0 for char in row])
+
+        return board
 
     def cut_board(self, board):
         if len(board) == 0:
@@ -125,6 +128,10 @@ class Boardcover:
             return 0
 
         # memoization check
+        board_str = self.to_string(board)
+        if self.cache.get(board_str, False):
+            print('\n[CACHED]')
+            return self.cache[board_str]
 
         # split board
         for r in range(1, len(board)-1):
@@ -138,7 +145,9 @@ class Boardcover:
                 return self.solve([row[:c] for row in board]) * self.solve([row[c+1:] for row in board])
 
         # return self.fill(board)
-        return self.solve(self.fill_board(board, 'L')) + self.solve(self.fill_board(board, 'L_90')) + self.solve(self.fill_board(board, 'L_180')) + self.solve(self.fill_board(board, 'L_270'))
+        ret = self.solve(self.fill_board(board, 'L')) + self.solve(self.fill_board(board, 'L_90')) + self.solve(self.fill_board(board, 'L_180')) + self.solve(self.fill_board(board, 'L_270'))
+        self.cache[self.to_string(board)] = ret
+        return ret
 
     def split_board(self, row_begin, row_end, col_begin, col_end):
         print('%d, %d, %d, %d' % (row_begin, row_end, col_begin, col_end))
@@ -198,6 +207,11 @@ class Boardcover:
         print(ret)
         return ret
 
+    def print_cache(self):
+        for key, val in self.cache.items():
+            print(f'key: -> val: {val}')
+            self.print_board(self.to_board(key))
+
 def main():
     C = int(input())
     for _ in range(C):
@@ -206,3 +220,4 @@ def main():
     # is_full check
 if __name__ == '__main__':
     main()
+
