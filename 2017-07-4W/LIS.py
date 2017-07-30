@@ -7,7 +7,7 @@ class LIS:
         for i, num in enumerate(seq):
             ret = self.cache.get(i, False)
             if not ret:
-                ret = 1 + self.max_length(seq[i:], seq[i], i)
+                ret = self.max_length(seq[i:], 0, i)
                 self.cache[i] = ret
             self.max_val = max(self.max_val, ret)
 
@@ -21,14 +21,12 @@ class LIS:
         if len(seq) == 0:
             return 0
 
-        print(f'char: {seq[0]}')
         if seq[0] <= num:
-            print('PASS')
             return self.max_length(seq[1:], num, index+1)
         else:
             ret = 0
             for i in range(len(seq)):
-                ret = max(ret, 1 + self.max_length(seq[i+1:], seq[i], index+i+1))
+                ret = max(ret, 1 + self.max_length(seq[i+1:], seq[0], index+i+1))
             self.cache[index] = ret
             return ret
 
