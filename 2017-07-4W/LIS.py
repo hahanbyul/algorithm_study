@@ -23,9 +23,12 @@ class LIS:
 
         print(f'char: {seq[0]}')
         if seq[0] <= num:
+            print('PASS')
             return self.max_length(seq[1:], num, index+1)
         else:
-            ret = 1 + self.max_length(seq[1:], seq[0], index+1)
+            ret = 0
+            for i in range(len(seq)):
+                ret = max(ret, 1 + self.max_length(seq[i+1:], seq[i], index+i+1))
             self.cache[index] = ret
             return ret
 

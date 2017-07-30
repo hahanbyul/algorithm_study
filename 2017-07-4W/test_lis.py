@@ -26,3 +26,9 @@ def test_ex4():
     lis = LIS()
     lis.solve([9, 1, 3, 7, 5, 6, 20]) == 5
     print(lis.cache)
+
+def test_ex5():
+    lis = LIS()
+    lis.solve([1, 3, 2, 5, 3, 4, 5]) == 5
+    print(lis.cache)
+
