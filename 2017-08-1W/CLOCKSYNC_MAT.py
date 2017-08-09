@@ -1,4 +1,6 @@
 # https://algospot.com/judge/problem/read/CLOCKSYNC
+import numpy as np
+
 class Clocksync:
     def __init__(self):
         self.switch = {0: (0, 1, 2), \
@@ -13,6 +15,11 @@ class Clocksync:
                 9: (3, 4, 5, 9, 13)}
 
         self.answer = tuple([12] * 16)
+
+        # self.switch_mat = self.get_switch_mat()
+        # self.identity_mat = self.get_identity_mat()
+        # self.pivotted = {}
+
 
     def bfs(self, problem):
         visited = {}
@@ -51,6 +58,56 @@ class Clocksync:
                 next_state[i] = 3
 
         return tuple(next_state)
+
+    def get_switch_mat(self):
+        mat = []
+        for indices in self.switch.values():
+            mat.append([-1 if i in indices else 0 for i in range(16)])
+
+        return mat
+
+    def get_identity_mat(self):
+        return [[0 if i != j else 1 for j in range(16)] for i in range(16)]
+
+    @staticmethod
+    def add_multiple_row(mat, i, j, scaler):
+        print(f'i: {i}, j: {j}, scaler: {scaler}')
+        mat[j] = [e_j + scaler * e_i for e_i, e_j in zip(mat[i], mat[j])]
+        return mat
+    
+    @staticmethod
+    def swap_rows(mat, i, j):
+        print(f'mat[i]: {mat[i]}, mat[j]: {mat[j]}')
+        mat[i], mat[j] = mat[j], mat[i]
+        return mat
+
+    def pivotting(self, mat, j):
+        self.print_matrix(mat)
+        i = j
+        while i < 10 and mat[i][j] == 0:
+            i += 1
+        if i == 10:
+            return
+
+        pivot = i
+
+        # i += 1
+        i = 0
+        while i < 10:
+            if i != pivot and mat[i][j] != 0:
+                self.add_multiple_row(mat, pivot, i, int(-mat[i][j]/mat[pivot][j]))
+                self.add_multiple_row(self.identity_mat, pivot, i, int(-mat[i][j]/mat[pivot][j]))
+
+            i += 1
+
+        self.swap_rows(mat, pivot, j)
+        self.swap_rows(self.identity_mat, pivot, j)
+        self.print_matrix(mat)
+        self.print_matrix(self.identity_mat)
+
+    @staticmethod
+    def print_matrix(mat):
+        print(f'mat: \n{np.array(mat)}')
 
 
 def main():
