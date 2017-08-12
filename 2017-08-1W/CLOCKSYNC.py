@@ -20,31 +20,38 @@ class Clocksync:
     def bfs(self, problem):
         visited = {}
         queue = []
-        queue.append((problem, 0))
+        queue.append((tuple([0]*10), problem, 0))
 
         while len(queue) > 0:
-            cur_state, distance = queue.pop(0)
-            # print(f'state: {cur_state}, dist: {distance}')
+            cur_switch, cur_state, distance = queue.pop(0)
+            # print(f'switch: {cur_switch}, state: {cur_state}, dist: {distance}')
             if cur_state == self.answer:
                 return distance
             if distance > 30:
                 return -1
 
-            # print(f'next: {self.get_next(cur_state)}')
-            for next_state in self.get_next(cur_state):
+            switch_list, state_list = self.get_next(cur_switch, cur_state)
+            for next_switch, next_state in zip(switch_list, state_list):
                 if not visited.get(next_state, False):
-                    queue.append((next_state, distance + 1))
+                    queue.append((tuple(next_switch), next_state, distance + 1))
                     visited[next_state] = True
             # print(f'q: {queue}')
 
-    def get_next(self, cur_state):
-        next_state_list = []
-        for switch_num, indices in enumerate(self.switch.values()):
-            # if any([cur_state[i] != 12 for i in indices]):
-            next_state = self.push_switch(cur_state, switch_num)
+    def get_next(self, switch_state, cur_state):
+        next_switch_list = []
+        next_state_list   = []
+        for switch_idx in range(10):
+            next_switch = [switch_num for switch_num in switch_state]
+            next_switch[switch_idx] += 1
+
+            if next_switch[switch_idx] > 3:
+                continue
+
+            next_switch_list.append(next_switch)
+            next_state = self.push_switch(cur_state, switch_idx)
             next_state_list.append(next_state)
 
-        return next_state_list
+        return next_switch_list, next_state_list
 
     def push_switch(self, cur_state, switch_num):
         next_state = list(cur_state)

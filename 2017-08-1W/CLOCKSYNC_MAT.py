@@ -93,16 +93,27 @@ class Clocksync:
         x[5] = -Lb[5] % 4
         x[6] = -Lb[6] % 4
         x[8] = -Lb[8] % 4
-        x[9] = (Lb[9] // 2) % 4
+        x[9] = Lb[13] % 4
         x[7] = (Lb[7] - x[9]) % 4
+
         
-        if self.is_correct(x, string):
+        if not self.is_other_conditions(x, Lb) or not self.is_correct(x, string):
+            return -1
+        else:
             ret = 0
             for i in range(10):
                 ret += x[i]
             return ret
-        else:
-            return -1
+
+    def is_other_conditions(self, x, Lb):
+        condition = True
+        condition &= (x[1] - x[9]) % 4 == Lb[1] % 4
+        condition &= (2*x[9]) % 4 == Lb[9] % 4
+        condition &= (x[2] + x[4]) % 4 == Lb[10] % 4
+        condition &= x[4] % 4 == Lb[12] % 4
+        condition &= (x[2] + x[5] + x[6] + x[7]) % 4 == Lb[14] % 4
+        condition &= (x[2] + x[5] + x[6] + x[7]) % 4 == Lb[15] % 4
+        return condition
 
     def is_correct(self, x, string):
         cur_state = tuple([int(i) for i in string.split()])
@@ -123,8 +134,8 @@ class Clocksync:
 
 def main():
     C = int(input())
+    cs = Clocksync()
     for _ in range(C):
-        cs = Clocksync()
         print(cs.solve(input()))
 
 if __name__ == '__main__':
