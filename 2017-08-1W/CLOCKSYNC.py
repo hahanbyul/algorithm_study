@@ -14,6 +14,9 @@ class Clocksync:
 
         self.answer = tuple([12] * 16)
 
+    def solve(self, problem):
+        return self.bfs(tuple([int(i) for i in problem.split()]))
+
     def bfs(self, problem):
         visited = {}
         queue = []
