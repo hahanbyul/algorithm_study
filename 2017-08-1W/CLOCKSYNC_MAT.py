@@ -95,27 +95,36 @@ class Clocksync:
         x[8] = -Lb[8] % 4
         x[9] = (Lb[9] // 2) % 4
         x[7] = (Lb[7] - x[9]) % 4
-
-        condition = True
-        condition &= (x[1] - x[9]) % 4 == Lb[1] % 4
-        condition &= (x[2] + x[4]) % 4 == Lb[10] % 4
-        condition &= x[4] == Lb[12] % 4
-        condition &= x[9] == Lb[13] % 4
-        condition &= (x[2] + x[5] + x[6] + x[7]) % 4 == Lb[14] % 4
-        condition &= (x[2] + x[5] + x[6] + x[7]) % 4 == Lb[15] % 4
-
-        if not condition:
-            return -1
-        else:
+        
+        if self.is_correct(x, string):
             ret = 0
             for i in range(10):
                 ret += x[i]
             return ret
+        else:
+            return -1
+
+    def is_correct(self, x, string):
+        cur_state = tuple([int(i) for i in string.split()])
+        for i in range(10):
+            for _ in range(x[i]):
+                cur_state = self.push_switch(cur_state, i)
+
+        return cur_state == self.answer
+
+    def push_switch(self, cur_state, switch_num):
+        next_state = list(cur_state)
+        for i in self.switch[switch_num]:
+            next_state[i] += 3
+            if next_state[i] == 15:
+                next_state[i] = 3
+
+        return tuple(next_state)
 
 def main():
     C = int(input())
-    cs = Clocksync()
     for _ in range(C):
+        cs = Clocksync()
         print(cs.solve(input()))
 
 if __name__ == '__main__':
