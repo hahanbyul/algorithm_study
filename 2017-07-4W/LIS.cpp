@@ -14,7 +14,8 @@ class LIS {
         ~LIS();
         void ReadSeq();
         int  Solve();
-        int  MaxLength(int max_val, int index);
+        int  MaxLength(int index);
+        void PrintCache();
 };
 
 int main() {
@@ -57,39 +58,31 @@ int LIS::Solve() {
     for (int i = 0; i < N; i++) {
         ret = cache[i];
         if (ret == -1) {
-            ret = MaxLength(0, i);
+            ret = MaxLength(i);
             cache[i] = ret;
         }
         max_val = max(max_val, ret);
     }
 
-    /*
-    cout << "cache: ";
-    for (int i = 0; i < N; i++)
-        cout << cache[i] << ' ';
-    cout << endl;
-    */
-
     cout << max_val << endl;
     return max_val;
 }
 
-int LIS::MaxLength(int max_val, int index) {
-    // cout << "val: " << max_val << ", index: " << index << endl;
+int LIS::MaxLength(int index) {
     if (cache[index] != -1)
         return cache[index];
 
-    if (index >= N)
-        return 0;
+    int ret = 1;
+    for (int i = index+1; i < N; i++)
+        if (seq[i] > seq[index])
+            ret = max(ret, 1 + MaxLength(i));
+    cache[index] = ret;
+    return ret;
+}
 
-    if (seq[index] <= max_val)
-        return MaxLength(max_val, index+1);
-    else {
-        int ret = 0;
-        for (int i = index; i < N; i++)
-            ret = max(ret, 1 + MaxLength(seq[index], i+1));
-        // cout << "return: " << ret << endl;
-        cache[index] = ret;
-        return ret;
-    }
+void LIS::PrintCache() {
+    cout << "cache: ";
+    for (int i = 0; i < N; i++)
+        cout << cache[i] << ' ';
+    cout << endl;
 }
