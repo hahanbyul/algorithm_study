@@ -4,30 +4,27 @@ class Stair:
     def __init__(self, N):
         self.score = [0]
         self.N = N
+        self.cache = {}
 
     def read_stairs(self):
-        self.score.append(input())
+        self.score.append(int(input()))
 
-    def solve(self, step_prev, index):
-        print(f'index: {index}')
+    def solve(self, index):
+        if self.cache.get(index, False):
+            return self.cache[index]
+
         if index == self.N:
-            print(f'hist: {step_prev}')
             return self.score[self.N]
+        if index == self.N-1:
+            return self.score[self.N] + self.score[self.N-1]
+        if index == self.N-2:
+            return self.score[self.N] + self.score[self.N-2]
+        
+        step_1_2 = self.score[index] + self.score[index+1] + self.solve(index+3)
+        step_2   = self.score[index] + self.solve(index+2)
 
-        ret = 0
-        for step in [1, 2]:
-            if len(step_prev) >= 2 and step_prev[-1] ==  1 and step == 1:
-                continue
-            if index + step > self.N:
-                break
-
-            step_prev.append(step)
-            ret2 = self.score[index] + self.solve(step_prev, index + step)
-            ret = max(ret, ret2)
-            print(f'ret: {ret2}')
-            step_prev.pop()
-
-        print(f'max_ret: {ret}')
+        ret = max(step_1_2, step_2)
+        self.cache[index] = ret
         return ret
 
 
@@ -36,7 +33,7 @@ def main():
     stair = Stair(stair_num)
     for _ in range(stair_num):
         stair.read_stairs()
-    print(stair.solve([], 0))
+    print(max(stair.solve(0), stair.solve(1)))
 
 
 if __name__ == '__main__':
