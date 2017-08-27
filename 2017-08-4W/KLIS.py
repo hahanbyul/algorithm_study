@@ -2,6 +2,7 @@ class KLIS:
     def __init__(self):
         self.cache = {}
         self.choices = {}
+        self.comb_cache = {}
 
     def read_seq(self, string):
         self.seq = [int(i) for i in string.split()]
@@ -71,15 +72,19 @@ class KLIS:
                 return self.kth_seq(k, num, seq, lis_length-1)
 
     def get_comb_num(self, char, depth):
-        # memoization!
+        if self.comb_cache.get(char, False):
+            return self.comb_cache[char]
+
         if depth == 1:
             return 1
         
         ret = 0
         for next_char in self.choices[char]:
             ret += self.get_comb_num(next_char, depth-1)
-
+        
+        self.comb_cache[char] = ret
         return ret
+
 
 def main():
     C = int(input())
@@ -87,7 +92,7 @@ def main():
         N, K = [int(i) for i in input().split()]
         klis = KLIS()
         klis.read_seq(input())
-        klis.solve(K)
+        klis.solve2(K)
 
 
 if __name__ == '__main__':
