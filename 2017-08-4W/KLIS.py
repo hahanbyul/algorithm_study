@@ -35,6 +35,14 @@ class KLIS:
         self.k = 0
         return self.reconstruct_(-1, [])
 
+    def solve2(self, K):
+        lis_length = self.lis(-1)-1
+        print(lis_length)
+
+        seq = self.kth_seq(K, -1, [], lis_length)
+        print(" ".join([str(x) for x in seq]))
+        return seq
+
     def reconstruct_(self, start, seq):
         if len(seq) == self.cache[-1]-1:
             self.k += 1
@@ -50,6 +58,28 @@ class KLIS:
     def compare(self, key):
         return self.seq[key]
 
+    def kth_seq(self, k, start, seq, lis_length):
+        if lis_length == 0:
+            return seq
+
+        for num in sorted(self.choices[start], key=self.compare):
+            ans = self.get_comb_num(num, lis_length)
+            if k > ans:
+                k -= ans
+            else:
+                seq.append(self.seq[num])
+                return self.kth_seq(k, num, seq, lis_length-1)
+
+    def get_comb_num(self, char, depth):
+        # memoization!
+        if depth == 1:
+            return 1
+        
+        ret = 0
+        for next_char in self.choices[char]:
+            ret += self.get_comb_num(next_char, depth-1)
+
+        return ret
 
 def main():
     C = int(input())
