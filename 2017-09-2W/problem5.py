@@ -1,4 +1,7 @@
-def solve(land, row_index, prev_i):
+def solve(cache, land, row_index, prev_i):
+    if cache.get((row_index, prev_i), False):
+        return cache[(row_index, prev_i)]
+
     if row_index >= len(land):
         return 0
 
@@ -6,10 +9,12 @@ def solve(land, row_index, prev_i):
     for index, x in enumerate(land[row_index]):
         if index == prev_i:
             continue
-        ret = max(ret, x + solve(land, row_index+1, index))
+        ret = max(ret, x + solve(cache, land, row_index+1, index))
 
+    cache[(row_index, prev_i)] = ret
     return ret
 
 def solution(land):
-    answer = solve(land, 0, -1)
+    cache = {}
+    answer = solve(cache, land, 0, -1)
     return answer
