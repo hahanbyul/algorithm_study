@@ -43,6 +43,13 @@ LIS::~LIS() {
     delete []cache;
 }
 
+void LIS::PrintCache() {
+    cout << "cache: ";
+    for (int i = 0; i < N; i++)
+        cout << cache[i] << ' ';
+    cout << endl;
+}
+
 void LIS::ReadSeq() {
     int num;
     for (int i = 0; i < N; i++) {
@@ -53,7 +60,6 @@ void LIS::ReadSeq() {
 
 int LIS::Solve() {
     int ret;
-    int max_val = 0;
 
     for (int i = 0; i < N; i++) {
         ret = cache[i];
@@ -61,7 +67,6 @@ int LIS::Solve() {
             ret = MaxLength(i);
             cache[i] = ret;
         }
-        max_val = max(max_val, ret);
     }
 
     cout << max_val << endl;

@@ -1,34 +1,38 @@
 class LIS:
     def __init__(self):
         self.cache = {}
-        self.max_val = 0
+        self.choices = {}
 
-    def solve(self, seq):
-        for i, num in enumerate(seq):
-            ret = self.cache.get(i, False)
-            if not ret:
-                ret = self.max_length(seq[i:], 0, i)
-                self.cache[i] = ret
-            self.max_val = max(self.max_val, ret)
+    def read_seq(self, string):
+        self.seq = [int(i) for i in string.split()]
 
-        print(self.max_val)
-        return self.max_val
+    def solve(self):
+        return self.lis(-1)-1
 
-    def max_length(self, seq, num, index):
-        if self.cache.get(index, False):
-            return self.cache[index]
+    def lis(self, start):
+        if self.cache.get(start, False):
+            return self.cache[start]
 
-        if len(seq) == 0:
-            return 0
+        ret = 1
+        for i in range(start+1, len(self.seq)):
+            if start == -1 or self.seq[i] > self.seq[start]:
+                ans = 1 + self.lis(i)
+                if ret < ans:
+                    ret = ans
+                    self.choices[start] = i
 
-        if seq[0] <= num:
-            return self.max_length(seq[1:], num, index+1)
-        else:
-            ret = 0
-            for i in range(len(seq)):
-                ret = max(ret, 1 + self.max_length(seq[i+1:], seq[0], index+i+1))
-            self.cache[index] = ret
-            return ret
+        self.cache[start] = ret
+        return ret
+
+    def reconstruct(self):
+        return self.reconstruct_(self.choices[-1], [])
+
+    def reconstruct_(self, start, seq):
+        print("start: %d, seq: %s" % (start, seq))
+        seq.append(self.seq[start])
+        if start not in self.choices.keys():
+            return seq
+        return self.reconstruct_(self.choices[start], seq)
 
 
 def main():
@@ -36,9 +40,8 @@ def main():
     for _ in range(C):
         N = int(input())
         lis = LIS()
-
-        seq = [int(i) for i in input().split()]
-        lis.solve(seq)
+        lis.read_seq(input())
+        print(lis.solve())
 
 
 if __name__ == '__main__':
