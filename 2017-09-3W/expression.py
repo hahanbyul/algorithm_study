@@ -1,47 +1,41 @@
-class Expression:
-    @staticmethod
-    def get_initial_array(goal):
-        i = 1
-        summed = 0
-        array = []
+def get_initial_array(goal):
+    i = 1
+    summed = 0
+    array = []
 
-        while summed < goal:
-            array.append(i)
-            summed += i
-            i += 1
+    while summed < goal:
+        array.append(i)
+        summed += i
+        i += 1
 
-        return array, summed
+    return array, summed
 
-    @staticmethod
-    def move_right(array, summed):
-        left  = array.pop(0)
-        right = array[-1] + 1
-        array.append(right)
+def move_right(array, summed):
+    left  = array.pop(0)
+    right = array[-1] + 1
+    array.append(right)
 
-        return summed - left + right
+    return summed - left + right
 
-    def solve(self, goal):
-        array, summed = self.get_initial_array(goal)
-        answer = self.solve_(array[:-1], summed - array[-1], goal)
-        if summed == goal:
-            print(array)
-            answer += 1
+def solve_(array, summed, goal):
+    if len(array) == 1:
+        return 1
 
-        return answer
+    while summed < goal:
+        summed = move_right(array, summed)
 
-    def solve_(self, array, summed, goal):
-        if len(array) == 1:
-            return 1
+    answer = solve_(array[:-1], summed - array[-1], goal)
+    if summed == goal:
+        # print(array)
+        answer += 1
 
-        while summed < goal:
-            summed = self.move_right(array, summed)
+    return answer
 
-        answer = self.solve_(array[:-1], summed - array[-1], goal)
-        if summed == goal:
-            print(array)
-            answer += 1
+def expressions(goal):
+    array, summed = get_initial_array(goal)
+    answer = solve_(array[:-1], summed - array[-1], goal)
+    if summed == goal:
+        # print(array)
+        answer += 1
 
-        return answer
-
-
-
+    return answer
