@@ -5,9 +5,14 @@ def test_sub_min():
     assert Equal.sub_min([1, 3, 3, 3]) == [0, 2, 2, 2]
 
 def test_compute_add_times():
-    assert Equal.compute_add_times(7) == 2
-    assert Equal.compute_add_times(8) == 3
-    assert Equal.compute_add_times(9) == 3
+    eq = Equal([])
+    assert eq.compute_add_times(7) == 2
+    assert eq.compute_add_times(8) == 3
+    assert eq.compute_add_times(9) == 3
+
+def test_count_zero():
+    assert Equal.count_zero([0, 0, 2, 3]) == 2
+    assert Equal.count_zero([0, 0, 2, 3, 0]) == 3
 
 def test_ex1():
     eq = Equal([2, 2, 3, 7])
@@ -29,3 +34,9 @@ def test_special_case():
     eq = Equal([1, 9, 9])
     answer = eq.solve()
     print(answer)
+
+def test_one_case():
+    for x in range(10):
+        eq = Equal([x])
+        answer = eq.solve()
+        print(answer)
