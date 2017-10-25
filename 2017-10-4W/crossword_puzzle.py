@@ -79,8 +79,9 @@ class Puzzle:
     def solve(self):
         for x in range(10):
             for y in range(10):
-                if self.puzzle[x][y] != '+':
-                    ret = self.solve_this((x,y), VERTICAL)
+                if self.puzzle[x][y] == '-':
+                    self.solve_this((x,y), VERTICAL)
+                    self.solve_this((x,y), HORIZONTAL)
 
     def is_solved(self):
         return '-' not in self.puzzle_to_string()
@@ -125,6 +126,7 @@ class Puzzle:
                     else:
                         self.solve_this((x,y+delta), VERTICAL)
 
+                self.solve()
+
                 self.visited[word] = False
                 self.erase_puzzle(start, prev, direction)
-

@@ -5,6 +5,7 @@ VERTICAL = True
 HORIZONTAL = False
 
 ex1_puzzle = '+-++++++++\n+-++++++++\n+-++++++++\n+-----++++\n+-+++-++++\n+-+++-++++\n+++++-++++\n++------++\n+++++-++++\n+++++-++++'
+ex2_puzzle = '+-++++++++\n+-++++++++\n+-------++\n+-++++++++\n+-++++++++\n+------+++\n+-+++-++++\n+++++-++++\n+++++-++++\n++++++++++'
 
 def test_read():
     p = Puzzle()
@@ -49,6 +50,12 @@ def test_solve():
     ex1.puzzle = [[x for x in row] for row in ex1_puzzle.split('\n')]
     ex1.words = 'LONDON;DELHI;ICELAND;ANKARA'.split(';')
     ex1.solve_this((0,1), VERTICAL)
+
+def test_solve_ex2():
+    ex2 = Puzzle()
+    ex2.puzzle = [[x for x in row] for row in ex2_puzzle.split('\n')]
+    ex2.words = 'AGRA;NORWAY;ENGLAND;GWALIOR'.split(';')
+    ex2.solve_this((0,1), VERTICAL)
 
 def test_floor():
     ex1 = Puzzle()
