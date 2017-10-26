@@ -122,22 +122,25 @@ class CoinOnTheTable:
             k += 1
 
         print(k)
-        print('N: %d, M: %d, K: %d' % (self.N, self.M, self.K))
-        self.print_board(self.board_init)
+        # print('N: %d, M: %d, K: %d' % (self.N, self.M, self.K))
+        # self.print_board(self.board_init)
         return k
 
     def is_possible_in_K(self, changes):
         next_changes = []
 
         for change in changes:
-            print(change)
+            # print(change)
             board = self.edit_board(change)
             success, path = self.find_path(board)
 
-            self.print_board(board)
-            print('path: %s' % path)
+            # self.print_board(board)
+            # print('path: %s' % path)
 
             if success and len(path) <= self.K:
+                self.answer_board = self.board
+                self.answer_path  = path
+                self.answer_change = change
                 return []
 
             self.recover_board(change)
@@ -162,3 +165,20 @@ class CoinOnTheTable:
                     next_change.append(new_change)
 
         return next_change
+
+
+def main():
+    cot = CoinOnTheTable()
+    cot.read_numbers(input())
+
+    board = []
+    for n in range(cot.N):
+        board.append(input())
+    board_str = '\n'.join(board)
+    cot.read_board(board_str)
+
+    cot.solve()
+
+
+if __name__ == '__main__':
+    main()

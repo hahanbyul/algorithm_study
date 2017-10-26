@@ -106,6 +106,16 @@ def test_on_random_input():
     ex.N, ex.M = N, M
     ex.board_init = problem.tolist()
     ex.board = problem.tolist()
-    ex.K = randint(ex.min_dist(), N + M)
+    # ex.K = randint(ex.min_dist(), N + M)
+    ex.K = randint(ex.min_dist(), ex.min_dist() + 3)
+
+    print()
+    print('N: %d, M: %d, K: %d' % (ex.N, ex.M, ex.K))
+    ex.print_board(ex.board_init)
 
     ex.solve()
+
+    print(ex.answer_change)
+    ex.print_board(ex.answer_board)
+    print(ex.answer_path)
+
