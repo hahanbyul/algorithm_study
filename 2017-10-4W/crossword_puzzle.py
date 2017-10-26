@@ -101,32 +101,52 @@ class Puzzle:
         return (x, y)
 
     def solve_this(self, start, direction):
+        """
         print('start: (%d, %d)' % start)
         print('direction: %s' % direction)
+        """
         start = self.floor(start, direction)
         cond = self.get_condition(start, direction)
         if len(cond) == 1 or '-' not in cond:
             return 
 
-        pprint.pprint(self.puzzle)
+        # pprint.pprint(self.puzzle)
 
         for word in self.words:
             if not self.visited.get(word, False) and self.is_satisfied(cond, word):
                 self.visited[word] = True
                 prev = self.fill_puzzle(start, word, direction)
-                pprint.pprint(self.puzzle)
+                # pprint.pprint(self.puzzle)
 
-                if self.is_solved():
-                    return True
-
+                """
                 x, y = start
                 for delta in range(len(word)):
                     if direction == VERTICAL:
                         self.solve_this((x+delta,y), HORIZONTAL)
                     else:
                         self.solve_this((x,y+delta), VERTICAL)
+                """
 
                 self.solve()
+                if self.is_solved():
+                    return True
 
                 self.visited[word] = False
                 self.erase_puzzle(start, prev, direction)
+
+    def print_puzzle(self):
+        for row in self.puzzle:
+            print(''.join(row))
+
+
+def main():
+    cw = Puzzle()
+    cw.read_puzzle()
+    cw.read_words()
+
+    cw.solve()
+    cw.print_puzzle()
+
+
+if __name__ == '__main__':
+    main()

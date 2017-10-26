@@ -61,7 +61,7 @@ def test_floor():
     ex1 = Puzzle()
     ex1.puzzle = [[x for x in row] for row in ex1_puzzle.split('\n')]
     print()
-    pprint(ex1.puzzle)
+    ex1.print_puzzle()
     assert ex1.floor((0,1), VERTICAL) == (0, 1)
     assert ex1.floor((3,3), HORIZONTAL) == (3, 1)
     assert ex1.floor((7,5), VERTICAL) == (3, 5)
