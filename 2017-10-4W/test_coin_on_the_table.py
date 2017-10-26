@@ -1,5 +1,7 @@
 from coin_on_the_table import CoinOnTheTable as COT
 from pprint import pprint
+from random import randint
+from numpy.random import choice
 
 def test_read_func():
     cot = COT()
@@ -27,6 +29,14 @@ ex3.read_board('RD\n*L')
 ex4 = COT()
 ex4.read_numbers('2 2 2')
 ex4.read_board('DD\nU*')
+
+ex5 = COT()
+ex5.read_numbers('2 2 2')
+ex5.read_board('DR\nU*')
+
+ex6 = COT()
+ex6.read_numbers('2 2 2')
+ex6.read_board('LL\nL*')
 
 def test_find_star():
     assert ex1.find_star() == (1,0)
@@ -74,3 +84,28 @@ def test_solve_ex3():
 
 def test_solve_ex4():
     assert ex4.solve() == 1
+
+def test_solve_ex5():
+    assert ex5.solve() == 1
+
+def test_solve_ex6():
+    assert ex6.solve() == 2
+    
+def test_dict_keys():
+    change = {(1,0): 'L', (0,1): 'R'}
+    some_dict = {}
+    some_dict[tuple(change.keys())] = 1
+    print(some_dict)
+
+def test_on_random_input():
+    N, M = 10, 10
+    problem = choice(['L', 'R', 'U', 'D'], size=(N,M))
+    problem[randint(0, N-1)][randint(0, M-1)] = '*'
+
+    ex = COT()
+    ex.N, ex.M = N, M
+    ex.board_init = problem.tolist()
+    ex.board = problem.tolist()
+    ex.K = randint(ex.min_dist(), N + M)
+
+    ex.solve()

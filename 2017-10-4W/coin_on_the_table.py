@@ -1,8 +1,11 @@
+from pprint import pprint
+
 class CoinOnTheTable:
     def __init__(self):
         self.dist = {}
         self.path_coord = {}
         self.path_coord[''] = (0,0)
+        self.cache = {}
 
     def read_numbers(self, string):
         self.N, self.M, self.K = [int(x) for x in string.split()]
@@ -28,18 +31,17 @@ class CoinOnTheTable:
 
 
     def find_path(self, board):
-        # caching!
+        board_str = self.board_to_string(board)
+        ret = self.cache.get(board_str, False)
+        if ret:
+            return ret
+
         i, j = 0, 0
         visited = {}
 
         path = ''
         current = self.board[i][j]
         while current != '*':
-            if i < 0 or i >= self.N or j < 0 or j >= self.M:
-                return float('inf')
-            if visited.get((i,j), False):
-                return float('inf')
-
             path += current
             visited[(i,j)] = True
 
@@ -51,12 +53,18 @@ class CoinOnTheTable:
                 j -= 1
             elif current == 'R':
                 j += 1
+
+            if i < 0 or i >= self.N or j < 0 or j >= self.M:
+                self.cache[board_str] = (False, path)
+                return self.cache[board_str]
+            if visited.get((i,j), False):
+                self.cache[board_str] = (False, path)
+                return self.cache[board_str]
+
             current = self.board[i][j]
 
-        if i < 0 or i >= self.N or j < 0 or j >= self.M:
-            return float('inf')
-
-        return path
+        self.cache[board_str] = (True, path)
+        return self.cache[board_str]
 
     @staticmethod
     def board_to_string(board):
@@ -113,6 +121,9 @@ class CoinOnTheTable:
                 break
             k += 1
 
+        print(k)
+        print('N: %d, M: %d, K: %d' % (self.N, self.M, self.K))
+        self.print_board(self.board_init)
         return k
 
     def is_possible_in_K(self, changes):
@@ -121,14 +132,12 @@ class CoinOnTheTable:
         for change in changes:
             print(change)
             board = self.edit_board(change)
-            path = self.find_path(board)
+            success, path = self.find_path(board)
 
             self.print_board(board)
-            print(path)
+            print('path: %s' % path)
 
-            if path == float('inf'):
-                continue
-            if len(path) <= self.K:
+            if success and len(path) <= self.K:
                 return []
 
             self.recover_board(change)
@@ -138,7 +147,7 @@ class CoinOnTheTable:
 
     def get_next_change(self, change):
         next_change = []
-        path = self.find_path(self.edit_board(change))
+        _, path = self.find_path(self.edit_board(change))
         self.recover_board(change)
 
         for i in range(len(path)):
