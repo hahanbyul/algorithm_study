@@ -20,6 +20,14 @@ ex2 = COT()
 ex2.read_numbers('4 4 5')
 ex2.read_board('RDLU\nRDLU\nRDLU\nRRR*')
 
+ex3 = COT()
+ex3.read_numbers('2 2 1')
+ex3.read_board('RD\n*L')
+
+ex4 = COT()
+ex4.read_numbers('2 2 2')
+ex4.read_board('DD\nU*')
+
 def test_find_star():
     assert ex1.find_star() == (1,0)
     assert ex2.find_star() == (3,3)
@@ -41,3 +49,28 @@ def test_find_path():
 def test_find_path_coord():
     assert ex1.find_path_coord('R') == (0,0)
     assert ex1.find_path_coord('RL') == (1,0)
+
+def test_edit_and_recover_board():
+    change = {(0,0): 'L', (0,1): 'R'}
+    assert ex1.board_to_string(ex1.edit_board(change)) == 'LR*L'
+    ex1.recover_board(change)
+    assert ex1.board_to_string(ex1.board) == ex1.board_to_string(ex1.board_init)
+
+def test_get_next_change():
+    assert len(ex1.get_next_change({})) == 9
+
+def test_list_add():
+    assert ['a'] + ['b', 'c'] == ['a', 'b', 'c']
+    a = ['a']
+    a += ['b', 'c']
+
+    assert a == ['a', 'b', 'c']
+
+def test_solve_ex1():
+    assert ex1.solve() == 0
+
+def test_solve_ex3():
+    assert ex3.solve() == 1
+
+def test_solve_ex4():
+    assert ex4.solve() == 1

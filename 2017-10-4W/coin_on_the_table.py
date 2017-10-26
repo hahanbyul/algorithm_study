@@ -12,11 +12,12 @@ class CoinOnTheTable:
         for i, row in enumerate(string.split('\n')):
             for j in range(self.M):
                 self.board[i][j] = row[j]
+        self.board_init = [[x for x in row] for row in self.board]
 
     def find_star(self):
         for i in range(self.N):
             try:
-                j = self.board[i].index('*')
+                j = self.board_init[i].index('*')
             except ValueError:
                 continue
 
@@ -25,10 +26,6 @@ class CoinOnTheTable:
     def min_dist(self):
         return sum(self.find_star())
 
-    def solve(self):
-        if self.min_dist() > self.K:
-            print(-1)
-            return
 
     def find_path(self, board):
         # caching!
@@ -56,6 +53,9 @@ class CoinOnTheTable:
                 j += 1
             current = self.board[i][j]
 
+        if i < 0 or i >= self.N or j < 0 or j >= self.M:
+            return float('inf')
+
         return path
 
     @staticmethod
@@ -66,8 +66,10 @@ class CoinOnTheTable:
     def string_to_board(string, N, M):
         return [[string[i*M + j] for j in range(M)] for i in range(N)]
 
-    def change_board(board, index):
-        path = self.find_path(board)
+    def print_board(self, board):
+        for row in board:
+            print(''.join(row))
+        print('-'*self.M)
 
     def find_path_coord(self, path):
         coord = self.path_coord[path[:-1]]
@@ -86,8 +88,68 @@ class CoinOnTheTable:
 
         return coord
 
-    def solve(self):
-        next_board = change_board(board, index)
-        next_path = self.find_path(next_board)
-        self.dist[next_path] = self.dist[path] + 1
+    def edit_board(self, change):
+        for (i, j) in change.keys():
+            self.board[i][j] = change[(i,j)]
+        return self.board
 
+    def recover_board(self, change):
+        for (i, j) in change.keys():
+            self.board[i][j] = self.board_init[i][j]
+        return self.board
+
+    def solve(self):
+        k = 0
+        changes = [{}]
+
+        min_val = self.min_dist()
+        if min_val > self.K:
+            print(-1)
+            return
+
+        while k <= min_val:
+            changes = self.is_possible_in_K(changes)
+            if len(changes) == 0:
+                break
+            k += 1
+
+        return k
+
+    def is_possible_in_K(self, changes):
+        next_changes = []
+
+        for change in changes:
+            print(change)
+            board = self.edit_board(change)
+            path = self.find_path(board)
+
+            self.print_board(board)
+            print(path)
+
+            if path == float('inf'):
+                continue
+            if len(path) <= self.K:
+                return []
+
+            self.recover_board(change)
+            next_changes += self.get_next_change(change)
+
+        return next_changes
+
+    def get_next_change(self, change):
+        next_change = []
+        path = self.find_path(self.edit_board(change))
+        self.recover_board(change)
+
+        for i in range(len(path)):
+            coord = self.find_path_coord(path[:i+1])
+            if coord not in change.keys():
+                x, y = coord
+                for ch in ['L', 'R', 'U', 'D']:
+                    if self.board_init[x][y] == ch:
+                        continue
+                    new_change = change.copy()
+                    new_change[(x,y)] = ch
+                    next_change.append(new_change)
+
+        return next_change
