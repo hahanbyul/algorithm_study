@@ -37,3 +37,7 @@ def test_string_to_board():
 def test_find_path():
     assert ex1.find_path(ex1.board) == 'RDL'
     assert ex2.find_path(ex1.board) == 'RDDDRR'
+
+def test_find_path_coord():
+    assert ex1.find_path_coord('R') == (0,0)
+    assert ex1.find_path_coord('RL') == (1,0)

@@ -1,6 +1,8 @@
 class CoinOnTheTable:
     def __init__(self):
-        pass
+        self.dist = {}
+        self.path_coord = {}
+        self.path_coord[''] = (0,0)
 
     def read_numbers(self, string):
         self.N, self.M, self.K = [int(x) for x in string.split()]
@@ -29,15 +31,20 @@ class CoinOnTheTable:
             return
 
     def find_path(self, board):
+        # caching!
         i, j = 0, 0
-        path = ''
+        visited = {}
 
+        path = ''
         current = self.board[i][j]
         while current != '*':
             if i < 0 or i >= self.N or j < 0 or j >= self.M:
-                return ''
+                return float('inf')
+            if visited.get((i,j), False):
+                return float('inf')
 
             path += current
+            visited[(i,j)] = True
 
             if current == 'U':
                 i -= 1
@@ -58,4 +65,29 @@ class CoinOnTheTable:
     @staticmethod
     def string_to_board(string, N, M):
         return [[string[i*M + j] for j in range(M)] for i in range(N)]
+
+    def change_board(board, index):
+        path = self.find_path(board)
+
+    def find_path_coord(self, path):
+        coord = self.path_coord[path[:-1]]
+        last = path[-1]
+
+        i, j = coord
+        if last == 'U':
+            i -= 1
+        elif last == 'D':
+            i += 1
+        elif last == 'L':
+            j -= 1
+        elif last == 'R':
+            j += 1
+        self.path_coord[path] = (i, j)
+
+        return coord
+
+    def solve(self):
+        next_board = change_board(board, index)
+        next_path = self.find_path(next_board)
+        self.dist[next_path] = self.dist[path] + 1
 
