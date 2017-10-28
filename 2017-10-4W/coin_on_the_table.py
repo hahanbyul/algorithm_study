@@ -2,10 +2,10 @@ from pprint import pprint
 
 class CoinOnTheTable:
     def __init__(self):
-        self.dist = {}
         self.path_coord = {}
         self.path_coord[''] = (0,0)
         self.cache = {}
+        self.visited = {}
 
     def read_numbers(self, string):
         self.N, self.M, self.K = [int(x) for x in string.split()]
@@ -30,17 +30,20 @@ class CoinOnTheTable:
         return sum(self.find_star())
 
 
-    def find_path(self, board):
+    def find_path(self, board=None, i=0, j=0):
+        if board is None:
+            board = self.board
+
         board_str = self.board_to_string(board)
         ret = self.cache.get(board_str, False)
-        if ret:
+        if ret and i == 0 and j == 0:
+            # print('cached!')
             return ret
 
-        i, j = 0, 0
         visited = {}
 
         path = ''
-        current = self.board[i][j]
+        current = board[i][j]
         while current != '*':
             path += current
             visited[(i,j)] = True
@@ -61,7 +64,7 @@ class CoinOnTheTable:
                 self.cache[board_str] = (False, path)
                 return self.cache[board_str]
 
-            current = self.board[i][j]
+            current = board[i][j]
 
         self.cache[board_str] = (True, path)
         return self.cache[board_str]
@@ -127,15 +130,16 @@ class CoinOnTheTable:
         return k
 
     def is_possible_in_K(self, changes):
+        # pprint(changes)
         next_changes = []
 
         for change in changes:
             # print(change)
             board = self.edit_board(change)
-            success, path = self.find_path(board)
-
             # self.print_board(board)
+            success, path = self.find_path(board)
             # print('path: %s' % path)
+
 
             if success and len(path) <= self.K:
                 self.answer_board = self.board
@@ -151,18 +155,35 @@ class CoinOnTheTable:
     def get_next_change(self, change):
         next_change = []
         _, path = self.find_path(self.edit_board(change))
-        self.recover_board(change)
 
         for i in range(len(path)):
+            if self.visited.get(path[:i+1], False):
+                continue
+
             coord = self.find_path_coord(path[:i+1])
+
             if coord not in change.keys():
                 x, y = coord
                 for ch in ['L', 'R', 'U', 'D']:
                     if self.board_init[x][y] == ch:
                         continue
+
                     new_change = change.copy()
                     new_change[(x,y)] = ch
                     next_change.append(new_change)
+
+                    self.board[x][y] = ch
+                    result, rem_path = self.find_path(i=x, j=y)
+                    self.cache[self.board_to_string(self.board)] = (result, path[:i] + rem_path)
+                    """
+                    self.print_board(self.board)
+                    print('compute advance: %s' % self.cache[self.board_to_string(self.board)][1])
+                    print('saved: %s' % path[:i])
+                    """
+                    self.board[x][y] = self.board_init[x][y]
+                    
+            self.visited[path[:i+1]] = True
+        self.recover_board(change)
 
         return next_change
 
