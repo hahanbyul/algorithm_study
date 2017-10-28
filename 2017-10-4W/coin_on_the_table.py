@@ -5,6 +5,7 @@ class CoinOnTheTable:
         self.path_coord = {}
         self.path_coord[''] = (0,0)
         self.cache = {}
+        self.cache_start = {}
         self.visited = {}
 
     def read_numbers(self, string):
@@ -42,7 +43,11 @@ class CoinOnTheTable:
 
         visited = {}
 
-        path = ''
+        if self.cache_start.get(board_str, False):
+            path, (i, j) = self.cache_start[board_str]
+        else:
+            path = ''
+
         current = board[i][j]
         while current != '*':
             path += current
@@ -172,12 +177,12 @@ class CoinOnTheTable:
                     new_change[(x,y)] = ch
                     next_change.append(new_change)
 
+                    """
                     self.board[x][y] = ch
-                    result, rem_path = self.find_path(i=x, j=y)
-                    self.cache[self.board_to_string(self.board)] = (result, path[:i] + rem_path)
+                    self.cache_start[self.board_to_string(self.board)] = (path[:i], (x,y))
+                    """
                     """
                     self.print_board(self.board)
-                    print('compute advance: %s' % self.cache[self.board_to_string(self.board)][1])
                     print('saved: %s' % path[:i])
                     """
                     self.board[x][y] = self.board_init[x][y]
