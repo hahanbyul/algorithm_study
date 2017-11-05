@@ -31,11 +31,8 @@ class CoinOnTheTable:
         return sum(self.find_star())
 
 
-    def find_path(self, board=None, i=0, j=0):
-        if board is None:
-            board = self.board
-
-        board_str = self.board_to_string(board)
+    def find_path(self, change, i=0, j=0):
+        board_str = self.change_to_string(change)
         ret = self.cache.get(board_str, False)
         if ret and i == 0 and j == 0:
             # print('cached!')
@@ -48,6 +45,7 @@ class CoinOnTheTable:
         else:
             path = ''
 
+        board = self.edit_board(change)
         current = board[i][j]
         while current != '*':
             path += current
@@ -71,6 +69,7 @@ class CoinOnTheTable:
 
             current = board[i][j]
 
+        board = self.recover_board(change)
         self.cache[board_str] = (True, path)
         return self.cache[board_str]
 
@@ -134,32 +133,52 @@ class CoinOnTheTable:
         # self.print_board(self.board_init)
         return k
 
+    def change_to_string(self, change):
+        string = []
+        for key in sorted(change.keys(), key=lambda x : x[0]*self.M + x[1]):
+            string.append('%d,%d,%s' % (key[0], key[1], change[key]))
+
+        return '/'.join(string)
+
+    def string_to_change(self, string):
+        change = {}
+        if string == '':
+            return change
+
+        for item in string.split('/'):
+            x, y, ch = item.split(',')
+            change[(int(x),int(y))] = ch
+
+        return change
+
     def is_possible_in_K(self, changes):
         # pprint(changes)
         next_changes = []
 
         for change in changes:
-            # print(change)
-            board = self.edit_board(change)
+            print(change)
+            string = self.change_to_string(change)
+            # print(string)
+            # print(self.string_to_change(string))
+
             # self.print_board(board)
-            success, path = self.find_path(board)
-            # print('path: %s' % path)
+            success, path = self.find_path(change)
+            print('path: %s' % path)
 
 
             if success and len(path) <= self.K:
-                self.answer_board = self.board
                 self.answer_path  = path
                 self.answer_change = change
+                self.answer_board = self.edit_board(change)
                 return []
 
-            self.recover_board(change)
             next_changes += self.get_next_change(change)
 
         return next_changes
 
     def get_next_change(self, change):
         next_change = []
-        _, path = self.find_path(self.edit_board(change))
+        _, path = self.find_path(change)
 
         for i in range(len(path)):
             if self.visited.get(path[:i+1], False):
@@ -177,18 +196,15 @@ class CoinOnTheTable:
                     new_change[(x,y)] = ch
                     next_change.append(new_change)
 
-                    """
                     self.board[x][y] = ch
                     self.cache_start[self.board_to_string(self.board)] = (path[:i], (x,y))
-                    """
+                    self.board[x][y] = self.board_init[x][y]
                     """
                     self.print_board(self.board)
                     print('saved: %s' % path[:i])
                     """
-                    self.board[x][y] = self.board_init[x][y]
                     
             self.visited[path[:i+1]] = True
-        self.recover_board(change)
 
         return next_change
 

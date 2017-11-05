@@ -105,7 +105,7 @@ def test_dict_keys():
     print(some_dict)
 
 def test_on_random_input():
-    N, M = 4, 4
+    N, M = 3, 3
     problem = choice(['L', 'R', 'U', 'D'], size=(N,M))
     problem[randint(0, N-1)][randint(0, M-1)] = '*'
 
@@ -153,3 +153,12 @@ def test_new_path():
     assert x == 1 and y == 1
     ex2.board[x][y] = 'R'
     assert path[:index+1] + ex2.find_path(i=x,j=y)[1] == 'RDRDRD'
+
+def test_sort_result():
+    l1 = [(1,1,'R'), (0, 1, 'L')]
+    l1.sort(key=lambda x: x[0]*10 + x[1])
+    print(l1)
+    a = {}
+    a[''] = 1
+    print(a[''])
+
