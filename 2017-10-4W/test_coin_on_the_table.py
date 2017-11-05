@@ -38,50 +38,15 @@ ex6 = COT()
 ex6.read_numbers('2 2 2')
 ex6.read_board('LL\nL*')
 
-def test_find_star():
-    assert ex1.find_star() == (1,0)
-    assert ex2.find_star() == (3,3)
+def test_is_in_board():
+    assert not ex1.is_in_board(-1, 0)
+    assert not ex1.is_in_board(2, 0)
+    assert not ex1.is_in_board(-1, -1)
+    assert ex1.is_in_board(0, 0)
+    assert ex1.is_in_board(1, 1)
 
-def test_min_dist():
-    assert ex1.min_dist() == 1
-    assert ex2.min_dist() == 6
-
-def test_board_to_string():
-    assert ex1.board_to_string(ex1.board) == 'RD*L'
-
-def test_string_to_board():
-    assert ex1.string_to_board('RD*L', 2, 2) == ex1.board
-
-def test_find_path():
-    assert ex1.find_path() == (True, 'RDL')
-    assert ex1.find_path(i=0,j=1) == (True, 'DL')
-    assert ex1.find_path(i=1,j=1) == (True, 'L')
-    assert ex1.find_path(i=1,j=0) == (True, '')
-
-    assert ex2.find_path() == (True, 'RDDDRR')
-
-    assert ex4.find_path() == (False, 'DU')
-    assert ex4.find_path(i=1,j=0) == (False, 'UD')
-
-def test_find_path_coord():
-    assert ex1.find_path_coord('R') == (0,0)
-    assert ex1.find_path_coord('RL') == (0,1)
-
-def test_edit_and_recover_board():
-    change = {(0,0): 'L', (0,1): 'R'}
-    assert ex1.board_to_string(ex1.edit_board(change)) == 'LR*L'
-    ex1.recover_board(change)
-    assert ex1.board_to_string(ex1.board) == ex1.board_to_string(ex1.board_init)
-
-def test_get_next_change():
-    assert len(ex1.get_next_change({})) == 9
-
-def test_list_add():
-    assert ['a'] + ['b', 'c'] == ['a', 'b', 'c']
-    a = ['a']
-    a += ['b', 'c']
-
-    assert a == ['a', 'b', 'c']
+def test_solve():
+    ex1.solve()
 
 def test_solve_ex1():
     assert ex1.solve() == 0
@@ -98,34 +63,23 @@ def test_solve_ex5():
 def test_solve_ex6():
     assert ex6.solve() == 2
     
-def test_dict_keys():
-    change = {(1,0): 'L', (0,1): 'R'}
-    some_dict = {}
-    some_dict[tuple(change.keys())] = 1
-    print(some_dict)
-
 def test_on_random_input():
-    N, M = 3, 3
+    N, M = 9, 9
     problem = choice(['L', 'R', 'U', 'D'], size=(N,M))
     problem[randint(0, N-1)][randint(0, M-1)] = '*'
 
     ex = COT()
     ex.N, ex.M = N, M
-    ex.board_init = problem.tolist()
     ex.board = problem.tolist()
-    ex.K = randint(ex.min_dist(), N + M)
+    ex.K = randint(N, N + M)
+    ex.cache = [[[float('inf') for _ in range(ex.M)] for _ in range(ex.N)] for _ in range(ex.K+1)]
     # ex.K = randint(ex.min_dist(), ex.min_dist() + 3)
 
     print()
     print('%d %d %d' % (ex.N, ex.M, ex.K))
-    ex.print_board(ex.board_init)
+    ex.print_board(ex.board)
 
     ex.solve()
-
-    print('======================================')
-    print(ex.answer_change)
-    ex.print_board(ex.answer_board)
-    print(ex.answer_path)
 
 def test_repeated_input():
     cot = COT()

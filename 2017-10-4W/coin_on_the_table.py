@@ -2,14 +2,15 @@ from pprint import pprint
 
 class CoinOnTheTable:
     def __init__(self):
-        self.path_coord = {}
-        self.path_coord[''] = (0,0)
-        self.cache = {}
-        self.cache_start = {}
-        self.visited = {}
+        self.direction = {}
+        self.direction[(-1, 0)] = 'D'
+        self.direction[(1, 0)]  = 'U'
+        self.direction[(0, -1)] = 'R'
+        self.direction[(0, 1)]  = 'L'
 
     def read_numbers(self, string):
         self.N, self.M, self.K = [int(x) for x in string.split()]
+        self.cache = [[[float('inf') for _ in range(self.M)] for _ in range(self.N)] for _ in range(self.K+1)]
 
     def read_board(self, string):
         self.board = [[0 for _ in range(self.M)] for _ in range(self.N)]
@@ -18,196 +19,61 @@ class CoinOnTheTable:
                 self.board[i][j] = row[j]
         self.board_init = [[x for x in row] for row in self.board]
 
-    def find_star(self):
-        for i in range(self.N):
-            try:
-                j = self.board_init[i].index('*')
-            except ValueError:
-                continue
-
-        return (i, j)
-
-    def min_dist(self):
-        return sum(self.find_star())
-
-
-    def find_path(self, change, i=0, j=0):
-        board_str = self.change_to_string(change)
-        ret = self.cache.get(board_str, False)
-        if ret and i == 0 and j == 0:
-            # print('cached!')
-            return ret
-
-        visited = {}
-
-        if self.cache_start.get(board_str, False):
-            path, (i, j) = self.cache_start[board_str]
-        else:
-            path = ''
-
-        board = self.edit_board(change)
-        current = board[i][j]
-        while current != '*':
-            path += current
-            visited[(i,j)] = True
-
-            if current == 'U':
-                i -= 1
-            elif current == 'D':
-                i += 1
-            elif current == 'L':
-                j -= 1
-            elif current == 'R':
-                j += 1
-
-            if i < 0 or i >= self.N or j < 0 or j >= self.M:
-                self.cache[board_str] = (False, path)
-                return self.cache[board_str]
-            if visited.get((i,j), False):
-                self.cache[board_str] = (False, path)
-                return self.cache[board_str]
-
-            current = board[i][j]
-
-        board = self.recover_board(change)
-        self.cache[board_str] = (True, path)
-        return self.cache[board_str]
-
-    @staticmethod
-    def board_to_string(board):
-        return ''.join([''.join([x for x in row]) for row in board])
-
-    @staticmethod
-    def string_to_board(string, N, M):
-        return [[string[i*M + j] for j in range(M)] for i in range(N)]
-
     def print_board(self, board):
         for row in board:
             print(''.join(row))
         print('-'*self.M)
 
-    def find_path_coord(self, path):
-        coord = self.path_coord[path[:-1]]
-        last = path[-1]
-
-        i, j = coord
-        if last == 'U':
-            i -= 1
-        elif last == 'D':
-            i += 1
-        elif last == 'L':
-            j -= 1
-        elif last == 'R':
-            j += 1
-        self.path_coord[path] = (i, j)
-
-        return coord
-
-    def edit_board(self, change):
-        for (i, j) in change.keys():
-            self.board[i][j] = change[(i,j)]
-        return self.board
-
-    def recover_board(self, change):
-        for (i, j) in change.keys():
-            self.board[i][j] = self.board_init[i][j]
-        return self.board
+    def print_cache(self, t):
+        print('t = %d' % t)
+        for row in self.cache[t]:
+            print(row)
 
     def solve(self):
-        k = 0
-        changes = [{}]
+        self.cache[0][0][0] = 0
+        # self.print_cache(0)
 
-        min_val = self.min_dist()
-        if min_val > self.K:
-            print(-1)
-            return
+        ret = float('inf')
 
-        while k <= min_val:
-            changes = self.is_possible_in_K(changes)
-            if len(changes) == 0:
-                break
-            k += 1
-
-        print(k)
-        # print('N: %d, M: %d, K: %d' % (self.N, self.M, self.K))
-        # self.print_board(self.board_init)
-        return k
-
-    def change_to_string(self, change):
-        string = []
-        for key in sorted(change.keys(), key=lambda x : x[0]*self.M + x[1]):
-            string.append('%d,%d,%s' % (key[0], key[1], change[key]))
-
-        return '/'.join(string)
-
-    def string_to_change(self, string):
-        change = {}
-        if string == '':
-            return change
-
-        for item in string.split('/'):
-            x, y, ch = item.split(',')
-            change[(int(x),int(y))] = ch
-
-        return change
-
-    def is_possible_in_K(self, changes):
-        # pprint(changes)
-        next_changes = []
-
-        for change in changes:
-            print(change)
-            string = self.change_to_string(change)
-            # print(string)
-            # print(self.string_to_change(string))
-
-            # self.print_board(board)
-            success, path = self.find_path(change)
-            print('path: %s' % path)
-
-
-            if success and len(path) <= self.K:
-                self.answer_path  = path
-                self.answer_change = change
-                self.answer_board = self.edit_board(change)
-                return []
-
-            next_changes += self.get_next_change(change)
-
-        return next_changes
-
-    def get_next_change(self, change):
-        next_change = []
-        _, path = self.find_path(change)
-
-        for i in range(len(path)):
-            if self.visited.get(path[:i+1], False):
-                continue
-
-            coord = self.find_path_coord(path[:i+1])
-
-            if coord not in change.keys():
-                x, y = coord
-                for ch in ['L', 'R', 'U', 'D']:
-                    if self.board_init[x][y] == ch:
+        for t in range(1, self.K+1):
+            for i in range(self.N):
+                for j in range(self.M):
+                    if i + j > self.K:
                         continue
 
-                    new_change = change.copy()
-                    new_change[(x,y)] = ch
-                    next_change.append(new_change)
+                    self.cache[t][i][j] = self.check_neighbor(t, i, j)
 
-                    self.board[x][y] = ch
-                    self.cache_start[self.board_to_string(self.board)] = (path[:i], (x,y))
-                    self.board[x][y] = self.board_init[x][y]
-                    """
-                    self.print_board(self.board)
-                    print('saved: %s' % path[:i])
-                    """
-                    
-            self.visited[path[:i+1]] = True
+                    if self.board[i][j] == '*':
+                        ret = min(ret, self.cache[t][i][j])
 
-        return next_change
+            # self.print_cache(t)
 
+        if ret == float('inf'):
+            print(-1)
+        else:
+            print(ret)
+        return ret
+
+    def check_neighbor(self, t, i, j):
+        ret = float('inf')
+
+        for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
+            if not self.is_in_board(i+di, j+dj):
+                continue
+
+            cand = self.cache[t-1][i+di][j+dj]
+            if self.board[i+di][j+dj] != self.direction[(di,dj)]:
+                cand += 1
+
+            ret = min(ret, cand)
+
+        return ret
+
+    def is_in_board(self, i, j):
+        if 0 <= i < self.N and 0 <= j < self.M:
+            return True
+        else:
+            return False
 
 def main():
     cot = CoinOnTheTable()
