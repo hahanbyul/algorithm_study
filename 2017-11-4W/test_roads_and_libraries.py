@@ -14,6 +14,7 @@ def test_all_true():
 
 def test_compute_how_many_ex1():
     for i in [0, 1, 2]:
+        print('i:', i+1)
         ex = RoadsAndLibraries()
         ex.read_input_file('ex1.txt')
         visited = [False for _ in range(ex.num_city)]

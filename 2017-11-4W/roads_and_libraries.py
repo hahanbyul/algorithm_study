@@ -60,21 +60,28 @@ class RoadsAndLibraries():
             remained_road = num_road - self.compute_how_many_cities_are_connected(i, visited)
             return self.is_possible_with_these(num_lib-1, remained_road, visited)
 
-    def compute_how_many_cities_are_connected(self, city, visited):
-        visited[city] = True
-
+    def compute_how_many_cities_are_connected(self, start, visited):
         sum_cities = 0
-        for next_city, is_road in enumerate(self.road[city]):
-            if not is_road or visited[next_city]:
-                continue
+        queue = []
+        queue.append(start)
+        visited[start] = True
 
+        while len(queue) > 0:
+            city = queue.pop()
             sum_cities += 1
-            self.road[city][next_city] = False
-            self.road[next_city][city] = False
 
-            sum_cities += self.compute_how_many_cities_are_connected(next_city, visited)
+            for next_city, is_road in enumerate(self.road[city]):
+                if not is_road:
+                    continue
 
-        return sum_cities
+                if not visited[next_city]:
+                    visited[next_city] = True
+                    queue.append(next_city)
+
+                    self.road[city][next_city] = False
+                    self.road[next_city][city] = False
+
+        return sum_cities-1
 
 
 def main():
