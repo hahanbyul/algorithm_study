@@ -6,32 +6,51 @@ class RoadsAndLibraries():
         f = open(filename, 'r')
         n, m, x, y = f.readline().strip().split(' ')
         self.num_city, self.num_road, self.cost_lib, self.cost_road = [int(n), int(m), int(x), int(y)]
+        self.initialize(self.num_city)
 
-        # initialize graph
-        self.library = [False for _ in range(self.num_city)]
-        self.road    = [[False for _ in range(self.num_city)] for _ in range(self.num_city)]
-        
-        for a1 in range(self.num_road):
+        for _ in range(self.num_road):
             city_1, city_2 = f.readline().strip().split(' ')
-            city_1, city_2 = [int(city_1), int(city_2)]
+            city_1, city_2 = [int(city_1)-1, int(city_2)-1]
 
-            self.road[city_1-1][city_2-1] = True
-            self.road[city_2-1][city_1-1] = True
+            self.union(city_1, city_2)
 
     def read_input(self):
         n, m, x, y = input().strip().split(' ')
         self.num_city, self.num_road, self.cost_lib, self.cost_road = [int(n), int(m), int(x), int(y)]
+        self.initialize(self.num_city)
 
-        # initialize graph
-        self.library = [False for _ in range(self.num_city)]
-        self.road    = [[False for _ in range(self.num_city)] for _ in range(self.num_city)]
-        
-        for a1 in range(self.num_road):
+        for _ in range(self.num_road):
             city_1, city_2 = input().strip().split(' ')
-            city_1, city_2 = [int(city_1), int(city_2)]
+            city_1, city_2 = [int(city_1)-1, int(city_2)-1]
 
-            self.road[city_1-1][city_2-1] = True
-            self.road[city_2-1][city_1-1] = True
+            self.union(city_1, city_2)
+
+    def initialize(self, N):
+        self.count = N
+        self.id = [i for i in range(N)]
+        self.size = [1 for _ in range(N)]
+
+    def connected(self, p, q):
+        return self.find(p) == self.find(q)
+
+    def find(self, p):
+        while p != self.id[p]:
+            p = self.id[p]
+        return p
+
+    def union(self, p, q):
+        i = self.find(p)
+        j = self.find(q)
+        if i == j:
+            return
+
+        if self.size[i] < self.size[j]:
+            self.id[i] = j
+            self.size[j] += self.size[i]
+        else:
+            self.id[j] = i
+            self.size[i] += self.size[j]
+        self.count -= 1
 
     def solve(self):
         if self.cost_lib <= self.cost_road:
@@ -41,39 +60,12 @@ class RoadsAndLibraries():
         num_road = self.num_city - num_lib
         return num_lib * self.cost_lib + num_road * self.cost_road
 
-    def compute_how_many_cities_are_connected(self, start, visited):
-        sum_cities = 0
-        queue = []
-        queue.append(start)
-        visited[start] = True
-
-        while len(queue) > 0:
-            city = queue.pop()
-            sum_cities += 1
-
-            for next_city, is_road in enumerate(self.road[city]):
-                if not is_road:
-                    continue
-
-                if not visited[next_city]:
-                    visited[next_city] = True
-                    queue.append(next_city)
-
-                    self.road[city][next_city] = False
-                    self.road[next_city][city] = False
-
-        return sum_cities-1
-
     def find_unions(self):
-        visited = [False for _ in range(self.num_city)]
         num_unions = 0
 
-        for city, is_visited in enumerate(visited):
-            if is_visited:
-                continue
-
-            self.compute_how_many_cities_are_connected(city, visited)
-            num_unions += 1
+        for i in range(self.num_city):
+            if i == self.id[i]:
+                num_unions += 1
 
         return num_unions
 
