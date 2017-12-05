@@ -34,32 +34,12 @@ class RoadsAndLibraries():
             self.road[city_2-1][city_1-1] = True
 
     def solve(self):
-        if self.cost_lib < self.cost_road:
+        if self.cost_lib <= self.cost_road:
             return self.num_city * self.cost_lib
 
-        for num_lib in range(1, self.num_city):
-            num_road = self.num_city - num_lib
-
-            if self.is_possible_with_these(num_lib, num_road):
-                return num_lib * self.cost_lib + num_road * self.cost_road
-
-        # if num_lib == num_city (not returned before)
-        return self.num_city * self.cost_lib
-
-    def is_possible_with_these(self, num_lib, num_road):
-        visited = [False for _ in range(self.num_city)]
-        while True:
-            if num_road <= 0:
-                return True if num_lib + num_road == 0 and all(visited) else False
-            if num_lib == 0 and num_road == 0:
-                return True if all(visited) else False
-
-            for i, is_visited in enumerate(visited):
-                if is_visited:
-                    continue
-
-                num_lib  -= 1
-                num_road -= self.compute_how_many_cities_are_connected(i, visited)
+        num_lib = self.find_unions()
+        num_road = self.num_city - num_lib
+        return num_lib * self.cost_lib + num_road * self.cost_road
 
     def compute_how_many_cities_are_connected(self, start, visited):
         sum_cities = 0
@@ -83,6 +63,19 @@ class RoadsAndLibraries():
                     self.road[next_city][city] = False
 
         return sum_cities-1
+
+    def find_unions(self):
+        visited = [False for _ in range(self.num_city)]
+        num_unions = 0
+
+        for city, is_visited in enumerate(visited):
+            if is_visited:
+                continue
+
+            self.compute_how_many_cities_are_connected(city, visited)
+            num_unions += 1
+
+        return num_unions
 
 
 def main():
