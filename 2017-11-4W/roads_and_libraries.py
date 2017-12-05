@@ -4,38 +4,34 @@
 class RoadsAndLibraries():
     def read_input_file(self, filename):
         f = open(filename, 'r')
-        q = int(f.readline().strip())
-        for _ in range(q):
-            n, m, x, y = f.readline().strip().split(' ')
-            self.num_city, self.num_road, self.cost_lib, self.cost_road = [int(n), int(m), int(x), int(y)]
+        n, m, x, y = f.readline().strip().split(' ')
+        self.num_city, self.num_road, self.cost_lib, self.cost_road = [int(n), int(m), int(x), int(y)]
 
-            # initialize graph
-            self.library = [False for _ in range(self.num_city)]
-            self.road    = [[False for _ in range(self.num_city)] for _ in range(self.num_city)]
-            
-            for a1 in range(self.num_road):
-                city_1, city_2 = f.readline().strip().split(' ')
-                city_1, city_2 = [int(city_1), int(city_2)]
+        # initialize graph
+        self.library = [False for _ in range(self.num_city)]
+        self.road    = [[False for _ in range(self.num_city)] for _ in range(self.num_city)]
+        
+        for a1 in range(self.num_road):
+            city_1, city_2 = f.readline().strip().split(' ')
+            city_1, city_2 = [int(city_1), int(city_2)]
 
-                self.road[city_1-1][city_2-1] = True
-                self.road[city_2-1][city_1-1] = True
+            self.road[city_1-1][city_2-1] = True
+            self.road[city_2-1][city_1-1] = True
 
     def read_input(self):
-        q = int(input().strip())
-        for _ in range(q):
-            n, m, x, y = input().strip().split(' ')
-            self.num_city, self.num_road, self.cost_lib, self.cost_road = [int(n), int(m), int(x), int(y)]
+        n, m, x, y = input().strip().split(' ')
+        self.num_city, self.num_road, self.cost_lib, self.cost_road = [int(n), int(m), int(x), int(y)]
 
-            # initialize graph
-            self.library = [False for _ in range(self.num_city)]
-            self.road    = [[False for _ in range(self.num_city)] for _ in range(self.num_city)]
-            
-            for a1 in range(self.num_road):
-                city_1, city_2 = input().strip().split(' ')
-                city_1, city_2 = [int(city_1), int(city_2)]
+        # initialize graph
+        self.library = [False for _ in range(self.num_city)]
+        self.road    = [[False for _ in range(self.num_city)] for _ in range(self.num_city)]
+        
+        for a1 in range(self.num_road):
+            city_1, city_2 = input().strip().split(' ')
+            city_1, city_2 = [int(city_1), int(city_2)]
 
-                self.road[city_1-1][city_2-1] = True
-                self.road[city_2-1][city_1-1] = True
+            self.road[city_1-1][city_2-1] = True
+            self.road[city_2-1][city_1-1] = True
 
     def solve(self):
         if self.cost_lib < self.cost_road:
@@ -79,3 +75,15 @@ class RoadsAndLibraries():
             sum_cities += self.compute_how_many_cities_are_connected(next_city, visited)
 
         return sum_cities
+
+
+def main():
+    q = int(input().strip())
+    for _ in range(q):
+        ral = RoadsAndLibraries()
+        ral.read_input()
+        print(ral.solve())
+
+
+if __name__ == '__main__':
+    main()
