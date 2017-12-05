@@ -40,25 +40,26 @@ class RoadsAndLibraries():
         for num_lib in range(1, self.num_city):
             num_road = self.num_city - num_lib
 
-            visited = [False for _ in range(self.num_city)]
-            if self.is_possible_with_these(num_lib, num_road, visited):
+            if self.is_possible_with_these(num_lib, num_road):
                 return num_lib * self.cost_lib + num_road * self.cost_road
 
         # if num_lib == num_city (not returned before)
         return self.num_city * self.cost_lib
 
-    def is_possible_with_these(self, num_lib, num_road, visited):
-        if num_road <= 0:
-            return True if num_lib + num_road == 0 and all(visited) else False
-        if num_lib == 0 and num_road == 0:
-            return True if all(visited) else False
+    def is_possible_with_these(self, num_lib, num_road):
+        visited = [False for _ in range(self.num_city)]
+        while True:
+            if num_road <= 0:
+                return True if num_lib + num_road == 0 and all(visited) else False
+            if num_lib == 0 and num_road == 0:
+                return True if all(visited) else False
 
-        for i, is_visited in enumerate(visited):
-            if is_visited:
-                continue
+            for i, is_visited in enumerate(visited):
+                if is_visited:
+                    continue
 
-            remained_road = num_road - self.compute_how_many_cities_are_connected(i, visited)
-            return self.is_possible_with_these(num_lib-1, remained_road, visited)
+                num_lib  -= 1
+                num_road -= self.compute_how_many_cities_are_connected(i, visited)
 
     def compute_how_many_cities_are_connected(self, start, visited):
         sum_cities = 0
