@@ -14,7 +14,11 @@ class FindTreeParent:
     def solve(self):
         self.visited = [False for _ in range(self.N+1)]
         self.parent = {}
-        self.find_children(1)
+        self.queue = [1]
+
+        while len(self.queue) != 0:
+            node = self.queue.pop(0)
+            self.find_children(node)
 
         for node in range(2, self.N+1):
             print(self.parent[node])
@@ -28,7 +32,7 @@ class FindTreeParent:
                 continue
 
             self.parent[child] = node
-            self.find_children(child)
+            self.queue.append(child)
 
 
 def main():
