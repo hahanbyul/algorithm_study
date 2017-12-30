@@ -61,15 +61,12 @@ class FindMaxIndepSet:
         return (max_size, max_list)
 
     def solve_(self, node, is_this_node_included):
-        print(f'node {node}, {is_this_node_included}')
         if self.cache.get((node, is_this_node_included), False):
-            print(f'cached!!!')
             return self.cache[(node, is_this_node_included)]
 
         self.visited[node] = True
 
         answer = self.sum_children_answers(node, is_this_node_included)
-        print(answer)
 
         self.cache[(node, is_this_node_included)] = answer
         return answer
