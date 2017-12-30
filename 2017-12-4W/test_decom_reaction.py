@@ -25,3 +25,44 @@ def test_break_edge():
 
 def test_solve():
     assert dr_ex.solve() == 1
+    assert dr_ex.solve(1) == 1
+    assert dr_ex.solve(2) == 2
+    assert dr_ex.solve(3) == 1
+    assert dr_ex.solve(4) == 2
+    assert dr_ex.solve(6) == 2
+    assert dr_ex.solve(7) == 1
+    assert dr_ex.solve(8) == 0
+
+def test_ex1():
+    dr = DecomReaction()
+    with open('ex1.txt') as f:
+        dr.read_input(f.readline)
+    assert dr.solve() == 2
+
+def test_ex2():
+    dr = DecomReaction()
+    with open('ex2.txt') as f:
+        dr.read_input(f.readline)
+    assert dr.solve() == 1
+    assert dr.solve(2) == 3
+    assert dr.solve(3) == 3
+
+def test_get_combinations():
+    # dr_ex.get_combinations(0, [], 4, 8)
+    dr_ex.get_combinations(0, [], 3, 6)
+
+def test_opposite_end():
+    dr3 = DecomReaction()
+    with open('ex3.txt') as f:
+        dr3.read_input(f.readline)
+
+    assert dr3.opposite_end(0, 1) == 2
+    assert dr3.opposite_end(0, 2) == 1
+    assert dr3.opposite_end(4, 2) == 6
+
+def test_ex3():
+    dr3 = DecomReaction()
+    with open('ex3.txt') as f:
+        dr3.read_input(f.readline)
+    dr3.solve3()
+
