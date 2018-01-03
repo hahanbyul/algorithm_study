@@ -31,3 +31,16 @@ def test_solve():
     assert dr.solve_with_root(0, 5) == 2
     assert dr.solve_with_root(0, 6) == 1
     assert dr.solve_with_root(0, 7) == 0
+
+def test_ex():
+    example = DecomReaction()
+    with open('example.txt') as f:
+        example.read_input(f.readline)
+
+    example.construct_tree()
+    example.count_subtree()
+    print(example.tree)
+    print(example.subtree_count)
+
+    assert example.solve_with_root(0, 5) == 1
+
