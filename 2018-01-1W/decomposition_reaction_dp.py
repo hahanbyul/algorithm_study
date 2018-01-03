@@ -5,17 +5,15 @@ class DecomReaction:
         self.N, self.M = [int(x) for x in input_method().split()]
         self.graph = [[] for _ in range(self.N)]
         self.tree  = [[] for _ in range(self.N)]
-        self.vertex_count = [0 for _ in range(self.N)]
         self.subtree_count = [1 for _ in range(self.N)]
+        self.min_cut = [[float('inf') for _ in range(self.N)] for _ in range(self.N)]
+        self.visited = [[False for _ in range(self.N)] for _ in range(self.N)]
 
         for i in range(self.N-1):
             left_atom, right_atom = [int(x)-1 for x in input_method().split()]
 
             self.graph[left_atom].append(right_atom)
             self.graph[right_atom].append(left_atom)
-
-            self.vertex_count[left_atom]  += 1
-            self.vertex_count[right_atom] += 1
 
     def construct_tree(self):
         visited = [False for _ in range(self.N)]
@@ -86,34 +84,49 @@ class DecomReaction:
             ret = min(ret, self.solve_div(root, children, start+1, cut - ccc, summed + ccc, upper_bound))
 
 
-    def all_comb(self, start, children_num, goal, summed, picked, children=None, answer=None, root, root_cut):
-        if start == children_num-1:
-            ret = self.min_cut[root][root_cut]
-            self.min_cut[root][root_cut] = min(ret, answer + self.solve(children[start], goal-summed))
+"""
+
+    def solve(self, node, cut):
+        print(f'node: {node}, cut: {cut}')
+        if self.visited[node][cut]:
+            print('cached!!')
+            return self.min_cut[node][cut]
+
+        self.visited[node][cut] = True
+
+        count = self.subtree_count[node]
+        if cut == 0:
+            return 0
+        if node <= self.N-1 and cut == 1:
+            return 1
+
+        if count < cut:
+            return float('inf')
+        if count == cut:
+            return 1
+
+        self.solve_all_combination(0, count - cut, 0, 0, node, cut)
+        ret = self.min_cut[node][cut] + 1
+        children = self.tree[node]
+        for child in children:
+            new_answer = self.solve(child, cut)
+            print(f'new_answer: {new_answer}')
+            ret = min(ret, new_answer)
+
+        self.min_cut[node][cut] = ret
+        return ret
+
+    def solve_all_combination(self, start, goal, summed, answer, root, root_cut):
+        children = self.tree[root]
+        if start == len(children)-1:
+            old_answer = self.min_cut[root][root_cut]
+            new_answer = answer + self.solve(children[start], goal-summed)
+            print(f'update ({root}, {root_cut}): {new_answer}')
+            self.min_cut[root][root_cut] = min(old_answer, new_answer)
+            return
 
         for num in range(goal+1):
             if summed + num > goal:
                 continue
 
-            picked.append(num)
-            self.all_comb(start+1, children_num, goal, summed + num, picked, children, answer + self.solve(children[start], num), root, root_cut)
-            picked.pop()
-
-    def solve(self, node, cut, visited):
-        if cut <= 1:
-            return cut
-        count = self.subtree_count[node]
-        diff = count - cut
-        if diff < 0:
-            return float('inf')
-        if 0 <= diff <= 1:
-            return 1
-        elif diff < cut:
-            return self.solve(node, diff, visited)
-
-        ret = cut
-        children = self.tree[node]
-        self.all_comb(0, len(children), cut, 0, [], children, 0)
-        return self.min_cut[node][cut]
-
-"""
+            self.solve_all_combination(start+1, goal, summed + num, answer + self.solve(children[start], num), root, root_cut)
