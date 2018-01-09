@@ -7,9 +7,9 @@ using namespace std;
 class DecomReaction {
     public:
         int N, M;
-        bool** graph;
 
         vector<int>* tree;
+        vector<int>* tree_old;
         int* subtree_count;
 
         int** min_cut_with_root, ** min_cut_without_root;
@@ -19,29 +19,29 @@ class DecomReaction {
 
         void readInput() {
             cin >> N >> M;
-            graph = new bool*[N];
-            for (int n = 0; n < N; n++)
-                graph[n] = new bool[N];
+            tree_old = new vector<int>[N];
+            tree     = new vector<int>[N];
 
             int v, w;
             for (int i = 0; i < N-1; i++) {
                 cin >> v >> w;
-                graph[v-1][w-1] = true;
-                graph[w-1][v-1] = true;
+                tree_old[v-1].push_back(w-1);
+                tree_old[w-1].push_back(v-1);
             }
         }
 
         int solve() {
-            constructTree();
-
             subtree_count = new int[N];
-            countSubtree(root);
+            bool* visited = new bool[N];
+            countSubtree(root, visited);
+            delete[] tree_old;
+            delete[] visited;
 
             min_cut_with_root = new int*[N];
             min_cut_without_root = new int*[N];
 
             for (int i = 0; i < N; i++) {
-                min_cut_with_root[i] = new int[N];
+                min_cut_with_root[i]    = new int[N];
                 min_cut_without_root[i] = new int[N];
 
                 for (int j = 0; j < N; j++) {
@@ -55,33 +55,47 @@ class DecomReaction {
             return answer;
         }
 
-    private:
-        void constructTree() {
-            tree = new vector<int>[N];
-            bool* visited = new bool[N];
-            addChild(root, visited);
+        ~DecomReaction() {
+            delete[] tree;
+            delete[] subtree_count;
+
+            for (int i = 0; i < N; i++) {
+                delete[] min_cut_with_root[i];
+                delete[] min_cut_without_root[i];
+            }
+
+            delete[] min_cut_with_root;
+            delete[] min_cut_without_root;
         }
 
-        void addChild(int node, bool* visited) {
-            visited[node] = true;
-            bool* children = graph[node];
-
-            for (int child = 0; child < N; child++) {
-                bool isChild = children[child];
-                if (!isChild) continue;
-                if (visited[child]) continue;
-
-                tree[node].push_back(child);
-                addChild(child, visited);
+        void printCache(vector<int>* cache) {
+            for (int n = 0; n < N; n++) {
+                cout << "node " << n << ": ";
+                printVector(cache[n]);
             }
         }
 
-        int countSubtree(int node) {
-            vector<int> children = tree[node];
+        void printVector(vector<int> children) {
+            for (vector<int>::iterator child = children.begin(); child != children.end(); child++) {
+                cout << " " << *child;
+            }
+            cout << endl;
+        }
+
+    private:
+        int countSubtree(int node, bool* visited) {
+            vector<int> children = tree_old[node];
+            vector<int>* children_new = &tree[node];
+
+            visited[node] = true;
 
             subtree_count[node] = 1;
-            for (vector<int>::iterator child = children.begin(); child != children.end(); child++)
-                subtree_count[node] += countSubtree(*child);
+            for (vector<int>::iterator child = children.begin(); child != children.end(); child++) {
+                if (visited[*child]) continue;
+
+                subtree_count[node] += countSubtree(*child, visited);
+                children_new->push_back(*child);
+            }
 
             return subtree_count[node];
         }

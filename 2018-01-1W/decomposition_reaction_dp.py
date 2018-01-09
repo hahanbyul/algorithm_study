@@ -1,10 +1,10 @@
-# problem: https://www.acmicpc.net/problem/2197
+# problem: http://www.acmicpc.net/problem/2197
+import sys
 
 class DecomReaction:
     def read_input(self, input_method):
         self.N, self.M = [int(x) for x in input_method().split()]
-        self.graph = [[] for _ in range(self.N)]
-        self.tree  = [[] for _ in range(self.N)]
+        self.tree = [[] for _ in range(self.N)]
         self.subtree_count = [1 for _ in range(self.N)]
 
         self.min_cut_with_root = {}
@@ -13,32 +13,27 @@ class DecomReaction:
         for i in range(self.N-1):
             left_atom, right_atom = [int(x)-1 for x in input_method().split()]
 
-            self.graph[left_atom].append(right_atom)
-            self.graph[right_atom].append(left_atom)
+            self.tree[left_atom].append(right_atom)
+            self.tree[right_atom].append(left_atom)
 
-    def construct_tree(self):
-        visited = [False for _ in range(self.N)]
-        self.root = 0
-        self.add_child(self.root, visited)
+    def count_subtree(self, node=None, visited=None):
+        if node is None and visited is None:
+            self.root = 0
+            node = self.root
+            visited = [False for _ in range(self.N)]
 
-    def add_child(self, node, visited):
         visited[node] = True
-        children = self.graph[node]
 
+        children = self.tree[node]
+        new_children = []
         for child in children:
             if visited[child]:
                 continue
 
-            self.tree[node].append(child)
-            self.add_child(child, visited)
+            self.subtree_count[node] += self.count_subtree(child, visited)
+            new_children.append(child)
 
-    def count_subtree(self, node=None):
-        if node is None:
-            node = self.root
-
-        children = self.tree[node]
-        for child in children:
-            self.subtree_count[node] += self.count_subtree(child)
+        self.tree[node] = new_children
 
         return self.subtree_count[node]
 
@@ -97,14 +92,13 @@ class DecomReaction:
             self.solve_all_combination(start+1, goal, progress + step, answer + delta, root, cut)
 
     def solve(self):
-        self.construct_tree()
         self.count_subtree()
         return min(self.solve_with_root(self.root, self.M), self.solve_without_root(self.root, self.M))
 
 
 def main():
     dr = DecomReaction()
-    dr.read_input(input)
+    dr.read_input(sys.stdin.readline)
     answer = dr.solve()
     print(answer)
 
