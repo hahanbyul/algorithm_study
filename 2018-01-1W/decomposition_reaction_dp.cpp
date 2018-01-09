@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -18,13 +19,13 @@ class DecomReaction {
         static const int INFINITY = 150;
 
         void readInput() {
-            cin >> N >> M;
+            scanf("%d %d", &N, &M);
             tree_old = new vector<int>[N];
             tree     = new vector<int>[N];
 
             int v, w;
             for (int i = 0; i < N-1; i++) {
-                cin >> v >> w;
+                scanf("%d %d", &v, &w);
                 tree_old[v-1].push_back(w-1);
                 tree_old[w-1].push_back(v-1);
             }
@@ -50,7 +51,7 @@ class DecomReaction {
                 }
             }
 
-            int answer = min(solve_with_root(root, M), solve_without_root(root, M));
+            int answer = min(solve_with_root(root, M, -1), solve_without_root(root, M, -1));
             cout << answer << endl;
             return answer;
         }
@@ -100,7 +101,7 @@ class DecomReaction {
             return subtree_count[node];
         }
 
-        int solve_with_root(int node, int cut) {
+        int solve_with_root(int node, int cut, int parent) {
             if (min_cut_with_root[node][cut] != INFINITY)
                 return min_cut_with_root[node][cut];
 
@@ -110,8 +111,8 @@ class DecomReaction {
                 return 1;
             }
             if (cut == 1) {
-                min_cut_with_root[node][cut] = children.size();
-                return children.size();
+                min_cut_with_root[node][cut] = children.size()-1;
+                return min_cut_with_root[node][cut];
             }
 
             int count = subtree_count[node];
@@ -123,29 +124,33 @@ class DecomReaction {
                 return 0;
             }
 
-            solve_all_combination(0, cut-1, 0, 0, node, cut);
+            solve_all_combination(0, cut-1, 0, 0, node, cut, parent);
             return min_cut_with_root[node][cut];
         }
 
-        void solve_all_combination(int start, int goal, int progress, int answer, int root, int cut) {
-            vector<int> children = tree[root];
+        void solve_all_combination(int start, int goal, int progress, int answer, int node, int cut, int parent) {
+            vector<int> children = tree[node];
+            if (children[start] == parent) {
+                if (start == children.size()-1) return;
+                else solve_all_combination(start+1, goal, progress, answer, node, cut, parent);
+            }
             if (start == children.size()-1) {
-                int old_answer = min_cut_with_root[root][cut];
-                int new_answer = answer + solve_with_root(children[start], goal - progress);
-                min_cut_with_root[root][cut] = min(old_answer, new_answer);
+                int old_answer = min_cut_with_root[node][cut];
+                int new_answer = answer + solve_with_root(children[start], goal - progress, node);
+                min_cut_with_root[node][cut] = min(old_answer, new_answer);
                 return;
             }
 
             for (int step = 0; step <= subtree_count[children[start]]; step++) {
                 if (progress + step > goal) continue;
 
-                int delta = solve_with_root(children[start], step);
-                solve_all_combination(start+1, goal, progress + step, answer + delta, root, cut);
+                int delta = solve_with_root(children[start], step, node);
+                solve_all_combination(start+1, goal, progress + step, answer + delta, node, cut, parent);
             }
 
         }
 
-        int solve_without_root(int node, int cut) {
+        int solve_without_root(int node, int cut, int parent) {
             if (min_cut_without_root[node][cut] != INFINITY)
                 return min_cut_without_root[node][cut];
 
@@ -157,8 +162,9 @@ class DecomReaction {
             int ret = INFINITY;
             vector<int> children = tree[node];
             for (vector<int>::iterator child = children.begin(); child != children.end(); child++) {
-                ret = min(ret, 1 + solve_with_root(*child, cut));
-                ret = min(ret, solve_without_root(*child, cut));
+                if (*child == parent) continue;
+                ret = min(ret, 1 + solve_with_root(*child, cut, node));
+                ret = min(ret, solve_without_root(*child, cut, node));
             }
 
             min_cut_without_root[node][cut] = ret;
