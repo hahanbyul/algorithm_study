@@ -17,7 +17,6 @@ class DecomReaction:
             self.tree[right_atom].append(left_atom)
 
     def dfs(self, node, parent):
-        print(f'dfs: {node}')
         min_cut_with_root = self.min_cut_with_root
         min_cut_without_root = self.min_cut_without_root
 
@@ -46,27 +45,15 @@ class DecomReaction:
 
                 ret = [x for x in min_cut_with_root[node]]
 
-                print('before')
-                print(f'with (child): {min_cut_with_root[child]}')
-                print(f'with (node):  {min_cut_with_root[node]}')
-                print(f'with (ret):   {ret}')
-
                 for j in range(1, self.size[node]-i+1):
-                    print(f'child: {child}, i: {i}, j: {j}')
                     if i + j < 2:
                         continue
                     ret[i+j] = min(ret[i+j], min_cut_with_root[child][i] + min_cut_with_root[node][j] - 1)
-
-                print('after')
-                print(f'with: {ret}')
 
                 min_cut_with_root[node] = ret
 
             is_first_child = False
 
-        print(f'without: {min_cut_without_root[node]}')
-        print(f'with: {min_cut_with_root[node]}')
-        print('dfs end')
 
     def solve(self):
         self.dfs(0, -1)
