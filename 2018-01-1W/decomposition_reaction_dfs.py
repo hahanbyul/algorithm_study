@@ -27,7 +27,8 @@ class DecomReaction:
         if parent == -1:
             min_cut_with_root[node][1] = len(children)
 
-        prev_child = -1
+
+        is_first_child = True
         for child in children:
             if child == parent:
                 continue
@@ -35,26 +36,41 @@ class DecomReaction:
             self.dfs(child, node)
             self.size[node] += self.size[child]
 
-            for i in range(self.size[child]+1):
-                print(f'i: {i}')
+            for i in range(1, self.size[child]+1):
                 min_cut_without_root[node][i] = min(min_cut_without_root[node][i], 1 + min_cut_with_root[child][i])
                 min_cut_without_root[node][i] = min(min_cut_without_root[node][i], min_cut_without_root[child][i])
-                print(f'without: {min_cut_without_root[node]}')
 
-                if prev_child == -1:
-                    prev_child = child
-                    break
+                if is_first_child:
+                    min_cut_with_root[node][i+1] = min_cut_with_root[child][i] + min_cut_with_root[node][1] - 1
+                    continue
 
-                for j in range(self.size[prev_child]+1):
-                    print(f'j: {j}')
-                    min_cut_with_root[node][i+j+1] = min(min_cut_with_root[node][i+j+1], min_cut_with_root[child][i] + min_cut_with_root[prev_child][j])
-                    print(f'with: {min_cut_with_root[node]}')
-            prev_child = child
-        min_cut_with_root[node][self.size[node]] = 0
+                ret = [x for x in min_cut_with_root[node]]
+
+                print('before')
+                print(f'with (child): {min_cut_with_root[child]}')
+                print(f'with (node):  {min_cut_with_root[node]}')
+                print(f'with (ret):   {ret}')
+
+                for j in range(1, self.size[node]-i+1):
+                    print(f'child: {child}, i: {i}, j: {j}')
+                    if i + j < 2:
+                        continue
+                    ret[i+j] = min(ret[i+j], min_cut_with_root[child][i] + min_cut_with_root[node][j] - 1)
+
+                print('after')
+                print(f'with: {ret}')
+
+                min_cut_with_root[node] = ret
+
+            is_first_child = False
+
+        print(f'without: {min_cut_without_root[node]}')
+        print(f'with: {min_cut_with_root[node]}')
+        print('dfs end')
 
     def solve(self):
-        dfs(0, -1)
-        return min(min_cut_with_root[0][self.M], min_cut_without_root[0][self.M])
+        self.dfs(0, -1)
+        return min(self.min_cut_with_root[0][self.M], self.min_cut_without_root[0][self.M])
 
 
 def main():

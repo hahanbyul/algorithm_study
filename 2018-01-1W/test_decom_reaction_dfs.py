@@ -1,4 +1,4 @@
-from decomposition_reaction_memoization import DecomReaction
+from decomposition_reaction_dfs import DecomReaction
 
 def test_example(filename):
     dr = DecomReaction()
@@ -15,3 +15,9 @@ def test_7_2():
 
 def test_online_ex():
     test_example('example.txt')
+
+def test_online_ex_1():
+    test_example('ex_1.txt')
+
+def test_online_ex_2():
+    test_example('ex_2.txt')
