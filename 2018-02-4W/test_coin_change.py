@@ -1,12 +1,10 @@
 from coin_change import CoinChange
 
-cc = CoinChange()
-with open('prob1_ex.txt') as f:
-    cc.read_input_by(f.readline)
-
-cc2 = CoinChange()
-with open('prob1_ex2.txt') as f:
-    cc2.read_input_by(f.readline)
+def get_problem(index):
+    cc = CoinChange()
+    with open(f'prob1_ex{index}.txt') as f:
+        cc.read_input_by(f.readline)
+    return cc
 
 def test_read_by_input_function():
     cc = CoinChange()
@@ -14,7 +12,18 @@ def test_read_by_input_function():
     print(cc.n)
 
 def test_solve_for_ex1():
-    cc.solve()
+    ex1 = get_problem(1)
+    print(ex1.c)
+    assert ex1.solve() == 4
 
 def test_solve_for_ex2():
-    cc2.solve()
+    ex2 = get_problem(2)
+    print(ex2.c)
+    assert ex2.solve() == 5
+
+def test_solve_for_ex3():
+    ex3 = get_problem(3)
+    print(ex3.c)
+    assert ex3.solve() == 4
+
+
