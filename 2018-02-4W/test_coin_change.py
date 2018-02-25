@@ -24,6 +24,9 @@ def test_solve_for_ex2():
 def test_solve_for_ex3():
     ex3 = get_problem(3)
     print(ex3.c)
-    assert ex3.solve() == 4
+    ex3.solve()
 
-
+def test_solve_for_ex4():
+    ex4 = get_problem(4)
+    print(ex4.c)
+    ex4.solve()
