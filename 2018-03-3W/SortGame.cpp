@@ -5,18 +5,24 @@
 #include <queue>
 #include <memory>
 #include <tuple>
+#include <map>
+#include <algorithm>
 
+using std::sort;
 using std::cin;
 using std::cout;
 using std::string;
 using std::vector;
 using std::set;
+using std::map;
 using std::queue;
 using std::tuple;
 using std::make_tuple;
 using std::get;
+using std::pair;
 
 using sint = typename vector<int>::size_type;
+const int MAX_NUM = 8;
 
 void printVector(const vector<int>&);
 
@@ -24,25 +30,32 @@ class SortGame {
 public:
 	SortGame();
 	void readInput();
-	bool isSorted(const vector<int>&);
-	vector<int> reverseSeq(const vector<int>&, int, int);
-	int bfs();
-	void insertNext(const vector<int>, int);
-	bool isVisited(const vector<int>&);
+	int solve();
 
 private:
 	int C, N;
 	vector<int> initialSeq;
-	set<vector<int>> visited;
+	map<vector<int>, int> cache;
 	queue<tuple<vector<int>, int>> q;
 
+	bool isSorted(const vector<int>&);
+	vector<int> reverseSeq(const vector<int>&, int, int);
+	void insertNext(const vector<int>, int);
+	bool isVisited(const vector<int>&);
+
+	vector<int> arithmaticSeq(int);
+	void doCaching(int);
+	vector<int> normalize(const vector<int>& v);
+	int solve(const vector<int>& v);
 };
 
 SortGame::SortGame() {
-	initialSeq.reserve(8);
+	doCaching(MAX_NUM);
 }
 
 void SortGame::readInput() {
+	initialSeq.clear();
+
 	cin >> N;
 
 	for (int i = 0; i < N; ++i) {
@@ -59,24 +72,33 @@ bool SortGame::isSorted(const vector<int>& vec) {
 	return true;
 }
 
-int SortGame::bfs() {
-	q.push(make_tuple(initialSeq, 0));
-	visited.insert(initialSeq);
+vector<int> SortGame::arithmaticSeq(int n) {
+	vector<int> v;
+	for (int i = 0; i < n; ++i)
+		v.push_back(i);
 
-	while (q.size() > 0) {
-		auto tp = q.front();
-		const vector<int> v = get<0>(tp);
-		// printVector(v);
-
-		q.pop();
-
-		int min_count = get<1>(tp);
-		if (isSorted(v)) return min_count;
-		insertNext(v, min_count);
-	}
-    return 0;
+	return v;
 }
 
+void SortGame::doCaching(int n) {
+	vector<int> seq = arithmaticSeq(n);
+	q.push(make_tuple(seq, 0));
+	cache.insert(make_pair(seq, 0));
+
+	int count = 1;
+	while (q.size() > 0) {
+		auto tp = q.front();
+		q.pop();
+
+		const vector<int> v = get<0>(tp);
+		int min_count = get<1>(tp);
+
+		// printVector(v);
+		// cout << "->" << min_count << "->" << count++ << '\n';
+
+		insertNext(v, min_count);
+	}
+}
 
 vector<int> SortGame::reverseSeq(const vector<int>& v, int start, int end) {
 	vector<int> reversed(v);
@@ -92,7 +114,7 @@ vector<int> SortGame::reverseSeq(const vector<int>& v, int start, int end) {
 }
 
 bool SortGame::isVisited(const vector<int>& v) {
-	return visited.find(v) != visited.end();
+	return cache.count(v) == 1;
 }
 
 void SortGame::insertNext(const vector<int> v, int count) {
@@ -102,26 +124,57 @@ void SortGame::insertNext(const vector<int> v, int count) {
 
 			if (!isVisited(s)) {
 				q.push(make_tuple(s, count + 1));
-				visited.insert(s);
+				cache.insert(make_pair(s, count + 1));
 			}
 		}
 	}
 } 
 
+vector<int> SortGame::normalize(const vector<int>& v) {
+	vector<pair<int, int>> paired_v;
+	for (sint i = 0; i < v.size(); ++i) {
+		pair<int, int> p(v[i], i);
+		paired_v.push_back(p);
+	}
+
+	sort(paired_v.begin(), paired_v.end(), [](const pair<int, int> & a, const pair<int, int>& b) { return a.first < b.first; });
+
+	vector<int> normed_v(v);
+	for (int i = 0; i < v.size(); ++i)
+		normed_v[paired_v[i].second] = i;
+	
+
+	for (int i = normed_v.size(); i < MAX_NUM; ++i)
+		normed_v.push_back(i);
+
+	return normed_v;
+}
+
+int SortGame::solve() {
+	return solve(initialSeq);
+}
+
+int SortGame::solve(const vector<int>& v) {
+	// printVector(normalize(v));
+	return cache[normalize(v)];
+}
+
 void printVector(const vector<int>& V) {
 	for (int v : V)
 		cout << v << " ";
-	cout << '\n';
+	// cout << '\n';
 }
 
 int main() {
+	auto sg = new SortGame();
 	int C;
 	cin >> C;
 	for (int c = 0; c < C; ++c) {
-		auto sg = new SortGame();
 		sg->readInput();
-		cout << sg->bfs() << '\n';
+		cout << sg->solve() << '\n';
 	}
 
     return 0;
 }
+
+
