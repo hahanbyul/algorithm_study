@@ -5,7 +5,7 @@ using namespace std;
 
 class QuickUnion {
     public:
-        QuickUnion(int _N): N(_N), id(_N, 1), size(_N, 0) {
+        QuickUnion(int _N): N(_N), id(_N), size(_N, 1) {
             for (int n = 0; n < N; ++n)
                 id[n] = n;
         }
@@ -44,7 +44,7 @@ class QuickUnion {
 int main() {
     int n, m;
     cin >> n >> m;
-    QuickUnion qu(n);
+    QuickUnion qu(n+1);
     for (int i = 0; i < m; ++i) {
         int op, a, b;
         cin >> op >> a >> b;
