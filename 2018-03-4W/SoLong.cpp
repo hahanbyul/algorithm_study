@@ -22,6 +22,10 @@ struct Key {
     int    freq;
 
     Key(string _word, int _freq): word(_word), freq(_freq) {}
+
+    int operator<(const Key& that) {
+        return freq < that.freq;
+    }
 };
 
 class TrieNode {
@@ -52,8 +56,12 @@ class TrieNode {
     }
 
     vector<Key> keysWithPrefix(const char* prefix) {
-        vector<Key> keys;
         TrieNode* prefixNode = find(prefix);
+        return keysWithPrefix(prefixNode, prefix);
+    }
+
+    vector<Key> keysWithPrefix(TrieNode* prefixNode, const char* prefix) {
+        vector<Key> keys;
         if (prefixNode == 0) return keys;
 
         string prefixStr = string(prefix);
@@ -81,6 +89,13 @@ class TrieNode {
             cout << key->word << ": " << key->freq << '\n';
     }
 
+    int solve(vector<char *> v) {
+        int firstCharNum = v.size(); 
+        int spacesNum = v.size()-1;
+
+        int answer = firstCharNum + spacesNum;
+    }
+
 };
 
 int main() {
@@ -106,6 +121,9 @@ int main() {
             scanf("%s", s);
             line.push_back(s);
         }
+
+        vector<Key> keys = tn.keysWithPrefix("A");
+        tn.printKeys(keys);
     }
 
     /*
