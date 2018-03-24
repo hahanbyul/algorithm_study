@@ -158,6 +158,6 @@ int main() {
             line.push_back(s);
         }
 
-        cout << tn.solve(line) << '\n';
+        printf("%d\n", tn.solve(line));
     }
 }
