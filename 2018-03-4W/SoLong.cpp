@@ -23,7 +23,8 @@ struct Key {
 
     Key(string _word, int _freq): word(_word), freq(_freq) {}
 
-    int operator<(const Key& that) {
+    bool operator<(const Key& that) const {
+        if (freq == that.freq) return strcmp(word.c_str(), that.word.c_str()) > 0;
         return freq < that.freq;
     }
 };
@@ -62,7 +63,7 @@ class TrieNode {
 
     vector<Key> keysWithPrefix(TrieNode* prefixNode, const char* prefix) {
         vector<Key> keys;
-        if (prefixNode == 0) return keys;
+        if (prefixNode == nullptr) return keys;
 
         string prefixStr = string(prefix);
         prefixNode->collect(prefixStr, keys);
@@ -75,6 +76,7 @@ class TrieNode {
         if (freq != 0) {
             Key key(word, freq);
             queue.push_back(key);
+            push_heap(queue.begin(), queue.end());
         }
 
         for (char c = 0; c < R; ++c) {
@@ -89,11 +91,43 @@ class TrieNode {
             cout << key->word << ": " << key->freq << '\n';
     }
 
-    int solve(vector<char *> v) {
-        int firstCharNum = v.size(); 
+    int solve(vector<string> v) {
         int spacesNum = v.size()-1;
+        int answer = spacesNum;
 
-        int answer = firstCharNum + spacesNum;
+        for (vector<string>::const_iterator word = v.begin(); word != v.end(); ++word)
+            answer += solveForWord(*word);
+
+        return answer;
+    }
+
+    int solveForWord(string word) {
+        // cout << "word: " << word << endl;
+        int stroke = 1;
+        string prefix(1, word[0]);
+
+        TrieNode* prefixNode = find(prefix.c_str());
+        while (stroke <= word.size()) {
+            // cout << "prefix: " << prefix << endl;
+            vector<Key> keys = keysWithPrefix(prefixNode, prefix.c_str());
+            if (keys.size() == 0) // not in dictionary
+                return word.size(); 
+
+            Key maxKey = keys.front();
+            // cout << "max key: " << maxKey.word << endl;
+            if (maxKey.word == word) {
+                if (prefix != word) ++stroke; // tab
+                break;
+            }
+
+            char nextChar = word[stroke];
+            prefix += nextChar;
+            prefixNode = prefixNode->children[toNumber(nextChar)];
+            ++stroke;
+        }
+
+        // cout << word << "(" << stroke << ")" << endl;
+        return stroke;
     }
 
 };
@@ -115,22 +149,15 @@ int main() {
             tn.insert(s, freq);
         }
 
-        vector<char*> line;
+        vector<string> line;
         for (int m = 0; m < M; ++m) {
-            char s[10];
-            scanf("%s", s);
+            char ch[10];
+            scanf("%s", ch);
+
+            string s(ch);
             line.push_back(s);
         }
 
-        vector<Key> keys = tn.keysWithPrefix("A");
-        tn.printKeys(keys);
+        cout << tn.solve(line) << '\n';
     }
-
-    /*
-    tn.insert("ABCD", 4);
-    tn.insert("ABCDE", 3);
-
-    vector<Key> keys = tn.keysWithPrefix("AB");
-    tn.printKeys(keys);
-    */
 }
