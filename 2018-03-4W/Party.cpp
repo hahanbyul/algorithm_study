@@ -10,7 +10,7 @@ using namespace std;
 const int NO_ROAD = 0;
 
 int N, M, X;
-vector<vector<int> > road;
+vector<vector<pair<int, int> > > road;
 
 int dijkstra(int start, int goal) {
 	start -= 1;
@@ -25,21 +25,23 @@ int dijkstra(int start, int goal) {
 
 	while (!pq.empty()) {
 		pair<int,int> p = pq.top();
-		int dist = p.first;
+		int dist_so_far = p.first;
 		int here = p.second;
 		pq.pop();
 
 		if (here == goal) {
-			minDistance = -dist;
+			minDistance = -dist_so_far;
 			break;
 		}
-		if (distances[here] > dist) continue;
+		if (distances[here] > dist_so_far) continue;
 
-		for (int there = 0; there < road[here].size(); ++there) {
-			if (road[here][there] == NO_ROAD) continue;
+		for (int i = 0; i < road[here].size(); ++i) {
+            pair<int, int> edge = road[here][i];
+            int dist  = edge.first;
+            int there = edge.second;
 
-			if (distances[there] < dist + road[here][there]) {
-				distances[there] = dist + road[here][there];
+			if (distances[there] < dist_so_far + dist) {
+				distances[there] = dist_so_far + dist;
 				pq.push(make_pair(distances[there], there));
 			}
 			
@@ -65,14 +67,14 @@ int main() {
 	cin >> N >> M >> X;
 
 	for (int n = 0; n < N; ++n) {
-		vector<int> edge(N, NO_ROAD);
+		vector<pair<int, int> > edge;
 		road.push_back(edge);
 	}
 
 	for (int m = 0; m < M; ++m) {
 		int start, end, T;
 		cin >> start >> end >> T;
-		road[start-1][end-1] = -T;
+		road[start-1].push_back(make_pair(-T, end-1));
 	}
 
 	cout << solve() << '\n';
