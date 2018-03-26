@@ -1,82 +1,74 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>
+#include <utility>
+#include <climits>
 
 using namespace std;
 
 int N, M, X;
-vector<vector<int>> road;
+vector<vector<pair<int, int> > > normalRoad, reversedRoad;
 
-struct Pair {
-	int dist, next;
+void dijkstra(vector<int>& distances, const vector<vector<pair<int, int> > >& road) {
+    priority_queue<pair<int, int> > pq;
 
-	Pair(int _dist, int _next): dist(_dist), next(_next) {}
+    distances[X] = 0;
+    pq.push(make_pair(0, X));
 
-	int operator<(Pair p) {
-		return dist < p.dist;
-	}
-};
+    while (!pq.empty()) {
+        pair<int,int> p = pq.top();
+        int dist_so_far = p.first;
+        int here = p.second;
+        pq.pop();
 
-void push_next(vector<Pair>& frontier, vector<bool>& visited, int start, int prev_dist) {
-	for (int next = 0; next < N; ++next) {
-		int dist = road[start][next];
+        if (distances[here] > dist_so_far) continue;
 
-		if (dist != 0 && !visited[next]) {
-			Pair p(prev_dist + dist, next);
-			frontier.push_back(p);
-			push_heap(frontier.begin(), frontier.end());
-		}
-	}
-	visited[start] = true;
-}
+        for (int i = 0; i < road[here].size(); ++i) {
+            pair<int, int> edge = road[here][i];
+            int dist  = edge.first;
+            int there = edge.second;
 
-int bfs(int start, int goal) {
-	start -= 1;
-	goal  -= 1;
-	vector<bool> visited(N, false);
+            if (distances[there] < dist_so_far + dist) {
+                distances[there] = dist_so_far + dist;
+                pq.push(make_pair(distances[there], there));
+            }
 
-	vector<Pair> frontier;
-	push_next(frontier, visited, start, 0);
-
-	while (frontier.size() > 0) {
-		Pair p = frontier.front();
-		if (p.next == goal) return -p.dist;
-
-		pop_heap(frontier.begin(), frontier.end());
-		frontier.pop_back();
-
-		push_next(frontier, visited, p.next, p.dist);
-	}
-
-	return 0;
+        }
+    }
 }
 
 int solve() {
-	int ret = 0;
-	for (int i = 1; i <= N; ++i) {
-		if (i == X) continue;
-		int answer = bfs(i, X) + bfs(X, i);
-		if (answer > ret) ret = answer;
-	}
+    vector<int> normalDist(N, INT_MIN);
+    dijkstra(normalDist, reversedRoad);
 
-	return ret;
+    vector<int> reversedDist(N, INT_MIN);
+    dijkstra(reversedDist, normalRoad);
+
+    int ret = 0;
+    for (int i = 1; i < N; ++i)
+        ret = max(ret, -(normalDist[i] + reversedDist[i]));
+    return ret;
 }
 
 int main() {
-	cin >> N >> M >> X;
+    cin >> N >> M >> X;
+    N += 1;     // for array subscript
 
-	for (int n = 0; n < N; ++n) {
-		vector<int> to(N, 0);
-		road.push_back(to);
-	}
+    for (int n = 0; n < N; ++n) {
+        vector<pair<int, int> > edge;
+        normalRoad.push_back(edge);
+        reversedRoad.push_back(edge);
+    }
 
-	for (int m = 0; m < M; ++m) {
-		int start, end, T;
-		cin >> start >> end >> T;
-		road[start-1][end-1] = -T;
-	}
+    for (int m = 0; m < M; ++m) {
+        int start, end, T;
+        cin >> start >> end >> T;
+        normalRoad[start].push_back(make_pair(-T, end));
+        reversedRoad[end].push_back(make_pair(-T, start));
+    }
 
-	cout << solve() << '\n';
+    cout << solve() << '\n';
 
     return 0;
 }
