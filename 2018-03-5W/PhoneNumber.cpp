@@ -12,10 +12,10 @@ int toNumber(char ch) { return ch - '0'; }
 
 class PhoneNumber {
     bool inserted;
-    vector<PhoneNumber*> children;
+    PhoneNumber* children[DIGIT_NUM];
 
 public:
-    PhoneNumber() : inserted(false), children(DIGIT_NUM, 0) {}
+    PhoneNumber() : inserted(false), children{0} {}
 
     bool insert(const char* digit) {
         auto& currentNode = children[toNumber(*digit)];
