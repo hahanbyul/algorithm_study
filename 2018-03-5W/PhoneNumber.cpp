@@ -10,6 +10,14 @@ const int MAX_DIGITS = 10;
 
 int toNumber(char ch) { return ch - '0'; }
 
+struct MyString {
+    string str;
+    MyString(string _str) : str(_str) {}
+    int size() const { return str.size(); }
+    const char* c_str() { return str.c_str(); }
+    bool operator<(const MyString& _str) const { return size() < _str.size(); }
+};
+
 class PhoneNumber {
     bool inserted;
     PhoneNumber* children[DIGIT_NUM];
@@ -40,12 +48,12 @@ int main() {
         int numOfItems;
         scanf("%d", &numOfItems);
 
-        vector<string> phoneBook;
+        vector<MyString> phoneBook;
         for (int i = 0; i < numOfItems; ++i) {
             char number[MAX_DIGITS+1];
             scanf("%s", number);
 
-            string numberStr(number);
+            MyString numberStr(number);
             phoneBook.push_back(numberStr);
         }
 
@@ -53,7 +61,7 @@ int main() {
 
         PhoneNumber pn;
         bool result;
-        for (string number : phoneBook) {
+        for (MyString number : phoneBook) {
             result = pn.insert(number.c_str());
             if (result == CONTRADICT) {
                 printf("NO\n");
