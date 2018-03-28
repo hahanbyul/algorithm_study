@@ -114,21 +114,21 @@ int main() {
             double cost = p.first;
             Edge   edge = p.second;
 
-            cout << "EDGE: " << edge.first << ", " << edge.second << endl;
+            // cout << "EDGE: " << edge.first << ", " << edge.second << endl;
 
             if (qu.connected(edge)) continue;
 
             qu.unite(edge);
 
             int root = qu.find(edge.first);
-            cout << "ROOT: " << root << " (size: " << qu.size(root) << ")" << endl;
+            // cout << "ROOT: " << root << " (size: " << qu.size(root) << ")" << endl;
             ++connectedEdges;
             totalDist += cost;
 
             if (qu.spanned(edge)) break;
         }
 
-        printf("%f", totalDist);
+        printf("%.9f", totalDist);
 
     }
 }
