@@ -128,7 +128,7 @@ int main() {
             if (qu.spanned(edge)) break;
         }
 
-        printf("%.9f", totalDist);
+        printf("%.10f\n", totalDist);
 
     }
 }
