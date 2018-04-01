@@ -76,14 +76,16 @@ int main() {
     scanf("%d", &T);
 
     for (int t = 0; t < T; ++t) {
+
         int N;
         scanf("%d", &N);
 
         bricks.clear();
         bricks = vector<int>(N);
+        cache.clear();
         for (int n = 0; n < N; ++n) {
             scanf("%d", &bricks[n]);
-            cache.push_back(Score(-1, -1));
+            cache.push_back(DEFAULT);
         }
 
         for (int i = 1; i <= 3; ++i) {
