@@ -14,15 +14,17 @@ int C, N, M;
 vector<pair<int, int> > adj[2000];
 
 int dijkstra(int baseline) {
-    vector<int> dist(N, INT_MAX);
+    vector<int> dist(N, INT_MIN);
     priority_queue<pair<Cost, Next> > pq;
 
     for (int i = 0; i < adj[0].size(); ++i) {
         int there = adj[0][i].first;
-        int cost  = adj[0][i].second;
+        int cost  = baseline - adj[0][i].second;
 
-        dist[there] = -abs(baseline - cost);
-        pq.push(make_pair(dist[there], there));
+        if (cost <= 0) {
+            dist[there] = cost;
+            pq.push(make_pair(dist[there], there));
+        }
     }
 
     while (!pq.empty()) {
@@ -30,25 +32,29 @@ int dijkstra(int baseline) {
         pq.pop();
 
         Cost minCost = popped.first;
-        int  here    = popped.second;
+        Next here    = popped.second;
 
         cout << "[pop] here: " << here << ", cost: " << minCost << endl;
 
         if (here == N-1) return -minCost;
 
-        if (dist[here] < minCost) continue;
+        if (dist[here] > minCost) continue;
 
         for (int i = 0; i < adj[here].size(); ++i) {
             int there = adj[here][i].first;
-            int cost  = -abs(baseline - adj[here][i].second);
+            int cost  = baseline - adj[here][i].second;
+            if (cost > 0) continue;
 
             int nextCost = min(minCost, cost);
-            if (dist[there] > nextCost) {
+            if (dist[there] < nextCost) {
                 dist[there] = nextCost;
+                cout << "[add] there: " << there << ", cost: " << nextCost << endl;
                 pq.push(make_pair(dist[there], there));
             }
         }
     }
+
+    return -1;
 }
 
 int main() {
