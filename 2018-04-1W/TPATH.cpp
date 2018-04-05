@@ -1,5 +1,6 @@
+// online test: PASS (https://cl.ly/0S0Z1I3U1q3q)
+
 #include <queue>
-#include <cmath>
 #include <vector>
 #include <algorithm>
 #include <climits>
@@ -34,7 +35,7 @@ int dijkstra(int baseline) {
         Cost minCost = popped.first;
         Next here    = popped.second;
 
-        cout << "[pop] here: " << here << ", cost: " << minCost << endl;
+        // cout << "[pop] here: " << here << ", cost: " << minCost << endl;
 
         if (here == N-1) return -minCost;
 
@@ -48,7 +49,7 @@ int dijkstra(int baseline) {
             int nextCost = min(minCost, cost);
             if (dist[there] < nextCost) {
                 dist[there] = nextCost;
-                cout << "[add] there: " << there << ", cost: " << nextCost << endl;
+                // cout << "[add] there: " << there << ", cost: " << nextCost << endl;
                 pq.push(make_pair(dist[there], there));
             }
         }
@@ -63,18 +64,32 @@ int main() {
     for (int c = 0; c < C; ++c) {
         scanf("%d %d", &N, &M);
 
+        vector<bool> velocity(1000 + 1, false);
         for (int m = 0; m < M; ++m) {
             int a, b, c;
             scanf("%d %d %d", &a, &b, &c);
             adj[a].push_back(make_pair(b, c));
             adj[b].push_back(make_pair(a, c));
+
+            velocity[c] = true;
         }
 
+        int answer = INT_MAX;
+        for (int v = 0; v <= 1000; ++v) {
+            if (velocity[v]) {
+                int cost = dijkstra(v);
+                if (cost != -1) answer = min(answer, cost);
+            }
+        }
+        printf("%d\n", answer);
+
+        /*
         while (1) {
             int input;
             scanf("%d", &input);
             printf("%d\n", dijkstra(input));
         }
+        */
 
         for (int n = 0; n < N; ++n) {
             adj[n].clear();
