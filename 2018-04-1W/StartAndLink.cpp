@@ -25,7 +25,7 @@ int getLinkTeamScore() {
     return sum;
 }
 
-int dfs(int start, int remained, int startTeamScore, vector<int>& startTeam) {
+int dfs(int start, int remained, int startTeamScore) {
     if (remained == 0) {
         int linkTeamScore = getLinkTeamScore();
         answer = min(answer, abs(linkTeamScore - startTeamScore));
@@ -34,16 +34,16 @@ int dfs(int start, int remained, int startTeamScore, vector<int>& startTeam) {
 
     for (int i = start + 1; i <= N - remained; ++i) {
         int addedSum = 0;
-        for (auto v : startTeam)
-            addedSum += pairSum[v][i];
+        for (int v = 0; v < i; ++v) {
+            if (startTeamMember[v])
+                addedSum += pairSum[v][i];
+        }
 
-        startTeam.push_back(i);
         startTeamMember[i] = true;
 
-        int ret = dfs(i, remained - 1, startTeamScore + addedSum, startTeam);
+        int ret = dfs(i, remained - 1, startTeamScore + addedSum);
         if (ret == 0) return 0;
 
-        startTeam.pop_back();
         startTeamMember[i] = false;
     }
 
@@ -62,7 +62,7 @@ int main() {
     }
 
     vector<int> startTeam(1, 0);
-    dfs(0, N/2 - 1, 0, startTeam);
+    dfs(0, N/2 - 1, 0);
     printf("%d", answer);
 
     return 0;
