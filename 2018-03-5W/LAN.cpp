@@ -1,7 +1,11 @@
+// Delaunay Triangle: https://github.com/Bl4ckb0ne/delaunay-triangulation
+// online test result: https://cl.ly/2T0r33001E46
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include <map>
 
 using namespace std;
 
@@ -270,3 +274,138 @@ class Delaunay
 		vector<EdgeType> _edges;
 		vector<VertexType> _vertices;
 };
+
+void readCoord(int N, vector<int>& coord) {
+    for (int n = 0; n < N; ++n)
+        scanf("%d", &coord[n]);
+}
+
+class QuickUnion {
+	using Edge = pair<int, int>;
+    vector<int> id, sz;
+
+public:
+    QuickUnion(int N) : id(N), sz(N, 1) {
+        for (int n = 0; n < N; ++n) {
+            id[n] = n;
+        }
+    }
+
+    int size(int p) {
+        return sz[p];
+    }
+
+    int find(int p) {
+        while (p != id[p])
+            p = id[p];
+        return p;
+    }
+
+    bool connected(int p, int q) {
+        return find(p) == find(q);
+    }
+
+    bool connected(Edge e) {
+        return connected(e.first, e.second);
+    }
+
+    bool spanned(int p) {
+        return sz[find(p)] == id.size();
+    }
+
+    bool spanned(Edge e) {
+        return spanned(e.first);
+    }
+
+    bool unite(int p, int q) {
+        int i = find(p);
+        int j = find(q);
+
+        if (i == j) return false;
+
+        if (sz[i] >= sz[j]) {
+            id[j] = i;
+            sz[i] += sz[j];
+        } else {
+            id[i] = j;
+            sz[j] += sz[i];
+        }
+        return true;
+    }
+
+    bool unite(Edge e) {
+        return unite(e.first, e.second);
+    }
+};
+
+
+double distance(Edge<double> e) {
+	return sqrt(e.p1.dist2(e.p2));
+}
+
+using Dictionary = map<pair<int, int>, int>;
+int findPointNumber(Dictionary& dict, Vector2<double> point) {
+	auto pointPair = make_pair((int)point.x, (int)point.y);
+	return dict[pointPair];
+}
+
+pair<int, int> edgeToPair(Dictionary& dict, Edge<double> e) {
+	return make_pair(findPointNumber(dict, e.p1), findPointNumber(dict, e.p2));
+}
+
+int main() {
+	int C;
+    scanf("%d", &C);
+
+    for (int c = 0; c < C; ++c) {
+        int N, M;
+        scanf("%d %d", &N, &M);
+
+        vector<int> coordX(N), coordY(N);
+        readCoord(N, coordX);
+        readCoord(N, coordY);
+
+		vector<Vector2<double> > points;
+		Dictionary dict;
+		for (int n = 0; n < N; ++n) {
+			points.push_back(Vector2<double>(coordX[n], coordY[n]));
+			dict[make_pair(coordX[n], coordY[n])] = n;
+		}
+
+		Delaunay<double> triangulation;
+		vector<Triangle<double> > triangles = triangulation.triangulate(points);
+		vector<Edge<double> > edges = triangulation.getEdges();
+
+		auto qu = QuickUnion(N);
+        for (int m = 0; m < M; ++m) {
+            int a, b;
+            scanf("%d %d", &a, &b);
+            qu.unite(a, b);
+        }
+
+		vector<pair<double, pair<int, int> > > cand;
+		for (auto e : edges) {
+			double cost = distance(e);
+			pair<int, int> edge = edgeToPair(dict, e);
+			cand.push_back(make_pair(cost, edge));
+		}
+
+		sort(cand.begin(), cand.end());
+
+		double totalDist = 0;
+        for (auto p : cand) {
+            double cost = p.first;
+            pair<int, int> edge = p.second;
+
+
+            if (qu.connected(edge)) continue;
+
+            qu.unite(edge);
+            totalDist += cost;
+
+            if (qu.spanned(edge)) break;
+        }
+
+        printf("%.10f\n", totalDist);
+	}
+}
