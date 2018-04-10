@@ -19,20 +19,18 @@ void pathMapInc(int i, int direction, const string& path) {
     ++(*pathMap)[path];
 }
 
-void computePath(int i, int j, int direction, string path) {
-    if (path.size() == N-1) {
+void computePath(int i, int j, int direction, string& path, int count) {
+    if (count == N-1) {
         pathMapInc(i,             direction, path);
         pathMapInc(i + direction, direction, path);
         return;
     }
 
-    path.push_back(board[i][j + direction]);
-    computePath(i, j + direction, direction, path);
-    path.pop_back();
+    path[count] = board[i][j + direction];
+    computePath(i, j + direction, direction, path, count + 1);
 
-    path.push_back(board[i + direction][j]);
-    computePath(i + direction, j, direction, path);
-    path.pop_back();
+    path[count] = board[i + direction][j];
+    computePath(i + direction, j, direction, path, count + 1);
 }
 
 int main() {
@@ -49,11 +47,15 @@ int main() {
             rightPath[n].clear();
         }
 
-        string topLeft(1, board[0][0]);
-        computePath(0, 0, LEFT, topLeft);
+        string topLeft;
+        topLeft.resize(N-1);
+        topLeft[0] = board[0][0];
+        computePath(0, 0, LEFT, topLeft, 1);
 
-        string bottomRight(1, board[N-1][N-1]);
-        computePath(N-1, N-1, RIGHT, bottomRight);
+        string bottomRight;
+        bottomRight.resize(N-1);
+        bottomRight[0] = board[N-1][N-1];
+        computePath(N-1, N-1, RIGHT, bottomRight, 1);
 
         int numOfCases = 0;
         for (int i = 0; i < N; ++i) {
