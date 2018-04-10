@@ -1,17 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
+#include <unordered_map>
 using namespace std;
 
 int N;
 const int LEFT  = 1;
 const int RIGHT = -1;
 char board[500][500];
-map<string, int> leftPath[500], rightPath[500];
+unordered_map<string, int> leftPath[500], rightPath[500];
 
 void pathMapInc(int i, int direction, const string& path) {
-    map<string, int>* pathMap;
+    unordered_map<string, int>* pathMap;
     if (direction == LEFT)           pathMap = &leftPath[i];
     else /*if (direction == RIGHT)*/ pathMap = &rightPath[i];
 
