@@ -6,9 +6,7 @@ using namespace std;
 const int R = 26;
 const int SEARCH_MISS = 0;
 
-int toNumber(char ch) {
-    return ch - 'a';
-}
+int toNumber(char ch) { return ch - 'a'; }
 
 struct TrieNode {
     int count;
@@ -18,11 +16,9 @@ struct TrieNode {
     void insert(const char* path) {
         TrieNode*& currentNode = children[toNumber(*path)];
         if (currentNode == 0) currentNode = new TrieNode();
-        cout << "ch: " << *path << ", count: " << currentNode->count << endl;
 
         if (*(path+1) == 0) {
             ++(currentNode->count);
-            cout << "count: " << currentNode->count << endl;
             return;
         }
 
@@ -30,17 +26,9 @@ struct TrieNode {
     }
 
     int find(const char* path) {
-        // cout << "ch: " << *path << endl;
         TrieNode* currentNode = children[toNumber(*path)];
-        cout << "ch: " << *path << endl; // << ", count: " << currentNode->count << endl;
-        if (currentNode == 0) {
-            cout << "MISS" << endl;
-            return SEARCH_MISS;
-        }
-        if (*(path+1) == 0) {
-            cout << "FOUND: " << currentNode->count << endl;
-            return currentNode->count;
-        }
+        if (currentNode == 0) { return SEARCH_MISS;        }
+        if (*(path+1) == 0)   { return currentNode->count; }
 
         return currentNode->find(++path);
     }
