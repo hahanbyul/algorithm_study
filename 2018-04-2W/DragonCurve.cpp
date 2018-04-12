@@ -7,12 +7,7 @@ unsigned long int genSize[50 + 1] = {2};
 string basicStr    = "FX+YF+FX-YF+FX+YF-FX-YF+FX+YF+FX-YF-FX+YF-FX-YF";
 string reversedStr = "FY-XF-FY+XF-FY-XF+FY+XF-FY-XF-FY+XF+FY-XF+FY+XF";
 
-string getDragonCurve(int i, unsigned long int left, unsigned long int right, bool reversed) {
-    cout << "i: " << i;
-    cout << ", left: " << left;
-    cout << ", right: " << right; 
-    cout << ", mid: " << genSize[i-1];
-    cout << ", reversed " << reversed << endl;
+string getDragonCurve(int n, unsigned long int left, unsigned long int right, bool reversed) {
     if (right <= left) return "";
 
     if (right < genSize[4]) {
@@ -24,18 +19,18 @@ string getDragonCurve(int i, unsigned long int left, unsigned long int right, bo
         }
     }
 
-    unsigned long int mid = genSize[i-1];
-    if (right < mid) return getDragonCurve(i-1, left, right, reversed);
-    if (left  > mid) return getDragonCurve(i-1, 2*mid - right, 2*mid - left, !reversed);
+    unsigned long int mid = genSize[n-1];
+    if (right < mid) return getDragonCurve(n-1, left, right, reversed);
+    if (left  > mid) return getDragonCurve(n-1, 2*mid - right, 2*mid - left, !reversed);
     
-    string divLeft  = getDragonCurve(i, left, mid-1, reversed);
-    string divRight = getDragonCurve(i, mid+1, right, reversed);
+    string divLeft  = getDragonCurve(n, left, mid-1, reversed);
+    string divRight = getDragonCurve(n, mid+1, right, reversed);
     if (!reversed) return divLeft + "+" + divRight;
     else           return divRight + "-" + divLeft;
 }
 
-void printDragonCurve(int i, unsigned long int p, int l) {
-    printf("%s\n", getDragonCurve(i, p-1, p+l-2, false).c_str());
+void printDragonCurve(int n, unsigned long int p, int l) {
+    printf("%s\n", getDragonCurve(n, p-1, p+l-2, false).c_str());
 }
 
 string genDragonCurve(int n) {
@@ -65,23 +60,12 @@ string getDragonCurveSlow(int i, unsigned long int p, int l) {
 int main() {
     for (int i = 1; i <= 50; ++i) genSize[i] = genSize[i-1] * 2 + 1;
 
-    int i;
-    scanf("%d", &i);
-    cout << "range: 1 ~ " << genSize[i] << endl;
-
-    int p, l;
-    scanf("%d %d", &p, &l);
-
-    cout << getDragonCurveSlow(i, p, l) << endl;
-    printDragonCurve(i, p, l);
-
-    // printDragonCurve(6, 91, 5);
-    /*
-    printDragonCurve(0, 1, 2);
-    printDragonCurve(1, 1, 5);
-    printDragonCurve(2, 6, 5);
-    printDragonCurve(5, 46, 10);
-    printDragonCurve(42, 764853475, 30);
-    */
+    int c;
+    scanf("%d", &c);
+    while (--c >= 0) {
+        int n, p, l;
+        scanf("%d %d %d", &n, &p, &l);
+        printDragonCurve(n, p, l);
+    }
 }
 
