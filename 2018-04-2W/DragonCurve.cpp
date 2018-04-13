@@ -8,7 +8,7 @@ string basicStr    = "FX+YF+FX-YF+FX+YF-FX-YF+FX+YF+FX-YF-FX+YF-FX-YF";
 string reversedStr = "FY-XF-FY+XF-FY-XF+FY+XF-FY-XF-FY+XF+FY-XF+FY+XF";
 
 string getDragonCurve(int n, unsigned long int left, unsigned long int right, bool reversed) {
-    if (right <= left) return "";
+    if (right < left) return "";
 
     if (right < genSize[4]) {
         if (!reversed) return string(basicStr.begin() + left, basicStr.begin() + right + 1);
@@ -22,6 +22,7 @@ string getDragonCurve(int n, unsigned long int left, unsigned long int right, bo
     unsigned long int mid = genSize[n-1];
     if (right < mid) return getDragonCurve(n-1, left, right, reversed);
     if (left  > mid) return getDragonCurve(n-1, 2*mid - right, 2*mid - left, !reversed);
+    if (right == left) return !reversed? "+" : "-";
     
     string divLeft  = getDragonCurve(n, left, mid-1, reversed);
     string divRight = getDragonCurve(n, mid+1, right, reversed);
