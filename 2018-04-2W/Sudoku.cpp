@@ -7,11 +7,14 @@ class Sudoku {
     int board[9][9];
     int rowPos[9], colPos[9];
     int remainedZero;
+    vector<int> countInRow[9], countInCol[9], countInBox[9];
 
     vector<int> marked[9][9];
     int possibleLength[9][9];
 
     enum Condition { IMPOSSIBLE, POSSIBLE, GUESS };
+
+
 
 public:
     Sudoku() : remainedZero(0) {
@@ -25,10 +28,34 @@ public:
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 if (board[i][j] == 0) {
-                    marked[i][j] = vector<int>(10, POSSIBLE);
                     ++remainedZero;
+                    marked[i][j] = vector<int>(10, POSSIBLE);
                     check(i, j);
                     possibleLength[i][j] = getCandLength(i, j);
+                }
+                else possibleLength[i][j] = 0;
+            }
+        }
+
+        for (int i = 0; i < 9; ++i) {
+            countInRow[i] = vector<int>(10, 0);
+            countInCol[i] = vector<int>(10, 0);
+            countInBox[i] = vector<int>(10, 0);
+        }
+
+        getCount(); 
+
+    }
+
+    void getCount() {
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                for (int k = 1; k < 10; ++k) {
+                    if (board[i][j] == 0 && marked[i][j][k] == POSSIBLE) {
+                        ++countInRow[i][k];
+                        ++countInCol[j][k];
+                        ++countInBox[getBoxNum(i, j)][k];
+                    }
                 }
             }
         }
@@ -112,14 +139,39 @@ public:
             }
         }
     }
-    void fill(int i, int j) {
+
+
+
+    void fill(int i, int j, bool VERBOSE=false) {
+        if (VERBOSE) cout << "[FILL] " << i << ", " << j << endl;
+        if (VERBOSE) cout << board[i][j] << " " << possibleLength[i][j] << endl;
         if (board[i][j] != 0 || possibleLength[i][j] != 1) return;
+
         int k = 0;
-        while (++k <= 9 && marked[i][j][k] != POSSIBLE);
+        while (++k < 10 && marked[i][j][k] != POSSIBLE);
+        if (k == 10) return;
+        if (VERBOSE) cout << "k: " << k << endl;
 
-        board[i][j] = k;
-        --possibleLength[i][j];
+        board[i][j] = -k;
+        --remainedZero;
+        printBoard();
 
+        mark(i, j, k);
+        
+        for (int n = 0; n < 9; ++n) {
+            fill(i, n, VERBOSE);
+            fill(n, j, VERBOSE);
+        }
+
+        int box = getBoxNum(i, j);
+        for (int r = rowPos[box]; r < rowPos[box] + 3; ++r) {
+            for (int c = colPos[box]; c < colPos[box] + 3; ++c) {
+                fill(r, c, VERBOSE);
+            }
+        }
+    }
+
+    void mark(int i, int j, int k) {
         for (int n = 0; n < 9; ++n) {
             markImpossible(i, n, k);
             markImpossible(n, j, k);
@@ -134,16 +186,30 @@ public:
     }
 
     void markImpossible(int i, int j, int k) {
+        // printf("mark: (%d, %d)", i, j);
+        if (board[i][j] > 0) return;
         if (marked[i][j][k] == POSSIBLE || marked[i][j][k] == GUESS) {
             marked[i][j][k] = IMPOSSIBLE;
             --possibleLength[i][j];
         }
     }
 
+    bool markGuess(int i, int j, int k) {
+        if (board[i][j] != 0) return true;
+    }
+
     void restore(int i, int j, int k) {
         if (marked[i][j][k] == GUESS) {
             marked[i][j][k] = POSSIBLE;
             ++possibleLength[i][j];
+        }
+    }
+
+    void solve() {
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (possibleLength[i][j] == 1) fill(i, j);
+            }
         }
     }
 
@@ -158,8 +224,9 @@ private:
     }
 
     void printChar(int ch) {
-        if (ch == 0) cout << "\033[1;31m" << ch << "\033[0m";
-        else         cout << ch;
+        if (ch == 0)      cout << "\033[1;31m" <<  ch << "\033[0m";
+        else if (ch <  0) cout << "\033[1;34m" << -ch << "\033[0m";
+        else              cout << ch;
     }
 
     int toNumber(char ch) {
@@ -183,7 +250,7 @@ private:
     }
 
     void printCand(vector<int>& cand) {
-        for (int n = 1; n <= 9; ++n)
+        for (int n = 1; n < 10; ++n)
             if (cand[n] == POSSIBLE) cout << n << " ";
     }
 
@@ -199,6 +266,10 @@ private:
 int main() {
     auto sdk = Sudoku();
     sdk.printBoard();
-    sdk.printColCand(5);
+    sdk.solve();
+
+    for (int i = 0; i < 9; ++i)
+        sdk.printColCand(i);
+
     return 0;
 }
