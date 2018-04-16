@@ -3,8 +3,9 @@
 #include <algorithm>
 using namespace std;
 
+int N;
 bool totalScore[10000 + 1];
-vector<int>  eachScore;
+vector<int> eachScore(100);
 
 void solve(int goal, int start, int sum) {
     if (totalScore[goal]) {
@@ -12,11 +13,10 @@ void solve(int goal, int start, int sum) {
         return;
     }
 
-    for (int i = start; i < eachScore.size(); ++i) {
+    for (int i = start; i < N; ++i) {
         int nextSum = sum + eachScore[i];
-        if (nextSum >  goal) continue;
+        if (nextSum >  goal || totalScore[nextSum] ) continue;
         else {
-
             totalScore[nextSum] = true;
             cout << "saved: " << nextSum << endl;
             solve(goal, i + 1, nextSum);
@@ -33,31 +33,30 @@ int main() {
     int t = 0;
     while (++t <= T) {
         */
-        eachScore.clear();
-
-        int N;
         scanf("%d", &N);
 
-        eachScore  = vector<int>(N);
-        int MAX_SCORE = 0;
+        int MAX_SCORE_SUM = 0;
+        int MIN_SCORE = 100;
         for (int n = 0; n < N; ++n) {
             scanf("%d", &eachScore[n]);
-            MAX_SCORE += eachScore[n];
+            MAX_SCORE_SUM += eachScore[n];
+            MIN_SCORE = min(MIN_SCORE, eachScore[n]);
         }
 
-        sort(eachScore.begin(), eachScore.end(), greater<int>());
+        // sort(eachScore.begin(), eachScore.end(), greater<int>());
 
         totalScore[0] = true;
-        totalScore[MAX_SCORE] = true;
+        totalScore[MAX_SCORE_SUM] = true;
 
-        int goal = MAX_SCORE;
-        while (--goal > 0) {
+        int goal = MAX_SCORE_SUM - MIN_SCORE;
+        while (goal > 0) {
             cout << "goal: " << goal << endl;
             solve(goal, 0, 0);
+            goal -= MIN_SCORE;
         }
 
         int numOfCases = 0;
-        for (int i = 0; i <= MAX_SCORE; ++i)
+        for (int i = 0; i <= MAX_SCORE_SUM; ++i)
             numOfCases += totalScore[i];
 
         printf("%d\n", numOfCases);
