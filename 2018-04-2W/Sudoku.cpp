@@ -86,7 +86,7 @@ public:
     void printBoard() {
         for (int i = 0; i < 9; ++i)
             printRow(i);
-        cout << "remained: " << remainedZero << "\n\n";
+        // cout << "remained: " << remainedZero << "\n\n";
     }
 
     void printCol(int c) {
@@ -167,6 +167,7 @@ public:
         int box = getBoxNum(i, j);
 
         if (board[i][j] != 0) return true;
+        if (possibleLength[i][j] == 0) return false;
 
         int k;
         for (k = 1; k < 10; ++k) {
@@ -200,7 +201,7 @@ public:
 
         int box = getBoxNum(i, j);
         for (int kk = 1; kk <= 9; ++kk) {
-            if (marked[i][j][kk]) {
+            if (marked[i][j][kk] == POSSIBLE) {
                 marked[i][j][kk] = IMPOSSIBLE;
                 --countInRow[i][kk];
                 --countInCol[j][kk];
@@ -232,18 +233,7 @@ public:
         }
     }
 
-    bool markGuess(int i, int j, int k) {
-        if (board[i][j] != 0) return true;
-    }
-
-    void restore(int i, int j, int k) {
-        if (marked[i][j][k] == GUESS) {
-            marked[i][j][k] = POSSIBLE;
-            ++possibleLength[i][j];
-        }
-    }
-
-    void solve() {
+    void fillDefinite() {
         for (int i = 0; i < 9; ++i)
             for (int j = 0; j < 9; ++j)
                 fill(i, j);
@@ -277,6 +267,42 @@ public:
         for (int i = 0; i < 9; ++i)
             for (int j = 0; j < 9; ++j)
                 if (board[i][j] < 0) board[i][j] = -board[i][j];
+    }
+
+    bool dfs() { return dfs(remainedZero); }
+    bool dfs(int remained) {
+        cout << "remained: " << remained << endl;
+        printBoard();
+        if (remained == 0) return true;
+        
+        // find next empty
+        int i, j;
+        for (i = 0; i < 9; ++i) {
+            for (j = 0; j < 9; ++j) {
+                if (board[i][j] == 0) break;
+            }
+            if (j != 9 && board[i][j] == 0) break;
+        }
+
+        cout << i << ", " << j << endl;
+        vector<int> cand(10, POSSIBLE);
+        checkRow(i, cand);
+        checkCol(j, cand);
+        checkBox(getBoxNum(i, j), cand);
+
+        for (int k = 1; k <= 9; ++k) {
+            // if (marked[i][j][k] != POSSIBLE) continue;
+
+            // check consistency
+            if (cand[k] != POSSIBLE) continue;
+
+            board[i][j] = k;
+            bool result = dfs(remained - 1);
+            if (result) return true;
+        }
+
+        board[i][j] = 0;
+        return false;
     }
 
 private:
@@ -340,15 +366,11 @@ int main() {
     }
     */
 
-    sdk.printAllCand();
-    sdk.printAllCount();
+    // sdk.fillDefinite();
+    // sdk.confirm();
+    // sdk.printBoard();
 
-    bool result = sdk.solve();
-    if (result) sdk.confirm();
-    sdk.printBoard();
-
-    sdk.printAllCand();
-    sdk.printAllCount();
+    sdk.dfs();
 
     return 0;
 }
