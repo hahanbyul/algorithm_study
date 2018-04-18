@@ -163,10 +163,10 @@ public:
     }
 
 
-    void fill(int i, int j, bool VERBOSE=false) {
+    bool fill(int i, int j, bool VERBOSE=false) {
         int box = getBoxNum(i, j);
 
-        if (board[i][j] != 0) return;
+        if (board[i][j] != 0) return true;
 
         int k;
         for (k = 1; k < 10; ++k) {
@@ -175,20 +175,23 @@ public:
             if (possibleLength[i][j] == 1 || countInRow[i][k] == 1 || countInCol[j][k] == 1 || countInBox[box][k] == 1) break;
         }
 
-        if (k == 10) return;
+        if (k == 10) return true;
 
         mark(i, j, k);
 
         printBoard();
         
+        bool ret = true;
         for (int n = 0; n < 9; ++n) {
-            fill(i, n);
-            fill(n, j);
+            ret &= fill(i, n);
+            ret &= fill(n, j);
         }
 
         for (int r = rowPos[box]; r < rowPos[box] + 3; ++r)
             for (int c = colPos[box]; c < colPos[box] + 3; ++c)
-                fill(r, c);
+                ret &= fill(r, c);
+
+        return ret;
     }
 
     void mark(int i, int j, int k) {
