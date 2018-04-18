@@ -273,6 +273,12 @@ public:
             printCountInBox(i);
     }
 
+    void confirm() {
+        for (int i = 0; i < 9; ++i)
+            for (int j = 0; j < 9; ++j)
+                if (board[i][j] < 0) board[i][j] = -board[i][j];
+    }
+
 private:
     int getBoxNum(int i, int j) {
         return i/3*3 + j/3;
@@ -337,7 +343,9 @@ int main() {
     sdk.printAllCand();
     sdk.printAllCount();
 
-    sdk.solve();
+    bool result = sdk.solve();
+    if (result) sdk.confirm();
+    sdk.printBoard();
 
     sdk.printAllCand();
     sdk.printAllCount();
