@@ -7,8 +7,8 @@ class Sudoku {
     int board[9][9];
     int rowPos[9], colPos[9];
     int remainedZero;
-    vector<int> countInRow[9], countInCol[9], countInBox[9];
-    vector<int> marked[9][9];
+    vector<vector<int> > countInRow, countInCol, countInBox;
+    vector<vector<vector<int> > > marked;
     int possibleLength[9][9];
     enum Condition { IMPOSSIBLE, POSSIBLE };
 
@@ -29,16 +29,15 @@ public:
 
     void readBoard() {
         for (int i = 0; i < 9; ++i)
-            cin >> boardStr[i];
-
-        for (int i = 0; i < 9; ++i)
             for (int j = 0; j < 9; ++j)
-                board[i][j] = boardStr[i][j] - '0';
+                scanf("%d", &board[i][j]);
     }
 
     void getPossible() {
         for (int i = 0; i < 9; ++i) {
+            marked.push_back(vector<vector<int> >());
             for (int j = 0; j < 9; ++j) {
+                marked[i].push_back(vector<int>());
                 if (board[i][j] == 0) {
                     ++remainedZero;
                     marked[i][j] = vector<int>(10, POSSIBLE);
@@ -52,9 +51,9 @@ public:
 
     void getCount() {
         for (int i = 0; i < 9; ++i) {
-            countInRow[i] = vector<int>(10, 0);
-            countInCol[i] = vector<int>(10, 0);
-            countInBox[i] = vector<int>(10, 0);
+            countInRow.push_back(vector<int>(10, 0));
+            countInCol.push_back(vector<int>(10, 0));
+            countInBox.push_back(vector<int>(10, 0));
         }
 
         for (int i = 0; i < 9; ++i) {
@@ -194,7 +193,7 @@ public:
     }
 
     void mark(int i, int j, int k) {
-        board[i][j] = -k;
+        board[i][j] = k;
         --remainedZero;
 
         int box = getBoxNum(i, j);
@@ -345,12 +344,12 @@ private:
 
 
 int main() {
-    auto sdk = Sudoku();
-    sdk.printBoard();
+    Sudoku sdk;
+    // sdk.printBoard();
 
     sdk.fillDefinite();
-    sdk.printBoard();
-    sdk.confirm();
+    // sdk.printBoard();
+    // sdk.confirm();
 
     sdk.dfs();
     sdk.printBoard();
