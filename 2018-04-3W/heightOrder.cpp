@@ -1,3 +1,7 @@
+// link:   https://www.acmicpc.net/problem/2458
+// result: https://cl.ly/0b031p26131A
+#include <cstdio>
+#include <cstring>
 #include <vector>
 using std::vector;
 
@@ -7,23 +11,16 @@ bool visited[500];
 vector<vector<int> > forwardEdge(500), backwardEdge(500);
 
 int countChildren(int curNode, bool forward) {
-    int* cache = forward? &numOfChildren[0] : &numOfParent[0];
-    if (cache[curNode] != 0) return cache[curNode];
-
-    // printf("curNode: %d\n", curNode + 1);
     int ret = 1;
     vector<vector<int> >& edge = forward? forwardEdge : backwardEdge;
     for (int nextNode : edge[curNode]) {
         if (!visited[nextNode]) {
             visited[nextNode] = true;
             int cnt = countChildren(nextNode, forward);
-            // printf("next: %d (%d)\n", nextNode + 1, cnt);
             ret += cnt;
         }
     }
 
-    // printf("%d: %d\n", curNode + 1, ret);
-    cache[curNode] = ret;
     return ret;
 }
 
@@ -38,19 +35,15 @@ int main() {
     }
 
     for (int n = 0; n < N; ++n) {
-        if (numOfChildren[n] == 0) {
-            memset(visited, 0, N * sizeof(bool));
-            countChildren(n, true);
-        }
-        if (numOfParent[n] == 0) {
-            memset(visited, 0, N * sizeof(bool));
-            countChildren(n, false);
-        }
+        memset(visited, 0, N * sizeof(bool));
+        numOfChildren[n] = countChildren(n, true);
+
+        memset(visited, 0, N * sizeof(bool));
+        numOfParent[n] = countChildren(n, false);
     }
 
     int totalStudent = 0;
     for (int n = 0; n < N; ++n) {
-        // printf("%d: %d, %d\n", n, numOfChildren[n], numOfParent[n]);
         if (numOfChildren[n] + numOfParent[n] - 1 == N)
             ++totalStudent;
     }
