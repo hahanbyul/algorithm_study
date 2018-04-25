@@ -1,23 +1,16 @@
-#include <iostream>
-#include <cstring>
-#include <vector>
-#include <algorithm>
-using std::vector;
-using std::min;
-using std::cout;
+// link:   https://www.acmicpc.net/problem/1305 
+// result: https://cl.ly/0J16330f3N3D 
 
-#define endl "\n"
+#include <cstdio>
+#include <vector>
+using std::vector;
 
 int main() {
-    char text[1000000];
-    // strcpy(text, "abcabcabc");
-    // strcpy(text, "abcdef");
-    // int N = strlen(text);
-
     int N;
     scanf("%d", &N);
     vector<int> pi(N, 0);
 
+    char text[1000000];
     scanf("%s", text);
 
     int begin = 1;
@@ -36,40 +29,8 @@ int main() {
         }
     }
 
-    for (auto m : pi) cout << m << " ";
-    cout << endl;
-
-    int start = N;
-    int minJumpLength = N;
-    while (--start + minJumpLength >= N && pi[start] > 0) {
-        cout << "start: " << start << "\n";
-        minJumpLength = min(minJumpLength, N - pi[start]);
-        int jump = pi[start] - 1;
-        int jumpLength = start - jump;
-        if (jumpLength >= minJumpLength) continue;
-
-        int nextJump = pi[jump] - 1;
-        while (jump >= jumpLength && jump - nextJump == jumpLength) {
-            cout << "jump: " << jump << ", nextJump: " << nextJump << "\n";
-            jump = nextJump;
-            if (pi[jump] == 0) break;
-            nextJump = pi[jump] - 1;
-        }
-
-        int lastJump = jump;
-        cout << "lastJump: " << lastJump << endl;
-        if (lastJump < jumpLength) {
-            int idx = N + (lastJump - jumpLength);
-            cout << "idx: " << idx << ", text[idx]: " << text[idx] << ", text[lastJump]: " << text[lastJump] << endl;
-            if (text[idx] == text[lastJump]) {
-                minJumpLength = min(minJumpLength, jumpLength);
-                printf("updated: %d\n", minJumpLength);
-            }
-        }
-
-    }
-
-    printf("%d", minJumpLength);
+    int minLength = N - pi[N-1];
+    printf("%d\n", minLength);
 
     return 0;
 }
