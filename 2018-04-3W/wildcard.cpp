@@ -1,12 +1,17 @@
+// link:   https://algospot.com/judge/problem/read/WILDCARD
+// result: https://cl.ly/250q0o261r3d
+
 #define MAX_LENGTH 100
 
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 using namespace std;
 
 char text[MAX_LENGTH + 1], pattern[MAX_LENGTH + 1];
-int patternLength, textLength;
+int textLength, patternLength;
 
 // precondition: begin <= patternLength
 int getNextWildcardCharIdx (int begin) {
@@ -30,14 +35,12 @@ int getPatternMatchedLength (int patternBegin, int textBegin, int length) {
 bool find(int patternIdx, int textIdx) {
     const char patternChar = pattern[patternIdx];
     const char textChar    = text[textIdx];
-    // printf("p: %c t: %c\n", patternChar, textChar);
 
     if      (patternChar == 0)   { return text[textIdx] == 0; }
     else if (patternChar == '?') { return find(patternIdx + 1, textIdx + 1); }
     else if (patternChar == '*') {
         int beginIdx = patternIdx;
         while (beginIdx <= patternLength && (pattern[beginIdx] == '*' || pattern[beginIdx] == '?')) { ++beginIdx; }
-        // cout << "beginIdx: " << beginIdx << " " << pattern[beginIdx] << endl;
         int endIdx = getNextWildcardCharIdx(beginIdx);
         if (endIdx == patternLength) { return find(beginIdx, textLength - (patternLength - beginIdx)); }
 
@@ -59,18 +62,6 @@ bool find(int patternIdx, int textIdx) {
 }
 
 int main() {
-    // test
-    /*
-    scanf("%s", &pattern);
-    patternLength = strlen(pattern);
-
-    while (true) {
-        scanf("%s", &text);
-        textLength = strlen(text);
-        cout << find(0, 0) << endl;
-    }
-    */
-
     int T;
     scanf("%d", &T);
 
@@ -85,8 +76,9 @@ int main() {
         for (int n = 0; n < N; ++n) {
             scanf("%s", &text);
             textLength = strlen(text);
-            bool result = find(0, 0);
-            if (result) matched.push_back(string(text));
+
+            bool success = find(0, 0);
+            if (success) { matched.push_back(string(text)); }
         }
 
         sort(matched.begin(), matched.end());
