@@ -20,23 +20,21 @@ int main() {
     int N;
     scanf("%d", &N);
 
-    for (int A = 1; A < N; ++A) {
+    int MAX_A = N/2 < 100000 ? N/2 : 100000;
+    for (int A = 1; A < MAX_A; ++A) {
         vector<bool> usedDigits(10, false);
 
-        if (hasDuplicate(A, usedDigits))
+        if (hasDuplicate(A, usedDigits)) {
             continue;
-
-        int B = N - A;
-        if (A >= B) {
-            printf("-1\n");
-            break;
         }
 
+        int B = N - A;
         if (!hasDuplicate(B, usedDigits)) {
             printf("%d + %d\n", A, B);
-            break;
+            return 1;
         }
     }
 
+    printf("-1\n");
     return 0;
 }
