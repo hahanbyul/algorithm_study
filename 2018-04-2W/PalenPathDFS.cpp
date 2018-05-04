@@ -6,18 +6,21 @@ using namespace std;
 
 int N;
 char board[500][500];
-map<string, int> pathLeft, pathRight;
 
 const int LEFT  = -1;
 const int RIGHT = 1;
 
+const int MAX = 1000000007;
+
 class Node {
     const int yStart, xStart;
+    const int direction;
     int count;
     string path;
+    map<string, int> pathMap;
 
 public:
-    Node(int _y, int _x) : yStart(_y), xStart(_x), count(0) {
+    Node(int _y, int _x, int _direction) : yStart(_y), xStart(_x), direction(_direction), count(0) {
         path.reserve(N);
         path[0] = board[_y][_x];
         ++count;
@@ -27,18 +30,18 @@ public:
         return (y >= 0 && y < N && x >= 0 && x < N);
     }
 
-    bool isInMirrorRange(int y, int x, int direction) {
-        if (direction == RIGHT) return isInBoard(y, x) && (y <= yStart && x <= xStart);
-        else                    return isInBoard(y, x) && (y >= yStart && x >= xStart);
+    bool isInMirrorRange(int y, int x) {
+        if (direction == RIGHT) return (y <= yStart && x <= xStart);
+        else                    return (y >= yStart && x >= xStart);
     }
 
     bool isGoal() {
         return count == N;
     }
 
-    Node* go(int y, int x, int direction) {
+    Node* go(int y, int x) {
         ++count;
-        if (!isInBoard(y, x) || !hasOpposite(board[y][x], direction)) {  // 끝에 도달하면 안에 안들어가도 됨
+        if (!isInBoard(y, x) || !hasOpposite(board[y][x])) {  // 끝에 도달하면 안에 안들어가도 됨
             return 0; 
         }
 
@@ -46,7 +49,7 @@ public:
         return this;
     }
 
-    bool hasOpposite(char ch, int direction) {
+    bool hasOpposite(char ch) {
         int dist = count - 1;
 
         int yDiff;
@@ -55,7 +58,7 @@ public:
 
         int y = yStart - direction * yDiff;
         int x = xStart - direction * (dist - yDiff);
-        while (isInMirrorRange(y, x, direction)) {
+        while (isInMirrorRange(y, x)) {
             if (board[y][x] == ch) { return true; }
 
             y += direction;
@@ -69,6 +72,11 @@ public:
         --count;
     }
 
+    void print(const int direction) {
+        if (direction == LEFT) printf("%s (LEFT) \n", path.c_str());
+        if (direction == RIGHT) printf("%s (RIGHT) \n", path.c_str());
+    }
+
     void print() {
         printf("%s\n", path.c_str());
     }
@@ -76,53 +84,72 @@ public:
     string getPath() {
         return path;
     }
+
+    int getNext(int x) {
+        return x + direction;
+    }
+
+    void updateMap() {
+        ++pathMap[string(path.c_str())];
+    }
+
+    map<string, int>& getPathMap() {
+        return pathMap;
+    }
 };
 
-void dfs(Node* curNode, int y, int x, int direction) {
+void dfs(Node* curNode, int y, int x) {
     if (curNode == 0) { return; }
-    if (curNode->isGoal()) { // 종료 조건
-        // curNode->print();
-        if (direction == RIGHT) ++pathRight[curNode->getPath()];
-        else                    ++pathLeft[curNode->getPath()];
+    if (curNode->isGoal()) {
+        curNode->updateMap();
         return;
     }
 
-    int yNext = y + direction;
-    dfs(curNode->go(yNext, x, direction), yNext, x, direction);
+    int yNext = curNode->getNext(y);
+    dfs(curNode->go(yNext, x), yNext, x);
     curNode->back();
 
-    int xNext = x + direction;
-    dfs(curNode->go(y, xNext, direction), y, xNext, direction);
+    int xNext = curNode->getNext(x);
+    dfs(curNode->go(y, xNext), y, xNext);
     curNode->back();
 }
 
 int main() {
-    scanf("%d", &N);
+    int testCase;
+    scanf("%d", &testCase);
 
-    for (int n = 0; n < N; ++n)
-        scanf("%s", board[n]);
+    int t = 0;
+    while (++t <= testCase) {
+        scanf("%d", &N);
 
-    if (board[0][0] != board[N-1][N-1]) {
-        printf("0\n");
-        // continue;
+        for (int n = 0; n < N; ++n)
+            scanf("%s", board[n]);
+
+        if (board[0][0] != board[N-1][N-1]) {
+            printf("#%d 0\n", t);
+            continue;
+        }
+
+        unsigned int numOfCases = 0;
+        for (int i = 0; i < N; ++i) {
+            Node rightStart(i, N-1-i, RIGHT);
+            dfs(&rightStart, i, N-1-i);
+
+            Node leftStart(i, N-1-i, LEFT);
+            dfs(&leftStart, i, N-1-i);
+
+            map<string, int>& leftPath  = leftStart.getPathMap();
+            map<string, int>& rightPath = rightStart.getPathMap();
+            for (map<string, int>::iterator it = leftPath.begin(); it != leftPath.end(); ++it) { 
+                string path = it->first;
+                int   count = it->second;
+                // printf("%d) leftpath:  %s (%d %d)\n", i, path.c_str(), count, rightPath[path]);
+
+                numOfCases += (rightPath[path] * count) % MAX;
+                numOfCases %= MAX;
+            }
+        }
+
+        printf("#%d %d\n", t, numOfCases);
     }
-
-    for (int i = 0; i < N; ++i) {
-        Node rightStart(i, N-1-i);
-        dfs(&rightStart, i, N-1-i, RIGHT);
-
-        Node leftStart(i, N-1-i);
-        dfs(&leftStart, i, N-1-i, LEFT);
-    }
-
-    int numOfCases = 0;
-
-    /*
-    while (true) {
-        int i;
-        scanf("%d", &i);
-        Node start(i, N-1-i);
-        dfs(&start, i, N-1-i, RIGHT);
-    }
-    */
 }
