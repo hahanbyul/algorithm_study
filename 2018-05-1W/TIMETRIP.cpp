@@ -14,11 +14,37 @@ int G, W;
 vector<pair<int, int> > adj[100];
 bool reachable[100][100];
 
-void bellmanFord(vector<int>& upper, bool reversed=false) {
+bool isNegCycleReachable(const vector<int>& upper, bool reversed=false) {
+    // 추가 iteration
+    for (int here = 0; here < G; ++here) {
+        if (upper[here] == INF) { continue; }
+        for (int i = 0; i < adj[here].size(); ++i) {
+            int there = adj[here][i].first;
+            int cost  = adj[here][i].second;
+            if (reversed) { cost = -cost; }
+
+            if (upper[there] > upper[here] + cost) {
+                /*
+                if (reachable[0][here] && reachable[here][1]) {
+                    return true;
+                }
+                */
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool bellmanFord(bool reversed=false) {
+    vector<int> upper(G, INF);
+    upper[0] = 0;
+
     bool updated;
     for (int iter = 0; iter < G - 1; ++iter) {
         updated = false;
         for (int here = 0; here < G; ++here) {
+            if (upper[here] == INF) { continue; }
             for (int i = 0; i < adj[here].size(); ++i) {
                 int there = adj[here][i].first;
                 int cost  = adj[here][i].second;
@@ -32,24 +58,19 @@ void bellmanFord(vector<int>& upper, bool reversed=false) {
         }
         if (!updated) break;
     }
-}
 
-bool isNegCycleReachable(const vector<int>& upper, bool reversed=false) {
-    // 추가 iteration
-    for (int here = 0; here < G; ++here) {
-        for (int i = 0; i < adj[here].size(); ++i) {
-            int there = adj[here][i].first;
-            int cost  = adj[here][i].second;
-            if (reversed) { cost = -cost; }
-
-            if (upper[there] > upper[here] + cost) {
-                if (reachable[0][here] && reachable[here][1]) {
-                    return true;
-                }
-            }
-        }
+    if (upper[1] == INF) {
+        return false;
     }
-    return false;
+
+    if (isNegCycleReachable(upper, reversed)) {
+        printf("INFINITY");
+    }
+    else {
+        if (!reversed) printf("%d", upper[1]);
+        else           printf("%d", -upper[1]);
+    }
+    return true;
 }
 
 void floyd() {
@@ -92,33 +113,17 @@ int main() {
             adj[a].push_back(make_pair(b, d));
         }
 
-        floyd();
-        if (!reachable[0][1]) {
+        // floyd();
+
+        bool reachable = bellmanFord();
+        if (!reachable) {
             printf("UNREACHABLE\n");
             continue;
         }
 
-        vector<int> upper(G, INF);
-        upper[0] = 0;
-
-        bellmanFord(upper);
-        if (isNegCycleReachable(upper)) {
-            printf("INFINITY ");
-        }
-        else {
-            printf("%d ", upper[1]);
-        }
-
-        fill(upper.begin(), upper.end(), INF);
-        upper[0] = 0;
-
-        bellmanFord(upper, REVERSED);
-        if (isNegCycleReachable(upper, REVERSED)) {
-            printf("INFINITY\n");
-        }
-        else {
-            printf("%d\n", -upper[1]);
-        }
+        printf(" ");
+        bellmanFord(REVERSED);
+        printf("\n");
     }
 
     return 0;
