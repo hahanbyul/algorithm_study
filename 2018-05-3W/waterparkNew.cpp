@@ -4,7 +4,7 @@ using std::max;
 using std::min;
 
 int N, D;
-int stone[100000];          // 동적할당 하는 것과 비교
+int stone[100000];
 long long cache[100000];
 
 int main() {
@@ -15,17 +15,31 @@ int main() {
         scanf("%d", &stone[i]);
     }
 
+    cache[N-1] = stone[N-1];
+
     long long globalMax = stone[N-1];
     int globalMaxIndex  = N-1;
-    cache[N-1] = stone[N-1];
+
+    long long localMax = globalMax;
+    int localMaxIndex  = globalMaxIndex;
+
     for (int start = N - 2; start >= 0; --start) {
-        long long localMax = (globalMax > 0 && globalMaxIndex - start <= D)? globalMax : 0;
-        if (localMax == 0 && globalMax > 0) {
-            for (int i = start + 1; i <= min(start + D, N-1); ++i) {
-                localMax = max(localMax, cache[i]);
+        if (localMaxIndex - start > D) {
+            localMax = cache[start + 1];
+            localMaxIndex = start + 1;
+            for (int i = start + 2; i <= min(start + D, N-1); ++i) {
+                if (localMax < cache[i]) {
+                    localMax = cache[i];
+                    localMaxIndex = i;
+                }
             }
         }
-        cache[start] = stone[start] + localMax;
+
+        cache[start] = (long long) stone[start] + max((long long)0, localMax);
+        if (localMax <= cache[start]) {
+            localMax = cache[start];
+            localMaxIndex = start;
+        }
 
         if (globalMax < cache[start]) {
             globalMax = cache[start];
