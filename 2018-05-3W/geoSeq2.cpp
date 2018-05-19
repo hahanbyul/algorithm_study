@@ -1,14 +1,10 @@
+/* link: https://www.acmicpc.net/problem/15712 */
 #include <cstdio>
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-using namespace std;
 
 unsigned long long a, r, n, mod;
 unsigned long long cache[100];
 
 unsigned long long powerOfr(unsigned long long p=n, int index=0, int bias=-1) {
-    printf("%lld, %d, %d\n", p, bias, index);
     if (p == 2) {
         unsigned long long answer = bias == -1? r + 1 : (r*r) % mod + 1;
         return answer % mod;
@@ -28,8 +24,7 @@ unsigned long long powerOfr(unsigned long long p=n, int index=0, int bias=-1) {
 }
 
 unsigned long long solve() {
-    if (a % mod == 0) { return 0; }
-    return (n == 1 || r % mod == 0)? a % mod : (a * powerOfr()) % mod;
+    return (n == 1 || r % mod == 0 || a % mod == 0)? a % mod : ((a % mod) * powerOfr()) % mod;
 }
 
 int main() {
