@@ -4,12 +4,15 @@ using std::max;
 using std::min;
 
 int N, D;
-int stone[100000];
-long long cache[100000];
+int *stone;
+long long *cache;
 
 int main() {
     scanf("%d", &N);
     scanf("%d", &D);
+
+    stone = new int[N];
+    cache = new long long[N];
 
     for (int i = 0; i < N; ++i) {
         scanf("%d", &stone[i]);
