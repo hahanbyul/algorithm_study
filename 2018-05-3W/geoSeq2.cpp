@@ -15,7 +15,12 @@ unsigned long long powerOfr(unsigned long long p=n, int index=0, int bias=-1) {
         return answer % mod;
     }
     if (cache[index] != 0) {
-        unsigned long long answer = (bias == -1)? cache[index] : (cache[index] * (r - 1) + 2) % mod;
+        unsigned long long answer = (bias == -1)? cache[index] : ((cache[index] * (r - 1)) % mod + 2);
+        if (p == 5 && bias == 1) {
+            cout << "for debug\n"; 
+            int x = cache[index] * (r-1);
+            printf("%d %d %d %d %d\n", cache[index], (r-1), x, x % mod, x % mod + 2);
+        }
         cout << "cached!: " << cache[index] << " " << answer % mod << endl;
         return answer % mod;
     }
@@ -59,7 +64,8 @@ int main() {
     // mod = rand() % 100;
     a = 48, r = 28, n = 90, mod = 14;
     printf("%lld %lld %lld %lld\n", a, r, n, mod);
+    if (a % mod) { a %= mod; }
+    if (r % mod) { r %= mod; }
 
-    a %= mod, r %= mod;
     printf("%lld %lld\n", solve(), solveBrute());
 }
