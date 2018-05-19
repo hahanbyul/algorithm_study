@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 using namespace std;
 
 int N, M;
@@ -46,37 +45,26 @@ void countChildren(int parent) {
             children[1][parent] += children[0][child];
         }
     }
-
-    printf("(%d): 0 -> %lld, 1 -> %lld\n", parent + 1, children[0][parent], children[1][parent]);
 }
 
-void dfs(int parent, int prevStart[2]) {
+void dfs(int parent, unsigned long long prevStart[2]) {
     visited[parent] = true;
 
     for (int i = 0; i < adj[parent].size(); ++i) {
         int child = adj[parent][i];
         if (!visited[child]) {
-            printf("edge: (%d %d), prevSum: (%d %d)\n", parent + 1, child + 1, prevStart[0], prevStart[1]);
             int edgeIndex = findEdge(parent, child);
 
-            int start[2];
+            unsigned long long start[2];
             start[0] = prevStart[1] + children[0][parent] - children[1][child];
             start[1] = prevStart[0] + children[1][parent] - children[0][child];
-            printf("start: %d %d\n", start[0], start[1]);
 
             cache[RED][edgeIndex]   = children[0][child] * start[1] + children[1][child] * start[0];
             cache[BLACK][edgeIndex] = children[1][child] * start[1] + children[0][child] * start[0];
-            printf("end: %d %d\n", children[0][child], children[1][child]);
-            printf("cache: (%lld %lld)\n", cache[RED][edgeIndex], cache[BLACK][edgeIndex]);
 
             dfs(child, start);
         }
     }
-}
-
-unsigned long long solve(int u, int v, int color) {
-    int edgeIndex = findEdge(u-1, v-1);
-    printf("%lld\n", cache[color][edgeIndex]);
 }
 
 void init() {
@@ -84,31 +72,40 @@ void init() {
     countChildren(0);
 
     visited = vector<bool>(N, false);
-    int prevStart[2] = {0, 0};
+    unsigned long long prevStart[2] = {0, 0};
     dfs(0, prevStart);
 }
 
+void solve(int u, int v, int color) {
+    int edgeIndex = findEdge(u-1, v-1);
+    printf("%lld\n", cache[color][edgeIndex]);
+}
+
 int main() {
-    N = 6, M = 3;
+    scanf("%d %d", &N, &M);
 
     adj = vector<vector<int> >(N);
     edges = vector<vector<pair<int, int> > >(N-1);
+
     cache[0] = vector<unsigned long long>(N-1, -1);
     cache[1] = vector<unsigned long long>(N-1, -1);
+
     children[0] = vector<unsigned long long>(N, 0);
     children[1] = vector<unsigned long long>(N, 0);
 
-    addEdge(2, 4, 0);
-    addEdge(2, 5, 1);
-    addEdge(2, 6, 2);
-    addEdge(1, 2, 3);
-    addEdge(3, 1, 4);
+    for (int n = 0; n < N-1; ++n) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+        addEdge(u, v, n);
+    }
 
     init();
 
-    solve(1, 3, 0);
-    solve(1, 3, 1);
-    solve(2, 1, 1);
+    for (int m = 0; m < M; ++m) {
+        int u, v, c;
+        scanf("%d %d %d", &u, &v, &c);
+        solve(u, v, c);
+    }
 
     return 0;
 }
