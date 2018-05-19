@@ -1,56 +1,65 @@
 #include <cstdio>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
-int a, r, n, mod;
-int cache[36];
+unsigned long long a, r, n, mod;
+unsigned long long cache[100];
 
-int toIndex(int x) {
-    int index = 0;
-    int start = n;
-
-    while (start > x) {
-        if (start % 2 == 0) {
-            start /= 2;
-        }
-        else {
-            start -= 1;
-        }
-        ++index;
-    }
-    return index;
-}
-
-int powerOfr(int p=n, int index=0, int bias=-1) {
-    printf("%d %d %d\n", p, index, bias);
+unsigned long long powerOfr(unsigned long long p=n, int index=0, int bias=-1) {
+    printf("%lld, %d, %d\n", p, bias, index);
     if (p == 2) {
-        int answer = bias == -1? r + 1 : r*r + 1;
-        printf("%d\n", answer);
+        unsigned long long answer = bias == -1? r + 1 : (r*r) % mod + 1;
+        cout << answer % mod << endl;
         return answer % mod;
     }
     if (cache[index] != 0) {
-        int answer =  bias == -1? cache[index] : cache[index] * (r - 1) + 2;
-        printf("%d\n", answer);
+        unsigned long long answer = (bias == -1)? cache[index] : (cache[index] * (r - 1) + 2) % mod;
+        cout << "cached!: " << cache[index] << " " << answer % mod << endl;
         return answer % mod;
     }
     if (p % 2 == 0) {
         cache[index] = (powerOfr(p/2, index + 1, -1) * powerOfr(p/2, index + 1, +1)) % mod;
-        printf("%d\n", cache[index]);
+        cout << cache[index] << endl;
         return cache[index];
     }
     else {
-        cache[index] = (r * powerOfr(p - 1, index + 1, -1) + 1) % mod;
-        printf("%d\n", cache[index]);
+        cache[index] = ((r * powerOfr(p - 1, index + 1, -1)) % mod + 1) % mod;
+        cout << cache[index] << endl;
         return cache[index];
     }
 }
 
-int solve() {
-    return (a*powerOfr()) % mod;
+unsigned long long solve() {
+    return n == 1? a : (a*powerOfr()) % mod;
+}
+
+unsigned long long solveBrute() {
+    int term = a % mod;
+    unsigned long long geoSum = term;
+
+    for (int i = 1; i < n; ++i) {
+        term *= r;
+        term %= mod;
+
+        geoSum += term;
+        geoSum %= mod;
+    }
+
+    return geoSum;
 }
 
 int main() {
-    // a = 3, r = 5, n = 2, mod = 10;
-    a = 1, r = 2, n = 9, mod = 100;
-    printf("%d\n", solve());
+    // scanf("%lld %lld %lld %lld", &a, &r, &n, &mod);
+    // srand(time(NULL));
+    // a = rand() % 100;
+    // r = rand() % 100;
+    // n = rand() % 100;
+    // mod = rand() % 100;
+    a = 48, r = 28, n = 90, mod = 14;
+    printf("%lld %lld %lld %lld\n", a, r, n, mod);
+
+    a %= mod, r %= mod;
+    printf("%lld %lld\n", solve(), solveBrute());
 }
