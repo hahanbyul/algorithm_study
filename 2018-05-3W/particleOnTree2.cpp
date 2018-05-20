@@ -5,6 +5,7 @@ using namespace std;
 
 int N, M;
 vector<vector<int> > adj;
+vector<vector<int> > tree;
 vector<bool> visited;
 vector<vector<pair<int, int> > > edges;
 vector<unsigned long long> cache[2];
@@ -40,6 +41,7 @@ void countChildren(int parent) {
     for (int i = 0; i < adj[parent].size(); ++i) {
         int child = adj[parent][i];
         if (!visited[child]) {
+            tree[parent].push_back(child);
             countChildren(child);
             children[0][parent] += children[1][child];
             children[1][parent] += children[0][child];
@@ -50,8 +52,8 @@ void countChildren(int parent) {
 void dfs(int parent, unsigned long long prevStart[2]) {
     visited[parent] = true;
 
-    for (int i = 0; i < adj[parent].size(); ++i) {
-        int child = adj[parent][i];
+    for (int i = 0; i < tree[parent].size(); ++i) {
+        int child = tree[parent][i];
         if (!visited[child]) {
             int edgeIndex = findEdge(parent, child);
 
@@ -85,6 +87,7 @@ int main() {
     scanf("%d %d", &N, &M);
 
     adj = vector<vector<int> >(N);
+    tree = vector<vector<int> >(N);
     edges = vector<vector<pair<int, int> > >(N-1);
 
     cache[0] = vector<unsigned long long>(N-1, -1);
