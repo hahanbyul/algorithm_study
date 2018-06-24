@@ -2,26 +2,7 @@
 #include <vector>
 using namespace std;
 
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-
-    for (i=size-1;i>=0;i--)
-    {
-        for (j=7;j>=0;j--)
-        {
-            byte = (b[i] >> j) & 1;
-            printf("%u", byte);
-        }
-    }
-    puts("");
-}
-
 int main() {
-    freopen("timeTable-input.txt", "r", stdin);
-
     int N;
     scanf("%d", &N);
 
@@ -34,10 +15,8 @@ int main() {
         for (int i = 0; i < k; ++i) {
             unsigned long long t;
             scanf("%llu", &t);
-            printf("%llu ", t);
             classes[n] |= 1ULL << (t-1);
         }
-        printBits(sizeof(classes[n]), &classes[n]);
     }
 
     int M;
@@ -55,14 +34,8 @@ int main() {
             student |= 1ULL << (q-1);
         }
 
-        printf("student: ");
-        printBits(sizeof(student), &student);
-
         int classCount = 0;
         for (int n = 0; n < N; ++n) {
-            printf("  class: ");
-            printBits(sizeof(classes[n]), &classes[n]);
-
             if (classes[n] == (student & classes[n])) {
                 ++classCount;
             }
